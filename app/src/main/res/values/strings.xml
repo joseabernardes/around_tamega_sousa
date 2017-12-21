@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">Around Tâmega e Sousa</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="add_point">Adicionar</string>
+    <string name="action_settings">Settings</string>
+    <string name="mypoints">Adicionados</string>
+    <string name="favourites">Favoritos</string>
+    <string name="nav_interest_points">Pontos de Interesse</string>
+    <string name="interest_points">Lista</string>
+    <string name="map">Mapa</string>
+    <string name="nav_mypoints">Os Meus Pontos</string>
+    <string name="logout">Log Out</string>
+    <string name="title_activity_add_point">AddPointActivity</string>
+    <string name="check">Check</string>
+    <string name="close">Check</string>
+
 </resources>

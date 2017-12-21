@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "938671048830",
+    "firebase_url": "https://around-tamega-e-sousa.firebaseio.com",
+    "project_id": "around-tamega-e-sousa",
+    "storage_bucket": "around-tamega-e-sousa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:938671048830:android:a66b80c791a238a9",
+        "android_client_info": {
+          "package_name": "estg.ipp.pt.aroundtmegaesousa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "938671048830-llm7ogk4vquggku6e12ip08m4o1gvija.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "estg.ipp.pt.aroundtmegaesousa",
+            "certificate_hash": "736a0cbd5ef3076192f01269f6c8b91d4cfbd37e"
+          }
+        },
+        {
+          "client_id": "938671048830-ienalenbnj53r1nd9414d9k13q5plgib.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqXtyMEPsZ9gaL7FIuFQ2-mm7tkKjTdcs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "938671048830-ienalenbnj53r1nd9414d9k13q5plgib.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -21,7 +21,7 @@
             android:label="@string/title_activity_main2"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".AddPointActivity" />
-        
+
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

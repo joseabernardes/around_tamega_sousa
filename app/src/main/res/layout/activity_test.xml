@@ -7,6 +7,14 @@
     android:orientation="vertical"
     tools:context="estg.ipp.pt.aroundtmegaesousa.TestActivity">
 
+
+    <TextView
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/login_name"
+        android:hint="ee"/>
+
     <EditText
         android:id="@+id/editText1"
         android:layout_width="match_parent"
@@ -38,4 +46,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/quote"/>
+    <Button
+        android:id="@+id/sign_out"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign out"/>
 </LinearLayout>

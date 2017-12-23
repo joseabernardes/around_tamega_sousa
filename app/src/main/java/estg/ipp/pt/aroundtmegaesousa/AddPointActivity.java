@@ -1,6 +1,5 @@
 package estg.ipp.pt.aroundtmegaesousa;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -12,7 +11,7 @@ public class AddPointActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_point2);
+        setContentView(R.layout.activity_add_point);
 
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);

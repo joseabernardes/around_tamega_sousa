@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,8 +35,6 @@ import estg.ipp.pt.aroundtmegaesousa.model.Quotes;
 
 public class TestActivity extends AppCompatActivity {
     public static final int RC_SIGN_IN = 1;
-    public static final String QUOTE = "quote";
-    public static final String AUTHOR = "author";
     private EditText editText1;
     private EditText editText2;
     private Button save;
@@ -48,12 +47,14 @@ public class TestActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private TextView loginName;
     private Button signOut;
+    private LinearLayout linearLayout;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
+        linearLayout = findViewById(R.id.linear);
         db = FirebaseFirestore.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
         loginName = findViewById(R.id.login_name);
@@ -80,7 +81,7 @@ public class TestActivity extends AppCompatActivity {
   /*                Map<String, Object> data = new HashMap<String, Object>();
                     data.put(QUOTE, quote);
                     data.put(AUTHOR, author);*/
-                    db.collection("users").add(new Quotes(quote, author)).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                  /*  db.collection("users").add(new Quotes(quote, author)).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentReference> task) {
                             if (task.isSuccessful()) {
@@ -89,7 +90,7 @@ public class TestActivity extends AppCompatActivity {
                                 Toast.makeText(TestActivity.this, "ID: " + id, Toast.LENGTH_SHORT).show();
                             }
                         }
-                    });
+                    });*/
                 }
             }
         });
@@ -97,7 +98,22 @@ public class TestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 CollectionReference col = db.collection("users");
+                DocumentReference documentReference = col.document("IcSBvgsxTMzXpXsi43st");
+/*
+                DocumentSnapshot documentSnapshot = documentReference.get().getResult();
+*/
+                documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        Log.d(TAG, documentSnapshot.getId() + " - " + documentSnapshot.getData());
+                        Quotes quotes = documentSnapshot.toObject(Quotes.class);
+                        Log.d(TAG, quotes.toString());
+                    }
+                });
 
+
+/*
                 Query query = col.whereEqualTo("author", "paulo");
                 query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -109,7 +125,7 @@ public class TestActivity extends AppCompatActivity {
 
                         }
                     }
-                });
+                });*/
 
             }
         });

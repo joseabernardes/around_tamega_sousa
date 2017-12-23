@@ -1,33 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="estg.ipp.pt.aroundtmegaesousa.AddPointActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <include layout="@layout/toolbar" />
+
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_add_point" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+            <TextView
+                android:id="@+id/form_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:paddingBottom="8dp"
+                android:paddingTop="16dp"
+                android:text="Nome"
+                android:textSize="15dp" />
 
-</android.support.design.widget.CoordinatorLayout>
+            <EditText
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+            <!-- dar padding entre o input e a linha-->
+
+            <TextView
+                android:id="@+id/form_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="16dp"
+                android:text="Descrição"
+                android:textSize="15dp" />
+
+            <EditText
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp" />
+
+            <TextView
+                android:id="@+id/form_typeOfLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="16dp"
+                android:text="Tipo de Localização : "
+                android:textSize="15dp" />
+
+            <Spinner
+                android:id="@+id/typeOfLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:paddingBottom="35dp"></Spinner>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="8dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="16dp"
+                android:text="Fotográfias" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="10dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                    <ImageView
+                        android:id="@+id/third_img"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:src="@mipmap/ic_launcher" />
+
+                    <ImageView
+                        android:id="@+id/first_img"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="3dp"
+                        android:src="@mipmap/ic_launcher" />
+
+                    <ImageView
+                        android:id="@+id/second_img"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="3dp"
+                        android:src="@drawable/ic_menu_camera" />
+
+                    <ImageView
+                        android:id="@+id/fourth_img"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="3dp"
+                        android:src="@drawable/ic_menu_camera" />
+
+                    <ImageView
+                        android:id="@+id/fith_img"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="3dp"
+                        android:src="@drawable/ic_menu_camera" />
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

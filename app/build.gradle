@@ -32,6 +32,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:11.6.2'
     implementation 'com.firebaseui:firebase-ui-auth:3.1.2'
     compile 'com.facebook.android:facebook-login:4.28.0'
+    compile 'com.jsibbold:zoomage:1.1.0'
 
 }
 apply plugin: 'com.google.gms.google-services'

@@ -3,14 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!--<item-->
-        <!--android:id="@+id/settings"-->
-        <!--android:icon="@drawable/ic_launcher_background"-->
-        <!--android:title="Settings"-->
-        <!--app:showAsAction="never" />-->
+    <!--android:id="@+id/settings"-->
+    <!--android:icon="@drawable/ic_launcher_background"-->
+    <!--android:title="Settings"-->
+    <!--app:showAsAction="never" />-->
     <item
         android:id="@+id/action_check"
         android:icon="@drawable/ic_check"
         android:title="@string/check"
         app:showAsAction="ifRoom" />
+
 
 </menu>

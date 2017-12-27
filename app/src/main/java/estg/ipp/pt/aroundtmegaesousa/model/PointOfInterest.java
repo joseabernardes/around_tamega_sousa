@@ -16,9 +16,9 @@ public class PointOfInterest {
     private List<String> photos;
     private String user;
     private int avgRatting;
-/*
+    /*
     private List<Map<String, Object>> classifications; //array de objetos
-*/
+    */
 
     public PointOfInterest() {
     }
@@ -32,7 +32,9 @@ public class PointOfInterest {
         this.user = user;
     }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
     public String getDescription() {
         return description;
@@ -54,7 +56,9 @@ public class PointOfInterest {
         return user;
     }
 
-    public int getAvgRatting() { return avgRatting;  }
+    public int getAvgRatting() {
+        return avgRatting;
+    }
 
 
 }

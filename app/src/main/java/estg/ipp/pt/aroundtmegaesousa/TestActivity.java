@@ -49,14 +49,10 @@ public class TestActivity extends AppCompatActivity {
     private Button signOut;
     private LinearLayout linearLayout;
 
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    //perguntar ao professor
+    private void initLayout() {
         setContentView(R.layout.activity_test);
         linearLayout = findViewById(R.id.linear);
-        db = FirebaseFirestore.getInstance();
-        mFirebaseAuth = FirebaseAuth.getInstance();
         loginName = findViewById(R.id.login_name);
         mDocRef = FirebaseFirestore.getInstance().document("sampleData/inspiration");
         fetch = findViewById(R.id.fetch);
@@ -130,34 +126,17 @@ public class TestActivity extends AppCompatActivity {
             }
         });
 
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    //signed in
 
-                    onSignInInitialize(user.getDisplayName());
-                } else {
-                    //signed out
-                    onSignOutCleanup();
-                    startActivityForResult(
-                            AuthUI.getInstance()
-                                    .createSignInIntentBuilder()
-                                    .setIsSmartLockEnabled(false)
-                                    .setAvailableProviders(
-                                            Arrays.asList(
-                                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
-                                                    new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()
-                                            ))
-                                    .setLogo(R.drawable.around_logo)
-                                    .setTheme(R.style.LoginTheme)
-                                    .build(),
-                            RC_SIGN_IN);
-                }
-            }
-        };
     }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mAuthStateListener = new AuthStateListener();
+        db = FirebaseFirestore.getInstance();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+    }
+
 
     private void onSignInInitialize(String string) {
         loginName.setText(string);
@@ -167,18 +146,49 @@ public class TestActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) { //se foi do meu pedido de login
             if (resultCode == RESULT_OK) { //se retornou sucesso
+                initLayout();
                 Toast.makeText(this, "Signed in", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) { // se o utilizador cancelou BACK
+            } else if (resultCode == RESULT_CANCELED) { // se o utilizador cancelou BACK ou sem ligação á internet
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
     }
+
+    private class AuthStateListener implements FirebaseAuth.AuthStateListener {
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                //signed in
+                initLayout();
+                onSignInInitialize(user.getDisplayName());
+            } else {
+                //signed out
+                onSignOutCleanup();
+                startActivityForResult(
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setIsSmartLockEnabled(false)
+                                .setAvailableProviders(
+                                        Arrays.asList(
+                                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
+                                                new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()
+                                        ))
+                                .setLogo(R.drawable.around_logo)
+                                .setTheme(R.style.LoginTheme)
+                                .build(),
+                        RC_SIGN_IN);
+            }
+        }
+    }
+
 
     @Override
     protected void onPause() {

@@ -8,8 +8,14 @@
     tools:context="estg.ipp.pt.aroundtmegaesousa.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"></FrameLayout>
+<!--<FrameLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:id="@+id/fragment"-->
+    <!--android:layout_height="match_parent"></FrameLayout>-->
+
+    <include
+        layout="@layout/fragment_point_of_interest"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>

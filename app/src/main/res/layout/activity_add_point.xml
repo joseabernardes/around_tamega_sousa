@@ -93,38 +93,40 @@
 
 
                         <ImageView
-                            android:id="@+id/first_img"
+                            android:id="@+id/img_0"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:layout_margin="3dp"
                             android:adjustViewBounds="true"
-                            android:padding="0dp"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/img_1" />
+                            android:padding="20dp"
+                            android:src="@drawable/ic_add"/>
 
                         <ImageView
-                            android:id="@+id/second_img"
+                            android:id="@+id/img_1"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:layout_margin="3dp"
-                            android:padding="0dp"
+
                             android:adjustViewBounds="true"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/img_2" />
+                            android:padding="20dp"
+                            android:src="@drawable/ic_add" />
 
                         <ImageView
-                            android:id="@+id/third_img"
+                            android:id="@+id/img_2"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:layout_margin="3dp"
                             android:padding="20dp"
+                            android:src="@drawable/ic_add"
                             android:adjustViewBounds="true"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/ic_add"
+
                        />
 
                         <ImageView
-                            android:id="@+id/fourth_img"
+                            android:id="@+id/img_3"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:layout_margin="3dp"
@@ -135,7 +137,7 @@
                            />
 
                         <ImageView
-                            android:id="@+id/fith_img"
+                            android:id="@+id/img_4"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:layout_margin="3dp"

@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,52 +6,61 @@
     android:id="@+id/poi_fragment"
     >
 
-    <!-- TODO: Update blank fragment layout -->
+    &lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;-->
 
 
-    <LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/slider"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="250dp">
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/slider"
-            android:layout_width="match_parent"
-            android:layout_height="250dp">
+    </android.support.v4.view.ViewPager>
 
-        </android.support.v4.view.ViewPager>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:text="PARQUE DAS NAÇOES DO DOURO"
+        android:textColor="@color/colorAccent" />
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="PARQUE DAS NAÇOES DO DOURO"
-            android:textColor="@color/colorAccent"
-            android:enabled="false"
-            />
-        <TextView
-            android:id="@+id/por"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Vista magnifica, bom local para dar umas pinadas, com o frio que está até se dura mais tempo #experienciapropria"
-            android:padding="10dp"
-            android:lineSpacingExtra="2dp"
-            />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Local > Parque"
-            android:padding="10dp"
-            />
+    <TextView
+        android:id="@+id/por"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:lineSpacingExtra="2dp"
+        android:padding="10dp"
+        android:text="Vista magnifica, bom local para dar umas pinadas, com o frio que está até se dura mais tempo #experienciapropria" />
 
-        <RatingBar
-            android:id="@+id/poi_rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:numStars="5"
-            android:rating="3.5"
-            android:paddingLeft="5dp"
-            android:stepSize="0.5"
-            style="?android:attr/ratingBarStyleIndicator"/>
-    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="Local > Parque" />
 
-</FrameLayout>
+    <RatingBar
+        android:id="@+id/poi_rating"
+        style="?android:attr/ratingBarStyleIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:paddingLeft="5dp"
+        android:rating="3.5"
+        android:stepSize="0.5" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ver Mapa"
+        android:layout_margin="5dp"
+        />
+</LinearLayout>
+
+    <!--
+    </FrameLayout>
+    -->

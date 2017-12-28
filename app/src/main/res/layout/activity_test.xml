@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:id="@+id/linear"
-    tools:context="estg.ipp.pt.aroundtmegaesousa.TestActivity">
+    tools:context="estg.ipp.pt.aroundtmegaesousa.activities.TestActivity">
 
 
     <TextView

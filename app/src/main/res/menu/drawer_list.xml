@@ -13,7 +13,7 @@
                         android:icon="@drawable/ic_added"
                         android:title="@string/mypoints" />
                     <item
-                        android:id="@+id/favourites"
+                        android:id="@+id/favorites"
                         android:icon="@drawable/ic_favorite"
                         android:title="@string/favourites" />
                 </group>

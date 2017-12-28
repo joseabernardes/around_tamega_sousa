@@ -1,9 +1,19 @@
 package estg.ipp.pt.aroundtmegaesousa;
 
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
+import android.media.Image;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,26 +21,28 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.aprilapps.easyphotopicker.DefaultCallback;
+import pl.aprilapps.easyphotopicker.EasyImage;
+
 public class AddPointActivity extends AppCompatActivity {
 
-    private ImageView thirdImg;
-    private ImageView firstImg;
-    private ImageView secondImg;
-    private ImageView fourthImg;
-    private ImageView fithImg;
+    private static final int REQUEST_PHOTO_PERMISSIONS = 100;
+    private static final String PHOTOS_KEY = "photos_list";
+    private static final String THUMBS_KEY = "img_";
+    private List<ImageView> imageViewList;
     private boolean imageOpen;
     private PhotoView expandedImageView;
     private Menu menu;
     private Toolbar toolbar;
-    private int[] images;
-    private List<Integer> imagesList;
     private ArrayList<File> photos;
 
     @Override
@@ -41,57 +53,57 @@ public class AddPointActivity extends AppCompatActivity {
         toolbar.setTitle(R.string.add_point);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        photos = new ArrayList<File>();
+        imageViewList = new ArrayList<>();
+        imageViewList.add(0, (ImageView) findViewById(R.id.img_0));
+        imageViewList.add(1, (ImageView) findViewById(R.id.img_1));
+        imageViewList.add(2, (ImageView) findViewById(R.id.img_2));
+        imageViewList.add(3, (ImageView) findViewById(R.id.img_3));
+        imageViewList.add(4, (ImageView) findViewById(R.id.img_4));
 
-
-        imagesList = new ArrayList<Integer>();
-        for (int i = 0; i < 5; i++) {
-            imagesList.add(i, R.drawable.ic_add);
+        if (savedInstanceState != null) { //recuperar estado
+            photos = (ArrayList<File>) savedInstanceState.getSerializable(PHOTOS_KEY);
+            for (int i = 0; i < 5; i++) {
+                Object obj = savedInstanceState.getParcelable(THUMBS_KEY + i);
+                if (obj != null) {//existe imagem
+                    ImageView imageView = imageViewList.get(i);
+                    imageView.setImageBitmap((Bitmap) obj);
+                    imageView.setPadding(0, 0, 0, 0);
+                }
+            }
+        } else {
+            photos = new ArrayList<File>();
+            for (int i = 0; i < 5; i++) {
+                photos.add(i, null);
+            }
         }
-        imagesList.add(0, R.drawable.img_1);
-        imagesList.add(1, R.drawable.img_2);
+
+        //check permissions
+
+        EasyImage.configuration(this)
+                .setImagesFolderName("Fotografias")
+        ;
+
+
+        //checkGalleryAppAvailability();
+
+
         /**
          * gallery
          */
         expandedImageView = findViewById(R.id.expanded_image);
         imageOpen = false;
-        firstImg = findViewById(R.id.first_img);
-        secondImg = findViewById(R.id.second_img);
-        thirdImg = findViewById(R.id.third_img);
-        fourthImg = findViewById(R.id.fourth_img);
-        fithImg = findViewById(R.id.fith_img);
 
-        firstImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickImage(firstImg, imagesList.get(0));
 
-            }
-        });
-        secondImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickImage(secondImg, imagesList.get(1));
-            }
-        });
-        thirdImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickImage(thirdImg, imagesList.get(2));
-            }
-        });
-        fourthImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickImage(fourthImg, imagesList.get(3));
-            }
-        });
-        fithImg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickImage(fithImg, imagesList.get(4));
-            }
-        });
+        for (int i = 0; i < 5; i++) {
+            final ImageView tempImage = imageViewList.get(i);
+            tempImage.setTag(i); //adicionar o id da imagem
+            tempImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickImage(tempImage);
+                }
+            });
+        }
     }
 
 
@@ -118,20 +130,68 @@ public class AddPointActivity extends AppCompatActivity {
     }
 
 
-    private void onClickImage(final View thumbView, int imageResId) {
-        if (imageResId != R.drawable.ic_add) { //se já tiver imagem
-            expandedImageView.setImageResource(imageResId);
-            expandedImageView.setVisibility(View.VISIBLE);
-            updateMenuItem("Eliminar", R.drawable.ic_cancel);
-            toolbar.setTitle("Imagem " + imageResId);
-            imageOpen = true;
-        } else {
+    private void onClickImage(final ImageView imageView) {
+        int tag = (Integer) imageView.getTag();
+        File image = photos.get(tag);
+        if (image != null) { //se já tiver imagem
+            if (image.exists()) {
+                Picasso.with(AddPointActivity.this).load(image).fit().centerInside().into(expandedImageView);
+/*                Bitmap myBitmap = BitmapFactory.decodeFile(image.getAbsolutePath());
+                imageView.setImageBitmap(myBitmap);*/
+                expandedImageView.setVisibility(View.VISIBLE);
+                updateMenuItem("Eliminar", R.drawable.ic_cancel);
+                toolbar.setTitle("Imagem " + image.getName());
+                imageOpen = true;
+            } else {
+                Toast.makeText(this, "O ficheiro não existe", Toast.LENGTH_SHORT).show();
+            }
 
+        } else {
+            List<String> permissions = checkPermissions(REQUEST_PHOTO_PERMISSIONS);
+            if (!permissions.isEmpty()) {
+                requestPermissions(permissions, REQUEST_PHOTO_PERMISSIONS);
+                return;
+            }
+            EasyImage.openChooserWithDocuments(this, "Escolha a fonte", tag);
             //adicionar imagem
         }
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        EasyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
+            @Override
+            public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
+                //Some error handling
+                e.printStackTrace();
+                Toast.makeText(AddPointActivity.this, "Erro a carregar a imagem", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onImagePicked(File imageFile, EasyImage.ImageSource source, int type) {
+                addPhotoToList(imageFile, type);
+            }
+
+            @Override
+            public void onCanceled(EasyImage.ImageSource source, int type) {
+                //Cancel handling, you might wanna remove taken photo if it was canceled
+                if (source == EasyImage.ImageSource.CAMERA) {
+                    File photoFile = EasyImage.lastlyTakenButCanceledPhoto(AddPointActivity.this);
+                    if (photoFile != null) photoFile.delete();
+                }
+            }
+        });
+    }
+
+    private void addPhotoToList(File imageFile, int tag) {
+        ImageView imageView = imageViewList.get(tag);
+        imageView.setPadding(0, 0, 0, 0);
+        Picasso.with(AddPointActivity.this).load(imageFile).fit().centerCrop().into(imageView);
+        photos.add(tag, imageFile);
+    }
 
     private void closeImage() {
         toolbar.setTitle(R.string.add_point);
@@ -148,6 +208,28 @@ public class AddPointActivity extends AppCompatActivity {
             item.setTitle(title);
             item.setIcon(icon);
         }
+    }
+
+    private void requestPermissions(List<String> permissions, int requestCode) {
+        if (!permissions.isEmpty()) { //se não existe alguma permissão
+            ActivityCompat.requestPermissions(this, permissions.toArray(new String[permissions.size()]), requestCode);
+        }
+    }
+
+    private List<String> checkPermissions(int requestCode) {
+        List<String> permissions = new ArrayList<>();
+        if (requestCode == REQUEST_PHOTO_PERMISSIONS) {
+            int storage = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int camera = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+
+            if (storage != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+            if (camera != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.CAMERA);
+            }
+        }
+        return permissions;
 
     }
 
@@ -159,6 +241,20 @@ public class AddPointActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(PHOTOS_KEY, photos);
+        for (int i = 0; i < 5; i++) {
+            Drawable drawable = imageViewList.get(i).getDrawable();
+            if (drawable instanceof BitmapDrawable) { //significa que existe imagem
+                outState.putParcelable(THUMBS_KEY + i, ((BitmapDrawable) drawable).getBitmap());
+            } else {
+                outState.putParcelable(THUMBS_KEY + i, null);
+            }
+
+        }
+        super.onSaveInstanceState(outState);
     }
 }

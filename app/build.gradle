@@ -3,12 +3,14 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
+        vectorDrawables.useSupportLibrary = true
         applicationId "estg.ipp.pt.aroundtmegaesousa"
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
@@ -38,5 +40,7 @@ dependencies {
     compile 'com.github.jkwiecien:EasyImage:1.3.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
 
+
+    implementation 'com.google.android.gms:play-services-maps:11.6.2'
 }
 apply plugin: 'com.google.gms.google-services'

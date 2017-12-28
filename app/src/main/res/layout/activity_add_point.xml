@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -99,18 +100,19 @@
                             android:adjustViewBounds="true"
                             android:scaleType="centerCrop"
                             android:padding="20dp"
-                            android:src="@drawable/ic_add"/>
+                            android:tint="#9bffc107"
+                            app:srcCompat="@drawable/ic_add"/>
 
                         <ImageView
                             android:id="@+id/img_1"
                             android:layout_width="100dp"
                             android:layout_height="100dp"
                             android:layout_margin="3dp"
-
+                            android:tint="#9bffc107"
                             android:adjustViewBounds="true"
                             android:scaleType="centerCrop"
                             android:padding="20dp"
-                            android:src="@drawable/ic_add" />
+                            app:srcCompat="@drawable/ic_add" />
 
                         <ImageView
                             android:id="@+id/img_2"
@@ -118,7 +120,8 @@
                             android:layout_height="100dp"
                             android:layout_margin="3dp"
                             android:padding="20dp"
-                            android:src="@drawable/ic_add"
+                            android:tint="#9bffc107"
+                            app:srcCompat="@drawable/ic_add"
                             android:adjustViewBounds="true"
                             android:scaleType="centerCrop"
 
@@ -130,9 +133,10 @@
                             android:layout_height="100dp"
                             android:layout_margin="3dp"
                             android:padding="20dp"
+                            android:tint="#9bffc107"
                             android:adjustViewBounds="true"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/ic_add"
+                            app:srcCompat="@drawable/ic_add"
                            />
 
                         <ImageView
@@ -141,9 +145,10 @@
                             android:layout_height="100dp"
                             android:layout_margin="3dp"
                             android:padding="20dp"
+                            android:tint="#9bffc107"
                             android:adjustViewBounds="true"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/ic_add"
+                            app:srcCompat="@drawable/ic_add"
                      />
                     </LinearLayout>
                 </HorizontalScrollView>

@@ -20,10 +20,11 @@ import android.view.MenuItem;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
+import estg.ipp.pt.aroundtmegaesousa.fragments.MapFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,PointOfInterestFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener {
 
     private String TAG = "MainActivity";
 
@@ -116,6 +117,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.mypoints:
                 fragment = PointOfInterestFragment.newInstance("S", "SS");
+                break;
+            case R.id.map:
+                fragment = MapFragment.newInstance("aa", "bb");
                 break;
         }
 

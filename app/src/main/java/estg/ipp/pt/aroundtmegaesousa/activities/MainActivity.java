@@ -1,6 +1,7 @@
 package estg.ipp.pt.aroundtmegaesousa.activities;
 
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private NavigationView navigationView;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -117,9 +119,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.mypoints:
                 fragment = PointOfInterestFragment.newInstance("S", "SS");
+                fab.hide();
                 break;
             case R.id.map:
                 fragment = MapFragment.newInstance("aa", "bb");
+                fab.hide();
+                break;
+            case R.id.settings:
+                Intent intent = new Intent(MainActivity.this, AddPointActivity.class);
+              /*  intent.putExtra("edittext", text.getText().toString());*/
+                startActivity(intent);
                 break;
         }
 

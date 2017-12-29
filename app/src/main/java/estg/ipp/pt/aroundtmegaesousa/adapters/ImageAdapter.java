@@ -16,7 +16,7 @@ import estg.ipp.pt.aroundtmegaesousa.R;
 public class ImageAdapter extends PagerAdapter {
 
     private Context mContext;
-    private int[] mImageIds = new int[]{R.drawable.poi, R.drawable.around_logo, R.drawable.poi};
+    private int[] mImageIds = new int[]{R.drawable.cinf, R.drawable.around_logo, R.drawable.poi};
 
     public ImageAdapter(Context cotext) {
         mContext = cotext;

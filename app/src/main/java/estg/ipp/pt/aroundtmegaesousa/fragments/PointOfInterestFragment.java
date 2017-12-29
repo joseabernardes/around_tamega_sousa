@@ -62,7 +62,7 @@ public class PointOfInterestFragment extends Fragment {
         View mContentView = inflater.inflate(R.layout.fragment_point_of_interest, container, false);
 
         mPager = mContentView.findViewById(R.id.slider);
-        sliderDotspanel = mContentView.findViewById(R.id.SliderDots);
+        sliderDotspanel = mContentView.findViewById(R.id.slider_dots);
         mImageAdapter = new ImageAdapter(mContext);
         mPager.setAdapter(mImageAdapter);
         numImages = mImageAdapter.getCount();
@@ -70,12 +70,12 @@ public class PointOfInterestFragment extends Fragment {
 
         for (int i = 0; i < numImages; i++) {
             dots[i] = new ImageView(mContext);
-            dots[i].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.nonactive_dot));
+            dots[i].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.indicator_inactive));
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-            params.setMargins(8,0,8,0);
-            sliderDotspanel.addView(dots[i],params);
+            params.setMargins(8, 0, 8, 0);
+            sliderDotspanel.addView(dots[i], params);
         }
-        dots[0].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.active_dot));
+        dots[0].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.indicator_active));
 
         //deve ser no onCreate provavelmente
 
@@ -88,11 +88,11 @@ public class PointOfInterestFragment extends Fragment {
             @Override
             public void onPageSelected(int position) {
 
-                for(int i = 0; i< numImages; i++){
-                    dots[i].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.nonactive_dot));
+                for (int i = 0; i < numImages; i++) {
+                    dots[i].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.indicator_inactive));
                 }
 
-                dots[position].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.active_dot));
+                dots[position].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.indicator_active));
 
             }
 
@@ -101,7 +101,6 @@ public class PointOfInterestFragment extends Fragment {
 
             }
         });
-
         return mContentView;
     }
 

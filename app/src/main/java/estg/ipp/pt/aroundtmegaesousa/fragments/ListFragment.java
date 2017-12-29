@@ -71,27 +71,23 @@ public class ListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mRootView =  inflater.inflate(R.layout.fragment_list, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_list, container, false);
 
         ArrayList<PointOfInterest> contacts = new ArrayList<PointOfInterest>();
         RecyclerView recyclerView = mRootView.findViewById(R.id.recycler);
 
-        for (int i= 0; i< 10;i++){
+        for (int i = 0; i < 10; i++) {
             contacts.add(new PointOfInterest("Parque das naçoes do douro " + i));
         }
-
-
-
-        ListItemAdapter lia = new ListItemAdapter(mContext,contacts);
+        ListItemAdapter lia = new ListItemAdapter(mContext, contacts);
         recyclerView.setAdapter(lia);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        
-
-        return  mRootView; }
 
 
+        return mRootView;
+    }
 
 
     // TODO: Rename method, update argument and hook method into UI event

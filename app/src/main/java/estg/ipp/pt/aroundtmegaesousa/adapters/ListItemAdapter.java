@@ -2,7 +2,9 @@ package estg.ipp.pt.aroundtmegaesousa.adapters;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.provider.ContactsContract;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
@@ -15,6 +17,8 @@ import android.widget.TextView;
 import java.util.List;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.activities.MainActivity;
+import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
 /**
@@ -36,13 +40,14 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ViewHo
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View itemView = inflater.inflate(R.layout.item_poi, parent, false);
+
         ViewHolder vh = new ViewHolder(itemView);
         return vh;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        PointOfInterest poi = mPOI.get(position);
+      final  PointOfInterest poi = mPOI.get(position);
         ImageView iv = holder.img;
         iv.setImageResource(R.drawable.cinf);
 
@@ -54,6 +59,24 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ViewHo
 
         TextView rat = holder.rating_text;
         rat.setText("3");
+
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment =  fragment = PointOfInterestFragment.newInstance(poi.getName(), "SS");
+//                Intent intent = new Intent(mContext, UserActivity.class);
+//                intent.putExtra("name", poi.getName());
+                ((MainActivity)mContext).  getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+
+            }
+        });
+
+
     }
 
 

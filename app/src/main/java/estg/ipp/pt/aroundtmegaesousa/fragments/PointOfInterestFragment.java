@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
@@ -25,6 +28,7 @@ public class PointOfInterestFragment extends Fragment {
     private Context mContext;
     private ImageView[] dots;
     LinearLayout sliderDotspanel;
+    private TextView title;
 
     private String mParam1;
     private String mParam2;
@@ -67,6 +71,8 @@ public class PointOfInterestFragment extends Fragment {
         mPager.setAdapter(mImageAdapter);
         numImages = mImageAdapter.getCount();
         dots = new ImageView[numImages];
+        title = mContentView.findViewById(R.id.title);
+        title.setText(mParam1);
 
         for (int i = 0; i < numImages; i++) {
             dots[i] = new ImageView(mContext);

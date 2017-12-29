@@ -4,11 +4,18 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.adapters.ListItemAdapter;
+import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +34,8 @@ public class ListFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private Context mContext;
+    private View mRootView;
 
     private OnFragmentInteractionListener mListener;
 
@@ -62,11 +71,28 @@ public class ListFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list, container, false);
-    }
+        mRootView =  inflater.inflate(R.layout.fragment_list, container, false);
+
+        ArrayList<PointOfInterest> contacts = new ArrayList<PointOfInterest>();
+        RecyclerView recyclerView = mRootView.findViewById(R.id.recycler);
+
+        for (int i= 0; i< 10;i++){
+            contacts.add(new PointOfInterest("Parque das naçoes do douro " + i));
+        }
+
+
+
+        ListItemAdapter lia = new ListItemAdapter(mContext,contacts);
+        recyclerView.setAdapter(lia);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        
+
+        return  mRootView; }
+
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -78,11 +104,12 @@ public class ListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
         }
     }
 

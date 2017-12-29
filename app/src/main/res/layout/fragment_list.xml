@@ -15,8 +15,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/filters"
         android:background="@android:color/white"
+        tools:listitem="@layout/item_poi"
 
-   />
+        />
     <!--   tools:listitem="@layout/item_restaurant" -->
 
     <View

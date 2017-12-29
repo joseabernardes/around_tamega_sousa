@@ -22,6 +22,10 @@ public class PointOfInterest {
     public PointOfInterest() {
     }
 
+    public PointOfInterest(String name){
+        this.name = name;
+    }
+
     public PointOfInterest(String name, String description, LatLng location, String typeOfLocation, List<String> photos, String user) {
         this.name = name;
         this.description = description;

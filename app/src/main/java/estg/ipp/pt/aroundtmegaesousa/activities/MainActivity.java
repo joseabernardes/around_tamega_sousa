@@ -21,6 +21,7 @@ import android.view.MenuItem;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
+import estg.ipp.pt.aroundtmegaesousa.fragments.ListFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.MapFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
@@ -129,6 +130,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent intent = new Intent(MainActivity.this, AddPointActivity.class);
               /*  intent.putExtra("edittext", text.getText().toString());*/
                 startActivity(intent);
+                break;
+            case R.id.interest_points:
+                fragment = ListFragment.newInstance("aa", "bb");
+                fab.hide();
                 break;
         }
 

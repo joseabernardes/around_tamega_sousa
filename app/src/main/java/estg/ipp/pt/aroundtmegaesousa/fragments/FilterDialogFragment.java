@@ -97,7 +97,7 @@ public class FilterDialogFragment extends DialogFragment {
     @Nullable
     private String getSelectedCategory() {
         String selected = (String) mCategorySpinner.getSelectedItem();
-        if (getString(R.string.value_any_category).equals(selected)) {
+        if (getString(R.string.value_any_local).equals(selected)) {
             return null;
         } else {
             return selected;
@@ -116,12 +116,16 @@ public class FilterDialogFragment extends DialogFragment {
 
     private int getSelectedPrice() {
         String selected = (String) mPriceSpinner.getSelectedItem();
-        if (selected.equals(getString(R.string.price_1))) {
+        if (selected.equals(getString(R.string.star_1))) {
             return 1;
-        } else if (selected.equals(getString(R.string.price_2))) {
+        } else if (selected.equals(getString(R.string.star_2))) {
             return 2;
-        } else if (selected.equals(getString(R.string.price_3))) {
+        } else if (selected.equals(getString(R.string.star_3))) {
             return 3;
+        } else if (selected.equals(getString(R.string.star_4))) {
+            return 4;
+        } else if (selected.equals(getString(R.string.star_5))) {
+            return 5;
         } else {
             return -1;
         }
@@ -133,11 +137,8 @@ public class FilterDialogFragment extends DialogFragment {
         if (getString(R.string.sort_by_rating).equals(selected)) {
             //return Restaurant.FIELD_AVG_RATING;
         }
-        if (getString(R.string.sort_by_price).equals(selected)) {
+        if (getString(R.string.sort_by_date).equals(selected)) {
             //return Restaurant.FIELD_PRICE;
-        }
-        if (getString(R.string.sort_by_popularity).equals(selected)) {
-            // return Restaurant.FIELD_POPULARITY;
         }
 
         return null;
@@ -149,11 +150,8 @@ public class FilterDialogFragment extends DialogFragment {
         if (getString(R.string.sort_by_rating).equals(selected)) {
             return Query.Direction.DESCENDING;
         }
-        if (getString(R.string.sort_by_price).equals(selected)) {
+        if (getString(R.string.sort_by_date).equals(selected)) {
             return Query.Direction.ASCENDING;
-        }
-        if (getString(R.string.sort_by_popularity).equals(selected)) {
-            return Query.Direction.DESCENDING;
         }
 
         return null;

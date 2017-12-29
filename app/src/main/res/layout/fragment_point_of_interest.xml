@@ -180,7 +180,6 @@
                     android:layout_weight="1"
                     android:backgroundTint="@color/colorPrimary"
                     android:drawableLeft="@drawable/ic_star"
-                    android:drawableTint="@color/white"
                     android:text="Votar"
                     android:textColor="@color/white" />
 

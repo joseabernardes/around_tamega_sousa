@@ -20,18 +20,18 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/icon_category"
+            android:id="@+id/icon_type"
             style="@style/AppTheme.FilterIcon"
             android:layout_centerVertical="true"
             android:tint="@color/greySecondary"
-            app:srcCompat="@drawable/ic_place" />
+            app:srcCompat="@drawable/ic_beach" />
 
         <Spinner
             android:id="@+id/spinner_category"
             style="@style/AppTheme.FilterSpinner"
             android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/icon_category"
-            android:entries="@array/categories" />
+            android:layout_toRightOf="@+id/icon_type"
+            android:entries="@array/type_of_location" />
 
     </RelativeLayout>
 
@@ -45,7 +45,7 @@
             style="@style/AppTheme.FilterIcon"
             android:layout_centerVertical="true"
             android:tint="@color/greySecondary"
-            app:srcCompat="@drawable/ic_add" />
+            app:srcCompat="@drawable/ic_city" />
 
         <Spinner
             android:id="@+id/spinner_city"
@@ -66,14 +66,14 @@
             style="@style/AppTheme.FilterIcon"
             android:layout_centerVertical="true"
             android:tint="@color/greySecondary"
-            app:srcCompat="@drawable/ic_sign_out" />
+            app:srcCompat="@drawable/ic_star" />
 
         <Spinner
             android:id="@+id/spinner_price"
             style="@style/AppTheme.FilterSpinner"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/icon_price"
-            android:entries="@array/prices" />
+            android:entries="@array/ratings" />
 
     </RelativeLayout>
 

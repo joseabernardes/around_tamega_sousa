@@ -28,119 +28,77 @@
     <string name="header_filters">Filtro</string>
 
 
-    <!-- Types of food I could think of in 5 minutes -->
-    <string-array name="categories">
-        <item>@string/value_any_category</item>
+    <string-array name="type_of_location">
+        <item>@string/value_any_local</item>
 
-        <item>Brunch</item>
-        <item>Burgers</item>
-        <item>Coffee</item>
-        <item>Deli</item>
-        <item>Dim Sum</item>
-        <item>Indian</item>
-        <item>Italian</item>
-        <item>Mediterranean</item>
-        <item>Mexican</item>
-        <item>Pizza</item>
-        <item>Ramen</item>
-        <item>Sushi</item>
+        <item>Parque</item>
+        <item>Jardim</item>
+        <item>Praia fluvial</item>
+        <item>Monumento</item>
+        <item>Igreja</item>
+        <item>Restaurante</item>
+        <item>Outro</item>
     </string-array>
-    ite
 
-    <!-- 50 most populous cities in the US -->
+
     <string-array name="cities">
         <item>@string/value_any_city</item>
 
-        <item>Albuquerque</item>
-        <item>Arlington</item>
-        <item>Atlanta</item>
-        <item>Austin</item>
-        <item>Baltimore</item>
-        <item>Boston</item>
-        <item>Charlotte</item>
-        <item>Chicago</item>
-        <item>Cleveland</item>
-        <item>Colorado Springs</item>
-        <item>Columbus</item>
-        <item>Dallas</item>
-        <item>Denver</item>
-        <item>Detroit</item>
-        <item>El Paso</item>
-        <item>Fort Worth</item>
-        <item>Fresno</item>
-        <item>Houston</item>
-        <item>Indianapolis</item>
-        <item>Jacksonville</item>
-        <item>Kansas City</item>
-        <item>Las Vagas</item>
-        <item>Long Beach</item>
-        <item>Los Angeles</item>
-        <item>Louisville</item>
-        <item>Memphis</item>
-        <item>Mesa</item>
-        <item>Miami</item>
-        <item>Milwaukee</item>
-        <item>Nashville</item>
-        <item>New York</item>
-        <item>Oakland</item>
-        <item>Oklahoma</item>
-        <item>Omaha</item>
-        <item>Philadelphia</item>
-        <item>Phoenix</item>
-        <item>Portland</item>
-        <item>Raleigh</item>
-        <item>Sacramento</item>
-        <item>San Antonio</item>
-        <item>San Diego</item>
-        <item>San Francisco</item>
-        <item>San Jose</item>
-        <item>Tucson</item>
-        <item>Tulsa</item>
-        <item>Virginia Beach</item>
-        <item>Washington</item>
+
+        <item>Amarante</item>
+        <item>Baião</item>
+        <item>Castelo de Paiva</item>
+        <item>Celorico de Basto</item>
+        <item>Cinfães</item>
+        <item>Felgueiras</item>
+        <item>Lousada</item>
+        <item>Marco de Canaveses</item>
+        <item>Paços de Ferreira</item>
+        <item>Penafiel</item>
+        <item>Resende</item>
     </string-array>
 
-    <!-- Price filters -->
-    <string-array name="prices">
-        <item>@string/value_any_price</item>
+    <string-array name="ratings">
+        <item>@string/value_any_rating</item>
 
-        <item>@string/price_1</item>
-        <item>@string/price_2</item>
-        <item>@string/price_3</item>
+        <item>@string/star_1</item>
+        <item>@string/star_2</item>
+        <item>@string/star_3</item>
+        <item>@string/star_4</item>
+        <item>@string/star_5</item>
     </string-array>
 
-    <!-- Ways you can sort restaurants -->
+
     <string-array name="sort_by">
         <item>@string/sort_by_rating</item>
-        <item>@string/sort_by_popularity</item>
-        <item>@string/sort_by_price</item>
+        <item>@string/sort_by_date</item>
     </string-array>
 
 
-    <string name="value_any_category">All food</string>
-    <string name="value_any_city">Anywhere</string>
-    <string name="value_any_price">Any price</string>
+    <string name="value_any_local">Todos os Tipos de Local</string>
+    <string name="value_any_city">Todos os Concelhos</string>
+    <string name="value_any_rating">Todos os Ratings</string>
 
-    <string name="price_1">$</string>
-    <string name="price_2">$$</string>
-    <string name="price_3">$$$</string>
+    <string name="star_1"> * </string>
+    <string name="star_2"> * * </string>
+    <string name="star_3"> * * * </string>
+    <string name="star_4"> * * * * </string>
+    <string name="star_5"> * * * * * </string>
 
-    <string name="label_category">Category</string>
-    <string name="label_city">City</string>
-    <string name="label_price">Price</string>
-    <string name="label_sort_by">Sort By</string>
+    <!--    <string name="label_category">Tipo de Local</string>
+        <string name="label_city">Concelho</string>
+        <string name="label_price">Rating</string>
+        <string name="label_sort_by">Ordenado por</string>-->
 
     <string name="fmt_num_ratings" translatable="false">(%d)</string>
     <string name="all_points">Todos os Pontos</string>
-    <string name="search">Search</string>
+    <string name="search">Pesquisar</string>
 
-    <string name="sort_by_rating">Sort by Rating</string>
-    <string name="sort_by_popularity">Sort by Popularity</string>
-    <string name="sort_by_price">Sort by Price</string>
+    <string name="sort_by_rating">Ordenar por Rating</string>
+    <string name="sort_by_date">Ordenar por Data</string>
 
-    <string name="sorted_by_rating">ordenado por rating</string>
-    <string name="sorted_by_price">sorted by price</string>
-    <string name="sorted_by_popularity">sorted by popularity</string>
+    <string name="sorted_by_rating">Ordenado por rating</string>
+    <string name="sorted_by_date">Ordenado por data</string>
 
 
 </resources>

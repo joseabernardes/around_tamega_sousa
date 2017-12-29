@@ -28,8 +28,6 @@
     <string name="header_filters">Filtro</string>
 
 
-
-
     <!-- Types of food I could think of in 5 minutes -->
     <string-array name="categories">
         <item>@string/value_any_category</item>
@@ -119,7 +117,6 @@
     </string-array>
 
 
-
     <string name="value_any_category">All food</string>
     <string name="value_any_city">Anywhere</string>
     <string name="value_any_price">Any price</string>
@@ -144,10 +141,6 @@
     <string name="sorted_by_rating">ordenado por rating</string>
     <string name="sorted_by_price">sorted by price</string>
     <string name="sorted_by_popularity">sorted by popularity</string>
-
-
-
-
 
 
 </resources>

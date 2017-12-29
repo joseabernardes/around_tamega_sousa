@@ -89,7 +89,6 @@
                     android:layout_below="@+id/title"
                     android:layout_marginStart="4dp"
                     android:layout_toEndOf="@+id/rating_bar"
-
                     android:text="3.3"
                     android:textColor="@color/greyDisabled" />
 
@@ -172,7 +171,7 @@
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp">
 
-                
+
 
                 <Button
                     android:layout_width="0dp"

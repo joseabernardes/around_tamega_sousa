@@ -3,7 +3,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_main">MainActivity</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="facebook_application_id" translatable="false">1462407480534175</string>
@@ -17,9 +17,18 @@
     <string name="map">Mapa</string>
     <string name="nav_mypoints">Os Meus Pontos</string>
     <string name="logout">Log Out</string>
-    <string name="title_activity_add_point">AddPointActivity</string>
+
     <string name="check">Check</string>
     <string name="close">Check</string>
+
+    <!-- Title -->
+    <string name="title_activity_add_point">AddPointActivity</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_fragment_map">Mapa</string>
+    <string name="title_fragment_list">Pontos de Interesse</string>
+    <string name="title_fragment_list_favo">Favoritos</string>
+    <string name="title_fragment_list_my_points">Os Meus Pontos</string>
+
 
     <string name="apply">Aplicar</string>
     <string name="cancel">Cancelar</string>

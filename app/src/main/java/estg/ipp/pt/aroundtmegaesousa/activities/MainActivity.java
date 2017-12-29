@@ -24,9 +24,10 @@ import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
 import estg.ipp.pt.aroundtmegaesousa.fragments.ListFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.MapFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsActionBarListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener, OnFragmentsActionBarListener {
 
     private String TAG = "MainActivity";
 
@@ -44,21 +45,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar = findViewById(R.id.toolbar);
         drawer = findViewById(R.id.drawer_layout); //main layout
         navigationView = findViewById(R.id.nav_view); //navigation drawer
-
-        setSupportActionBar(toolbar);
-        if (findViewById(R.id.container) != null) { //phone
-            Log.d(TAG, "onCreate: Phone Layout");
-/*
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.container, recyclerViewLayout)
-                    .commit();
-*/
-        } else {
-            Log.d(TAG, "onCreate: TABLET Layout");
-        }
-
-
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,6 +55,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        setSupportActionBar(toolbar);
+        if (findViewById(R.id.container) != null) { //phone
+            Log.d(TAG, "onCreate: Phone Layout");
+
+            Fragment fragment = ListFragment.newInstance(ListFragment.LIST, "bb");
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.container, fragment)
+                    .commit();
+        } else {
+            Log.d(TAG, "onCreate: TABLET Layout");
+        }
+
+
+
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.interest_points);
 
 
     }
@@ -120,15 +124,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (id) {
             case R.id.mypoints:
-                fragment = ListFragment.newInstance("aa", "bb");
+                fragment = ListFragment.newInstance(ListFragment.MY_POINTS, "bb");
                 fab.show();
                 break;
             case R.id.favorites:
-                fragment = ListFragment.newInstance("aa", "bb");
+                fragment = ListFragment.newInstance(ListFragment.FAVORITES, "bb");
                 fab.hide();
                 break;
             case R.id.interest_points:
-                fragment = ListFragment.newInstance("aa", "bb");
+                fragment = ListFragment.newInstance(ListFragment.LIST, "bb");
                 fab.hide();
                 break;
             case R.id.map:
@@ -163,5 +167,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void changeActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
     }
 }

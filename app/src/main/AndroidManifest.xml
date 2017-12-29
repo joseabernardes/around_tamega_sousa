@@ -20,17 +20,17 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.AddPointActivity">
-
-        </activity>
+        <activity android:name=".activities.AddPointActivity"></activity>
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyCBx-45Hg-e9lFQEVCppN23ItZQODdaPKM" />
 
+        <activity android:name=".activities.SettingsActivity"></activity>
     </application>
 
 </manifest>

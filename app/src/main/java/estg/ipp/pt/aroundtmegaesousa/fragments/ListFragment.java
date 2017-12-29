@@ -70,13 +70,13 @@ public class ListFragment extends Fragment {
         // Inflate the layout for this fragment
         View mContentView = inflater.inflate(R.layout.fragment_list, container, false);
 
+
         ArrayList<PointOfInterest> contacts = new ArrayList<PointOfInterest>();
         RecyclerView recyclerView = mContentView.findViewById(R.id.recycler);
 
         for (int i = 0; i < 10; i++) {
             contacts.add(new PointOfInterest("Parque das naçoes do douro " + i));
         }
-
 
         ListItemAdapter lia = new ListItemAdapter(mContext, contacts);
         recyclerView.setAdapter(lia);
@@ -91,8 +91,8 @@ public class ListFragment extends Fragment {
         });
         clearFilter = mContentView.findViewById(R.id.button_clear_filter);
 
-        mFilterDialog = new FilterDialogFragment();
 
+        mFilterDialog = new FilterDialogFragment();
 
         changeActionBarTitle();
         return mContentView;

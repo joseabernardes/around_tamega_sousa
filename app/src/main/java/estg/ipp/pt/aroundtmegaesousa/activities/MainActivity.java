@@ -63,8 +63,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(MainActivity.this, AddPointActivity.class);
+              /*  intent.putExtra("edittext", text.getText().toString());*/
+                startActivity(intent);
             }
         });
 
@@ -119,7 +120,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (id) {
             case R.id.mypoints:
-                fragment = PointOfInterestFragment.newInstance("S", "SS");
+                fragment = ListFragment.newInstance("aa", "bb");
+                fab.show();
+                break;
+            case R.id.favorites:
+                fragment = ListFragment.newInstance("aa", "bb");
+                fab.hide();
+                break;
+            case R.id.interest_points:
+                fragment = ListFragment.newInstance("aa", "bb");
                 fab.hide();
                 break;
             case R.id.map:
@@ -131,8 +140,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
               /*  intent.putExtra("edittext", text.getText().toString());*/
                 startActivity(intent);
                 break;
-            case R.id.interest_points:
-                fragment = ListFragment.newInstance("aa", "bb");
+            case R.id.logout:
+                fragment = PointOfInterestFragment.newInstance("S", "SS");
                 fab.hide();
                 break;
         }
@@ -141,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, fragment)
-               /*     .addToBackStack(null)*/
+                    .addToBackStack(null)
                     .commit();
 
         }

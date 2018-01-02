@@ -19,16 +19,24 @@
     <string name="logout">Log Out</string>
 
     <string name="check">Check</string>
+    <string name="save_place">Selecionar</string>
     <string name="close">Check</string>
+
 
     <!-- Title -->
     <string name="title_activity_add_point">AddPointActivity</string>
+    <string name="title_activity_map_picker">Selecionar localização</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_fragment_map">Mapa</string>
     <string name="title_fragment_list">Pontos de Interesse</string>
     <string name="title_fragment_list_favo">Favoritos</string>
     <string name="title_fragment_list_my_points">Os Meus Pontos</string>
+    <string name="title_fragment_poi">Ponto de Interesse</string>
 
+
+    <!-- Warnings -->
+    <string name="warn_permission_dennied">Permissões negadas</string>
+    <string name="warn_location_disable">Localização desligada</string>
 
     <string name="apply">Aplicar</string>
     <string name="cancel">Cancelar</string>
@@ -49,6 +57,15 @@
         <item>Outro</item>
     </string-array>
 
+    <string-array name="type_of_location_add">
+        <item>Parque</item>
+        <item>Jardim</item>
+        <item>Praia fluvial</item>
+        <item>Monumento</item>
+        <item>Igreja</item>
+        <item>Restaurante</item>
+        <item>Outro</item>
+    </string-array>
 
     <string-array name="cities">
         <item>@string/value_any_city</item>

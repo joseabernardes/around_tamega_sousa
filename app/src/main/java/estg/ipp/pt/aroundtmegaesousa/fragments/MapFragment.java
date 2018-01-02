@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,21 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.PolyUtil;
+import com.google.maps.android.data.Geometry;
+import com.google.maps.android.data.geojson.GeoJsonFeature;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
+import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
+
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
-import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsActionBarListener;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
+import estg.ipp.pt.aroundtmegaesousa.utils.MapUtils;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
@@ -37,6 +50,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private View filterBar;
     private View clearFilter;
     private FilterDialogFragment mFilterDialog;
+    private GeoJsonLayer tamega;
 
 
     public MapFragment() {
@@ -79,7 +93,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mFilterDialog = new FilterDialogFragment();
 
         if (mContext != null) {
-            ((OnFragmentsActionBarListener) mContext).changeActionBarTitle(getString(R.string.title_fragment_map));
+            ((OnFragmentsChangeViewsListener) mContext).changeActionBarTitle(getString(R.string.title_fragment_map));
         }
         return mContentView;
     }
@@ -100,23 +114,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         //desenhar pontos!
         addMarker(new LatLng(41.047010, -8.287442), "Casa", "Casa do paulinho na casa");
 
+        try {
+            tamega = new GeoJsonLayer(mGoogleMap, R.raw.tamegaesousa_json, mContext);
+            GeoJsonPolygonStyle style = tamega.getDefaultPolygonStyle();
+           /* style.setFillColor(ContextCompat.getColor(mContext, R.color.colorAccent));*/
+            style.setStrokeColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark));
+            style.setStrokeWidth(6f);
+            tamega.addLayerToMap();
+       /*     MapUtils.containsLocation(tamega, new LatLng(41.047010, -8.287442));*/
 
-
-        /*getApi().getListOfPoints("London", "attraction", "Restaurant")
-                .enqueue(new Callback<List<Point>>() {
-                    @Override
-                    public void onResponse(Call<List<Point>> call, Response<List<Point>> response) {
-                        List<Point> points = response.body();
-                        for (Point point : points) {
-                            addMarker(new LatLng(point.getLat(), point.getLng()), point.getName(), point.getAddress());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<Point>> call, Throwable t) {
-                        Toast.makeText(MainActivity.this, "Erro ao obter resposta", Toast.LENGTH_SHORT).show();
-                    }
-                });*/
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -139,7 +150,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     public void onAttach(Context context) {
         super.onAttach(context);
         //context instanceof OnFragmentInteractionListener &&
-        if (context instanceof OnFragmentsActionBarListener) {
+        if (context instanceof OnFragmentsChangeViewsListener) {
             mContext = context;
         } else {
           /*  throw new RuntimeException(context.toString()

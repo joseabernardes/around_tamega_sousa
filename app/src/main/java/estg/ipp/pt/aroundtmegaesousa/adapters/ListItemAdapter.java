@@ -19,6 +19,7 @@ import java.util.List;
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.activities.MainActivity;
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
 /**
@@ -47,7 +48,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-      final  PointOfInterest poi = mPOI.get(position);
+        final PointOfInterest poi = mPOI.get(position);
         ImageView iv = holder.img;
         iv.setImageResource(R.drawable.cinf);
 
@@ -64,23 +65,14 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ViewHo
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Fragment fragment =  fragment = PointOfInterestFragment.newInstance(poi.getName(), "SS");
-//                Intent intent = new Intent(mContext, UserActivity.class);
-//                intent.putExtra("name", poi.getName());
-                ((MainActivity)mContext).  getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, fragment)
-                        .addToBackStack(null)
-                        .commit();
-
+                Fragment fragment = fragment = PointOfInterestFragment.newInstance(poi.getName(), "SS");
+                ((OnFragmentsChangeViewsListener) mContext).replaceFragment(fragment);
+                ((OnFragmentsChangeViewsListener) mContext).changeActionBarTitle(mContext.getString(R.string.title_fragment_poi));
+                ((OnFragmentsChangeViewsListener) mContext).showFloatingButton(false);
             }
         });
 
-
     }
-
-
-
 
     @Override
     public int getItemCount() {

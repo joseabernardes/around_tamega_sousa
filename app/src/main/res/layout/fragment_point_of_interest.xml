@@ -70,7 +70,7 @@
                     android:textStyle="bold"
                     android:textSize="22sp" />
 
-                <RatingBar
+                <android.support.v7.widget.AppCompatRatingBar
                     android:id="@+id/rating_bar"
                     style="@style/Widget.AppCompat.RatingBar.Small"
                     android:layout_width="wrap_content"
@@ -89,7 +89,7 @@
                     android:layout_below="@+id/title"
                     android:layout_marginStart="4dp"
                     android:layout_toEndOf="@+id/rating_bar"
-                    android:text="3.3"
+                    android:text="(3.3)"
                     android:textColor="@color/greyDisabled" />
 
 

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ListItemAdapter;
-import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsActionBarListener;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
 
@@ -36,7 +36,7 @@ public class ListFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private Context mContext;
-
+    private RecyclerView recyclerView;
     private View filterBar;
     private View clearFilter;
     private FilterDialogFragment mFilterDialog;
@@ -72,10 +72,10 @@ public class ListFragment extends Fragment {
 
 
         ArrayList<PointOfInterest> contacts = new ArrayList<PointOfInterest>();
-        RecyclerView recyclerView = mContentView.findViewById(R.id.recycler);
+        recyclerView = mContentView.findViewById(R.id.recycler);
 
         for (int i = 0; i < 10; i++) {
-            contacts.add(new PointOfInterest("Parque das naçoes do douro " + i));
+            contacts.add(new PointOfInterest("Parque das Nações do Douro " + i));
         }
 
         ListItemAdapter lia = new ListItemAdapter(mContext, contacts);
@@ -100,32 +100,50 @@ public class ListFragment extends Fragment {
 
     private void changeActionBarTitle() {
         if (mContext != null) {
+            OnFragmentsChangeViewsListener viewChanger = (OnFragmentsChangeViewsListener) mContext;
             String title;
             switch (typeOfFragment) {
                 case LIST:
+                    viewChanger.showFloatingButton(false);
                     title = getString(R.string.title_fragment_list);
                     break;
                 case FAVORITES:
+                    viewChanger.showFloatingButton(false);
                     title = getString(R.string.title_fragment_list_favo);
                     break;
                 case MY_POINTS:
+                    viewChanger.showFloatingButton(true);
+                    setOnScrolledRecyclerView(viewChanger);
                     title = getString(R.string.title_fragment_list_my_points);
                     break;
                 default:
                     title = getString(R.string.title_fragment_list);
             }
-            ((OnFragmentsActionBarListener) mContext).changeActionBarTitle(title);
+            viewChanger.changeActionBarTitle(title);
         }
 
 
     }
 
+    private void setOnScrolledRecyclerView(final OnFragmentsChangeViewsListener viewChanger) {
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 0 && viewChanger.isShownFloatingButton()) {
+                    viewChanger.showFloatingButton(false);
+                } else if (dy < 0 && !viewChanger.isShownFloatingButton()) {
+                    viewChanger.showFloatingButton(true);
+                }
+            }
+        });
+    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof OnFragmentsActionBarListener) {
+        if (context instanceof OnFragmentsChangeViewsListener) {
             mContext = context;
         } else {
 //            throw new RuntimeException(context.toString()

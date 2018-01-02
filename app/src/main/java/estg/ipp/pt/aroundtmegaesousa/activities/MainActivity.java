@@ -24,10 +24,10 @@ import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
 import estg.ipp.pt.aroundtmegaesousa.fragments.ListFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.MapFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
-import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsActionBarListener;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener, OnFragmentsActionBarListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener, OnFragmentsChangeViewsListener {
 
     private String TAG = "MainActivity";
 
@@ -68,8 +68,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             Log.d(TAG, "onCreate: TABLET Layout");
         }
-
-
 
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -125,15 +123,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (id) {
             case R.id.mypoints:
                 fragment = ListFragment.newInstance(ListFragment.MY_POINTS, "bb");
-                fab.show();
+
                 break;
             case R.id.favorites:
                 fragment = ListFragment.newInstance(ListFragment.FAVORITES, "bb");
-                fab.hide();
+
                 break;
             case R.id.interest_points:
                 fragment = ListFragment.newInstance(ListFragment.LIST, "bb");
-                fab.hide();
+
                 break;
             case R.id.map:
                 fragment = MapFragment.newInstance("aa", "bb");
@@ -150,17 +148,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
 
+        replaceFragment(fragment);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+
+    @Override
+    public void replaceFragment(Fragment fragment) {
         if (fragment != null) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.container, fragment)
                     .addToBackStack(null)
                     .commit();
-
         }
 
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
 
@@ -173,4 +176,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void changeActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
     }
+
+    @Override
+    public void showFloatingButton(boolean state) {
+        if (state) {
+            fab.show();
+        } else {
+            fab.hide();
+        }
+    }
+
+    @Override
+    public boolean isShownFloatingButton() {
+        return fab.isShown();
+    }
+
+
 }

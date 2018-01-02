@@ -16,6 +16,7 @@ import android.util.AndroidException;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import estg.ipp.pt.aroundtmegaesousa.MapPickerActivity;
 import estg.ipp.pt.aroundtmegaesousa.R;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
@@ -33,6 +35,7 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 public class AddPointActivity extends AppCompatActivity {
 
     private static final int REQUEST_PHOTO_PERMISSIONS = 100;
+    private static final int REQUEST_MAP_POINT = 420;
     private static final String PHOTOS_KEY = "photos_list";
     private static final String THUMBS_KEY = "img_";
     private List<ImageView> imageViewList;
@@ -41,6 +44,7 @@ public class AddPointActivity extends AppCompatActivity {
     private Menu menu;
     private Toolbar toolbar;
     private ArrayList<File> photos;
+    private Button mapButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,14 @@ public class AddPointActivity extends AppCompatActivity {
         toolbar.setTitle(R.string.add_point);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mapButton = findViewById(R.id.map_button);
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(AddPointActivity.this, MapPickerActivity.class);
+                startActivityForResult(i, REQUEST_MAP_POINT);
+            }
+        });
         imageViewList = new ArrayList<>();
         imageViewList.add(0, (ImageView) findViewById(R.id.img_0));
         imageViewList.add(1, (ImageView) findViewById(R.id.img_1));
@@ -114,7 +126,7 @@ public class AddPointActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.settings:
+            case R.id.action_check:
                 //TODO
 
 
@@ -149,8 +161,9 @@ public class AddPointActivity extends AppCompatActivity {
                 requestPermissions(permissions, REQUEST_PHOTO_PERMISSIONS);
                 return;
             }
-            EasyImage.openChooserWithDocuments(this, "Escolha a fonte", tag);
             //adicionar imagem
+            EasyImage.openChooserWithDocuments(this, "Escolha a fonte", tag);
+
         }
 
     }

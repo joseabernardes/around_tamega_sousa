@@ -11,6 +11,17 @@
     <color name="colorAccent">#FFC107</color>
     <color name="colorAccentLight">#ffd65b</color>
 
+
+
+    <color name="colorPrimarySec">#009688</color>
+    <color name="colorPrimaryDarkSec">#00796B</color>
+    <color name="colorAccentSec">#FF9800</color>
+
+
+    <color name="colorPrimaryBrown">#a1887f</color>
+    <color name="colorPrimaryDarkBrown">#795548</color>
+    <color name="colorPrimaryAccentBrown">#4CAF50</color>
+
     <!--
     <color name="colorPrimary">#FFC107</color>
     <color name="colorPrimaryDark">#FFA000</color>

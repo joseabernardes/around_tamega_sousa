@@ -59,8 +59,6 @@
 
 
     <string-array name="cores">
-        <item>@string/value_any_color</item>
-
         <item>Verde Claro</item>
         <item>Verde Escuro</item>
     </string-array>
@@ -108,7 +106,6 @@
         <item>@string/sort_by_date</item>
     </string-array>
 
-    <string name="value_any_color">Todas as Cores</string>
     <string name="value_any_local">Todos os Tipos de Local</string>
     <string name="value_any_city">Todos os Concelhos</string>
     <string name="value_any_rating">Todos os Ratings</string>

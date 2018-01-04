@@ -24,7 +24,7 @@
 
 
     <!-- Title -->
-    <string name="title_activity_add_point">AddPointActivity</string>
+    <string name="title_activity_add_point">Adicionar Ponto</string>
     <string name="title_activity_map_picker">Selecionar localização</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_fragment_map">Mapa</string>
@@ -34,9 +34,18 @@
     <string name="title_fragment_poi">Ponto de Interesse</string>
 
 
+
     <!-- Warnings -->
     <string name="warn_permission_dennied">Permissões negadas</string>
     <string name="warn_location_disable">Localização desligada</string>
+    <string name="warn_map_not_inside">Não percente ao Tâmega e Sousa</string>
+    <string name="warn_location_not_defined">Localização não definida</string>
+
+
+    <!-- Messages -->
+    <string name="message_submit_point">Deseja adicionar o ponto de interesse?</string>
+    <string name="message_submit_point_yes">Adicionar</string>
+    <string name="message_submit_point_no">Voltar</string>
 
     <string name="apply">Aplicar</string>
     <string name="cancel">Cancelar</string>

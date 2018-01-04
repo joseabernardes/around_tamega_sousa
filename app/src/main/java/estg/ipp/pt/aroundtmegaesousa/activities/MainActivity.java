@@ -136,8 +136,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fab.hide();
                 break;
             case R.id.settings:
-                Intent intent = new Intent(MainActivity.this, AddPointActivity.class);
-              /*  intent.putExtra("edittext", text.getText().toString());*/
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 break;
             case R.id.logout:

@@ -5,11 +5,13 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -60,6 +62,18 @@ public class AddPointActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences m = PreferenceManager.getDefaultSharedPreferences(this);
+        int theme = m.getInt("AppliedTheme", SettingsActivity.LIGHT_GREEN);
+        if (theme == SettingsActivity.LIGHT_GREEN) {
+
+            setTheme(R.style.AppTheme);
+        } else if (theme == SettingsActivity.DARK_GREEN) {
+            setTheme(R.style.AppTheme_Secondary);
+        } else if (theme == SettingsActivity.BROWN) {
+            setTheme(R.style.AppTheme_Brown);
+        }
+
         setContentView(estg.ipp.pt.aroundtmegaesousa.R.layout.activity_add_point);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.title_activity_add_point);

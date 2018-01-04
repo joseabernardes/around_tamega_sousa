@@ -2,8 +2,10 @@ package estg.ipp.pt.aroundtmegaesousa.activities;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -18,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
@@ -39,6 +42,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences m = PreferenceManager.getDefaultSharedPreferences(this);
+        int theme = m.getInt("AppliedTheme", SettingsActivity.LIGHT_GREEN);
+        if (theme == SettingsActivity.LIGHT_GREEN) {
+
+            setTheme(R.style.AppTheme);
+        } else if (theme == SettingsActivity.DARK_GREEN) {
+            setTheme(R.style.AppTheme_Secondary);
+        }else if (theme == SettingsActivity.BROWN){
+            setTheme(R.style.AppTheme_Brown);
+        }
         setContentView(R.layout.activity_main);
 
         //Connect Views
@@ -80,6 +93,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setCheckedItem(R.id.interest_points);
 
 
+
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -138,8 +159,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fab.hide();
                 break;
             case R.id.settings:
-                Intent intent = new Intent(MainActivity.this, AddPointActivity.class);
-              /*  intent.putExtra("edittext", text.getText().toString());*/
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 break;
             case R.id.logout:

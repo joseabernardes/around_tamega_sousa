@@ -8,6 +8,20 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="AppTheme_Secondary" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item name ="colorPrimary">@color/colorPrimarySec</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkSec</item>
+        <item name="colorAccent">@color/colorAccentSec</item>
+    </style>
+
+    <style name="AppTheme_Brown" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item name ="colorPrimary">@color/colorPrimaryBrown</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkBrown</item>
+        <item name="colorAccent">@color/colorPrimaryAccentBrown</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -45,21 +59,21 @@
     </style>
 
     <style name="ThemeOverlay.FilterButton" parent="ThemeOverlay.AppCompat.Dark">
-        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="colorButtonNormal">?colorPrimary</item>
     </style>
 
     <style name="LoginTheme" parent="FirebaseUI">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="colorPrimary">?colorPrimary</item>
+        <item name="colorPrimaryDark">?colorPrimaryDark</item>
+        <item name="colorAccent">?colorAccent</item>
+        <item name="colorButtonNormal">?colorAccent</item>
         <item name="colorControlNormal">@android:color/white</item>
         <item name="colorControlActivated">@android:color/white</item>
         <item name="colorControlHighlight">@android:color/white</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
-        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:windowBackground">?colorPrimary</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:textColorHint">@android:color/white</item>
@@ -85,7 +99,7 @@
 
     <style name="TextLabel" parent="TextAppearance.AppCompat">
 
-        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorAccent">?colorPrimary</item>
 
         <item name="android:textColorHint">@color/greyDisabled</item>
    <item name="android:textSize">16sp</item><!--

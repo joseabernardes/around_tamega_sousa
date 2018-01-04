@@ -12,54 +12,75 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="8dp"
         android:text="Notificação"
         android:textStyle="bold"
-        android:padding="8dp"
+        android:textSize="15sp"
         />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="8"
-            android:paddingTop="16dp"
-            android:paddingLeft="8dp"
-            android:text="Som"/>
-
-        <CheckBox
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_gravity="right"
-            />
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp">
 
         <TextView
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="8"
-            android:text="Vibração"
-            android:paddingLeft="8dp"
-            android:paddingTop="16dp"
-            
-            />
+            android:text="Som" />
 
         <CheckBox
+            android:id="@+id/settings_sound"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_gravity="right"
             />
     </LinearLayout>
 
+    <View
+        android:id="@+id/tile_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/dividerVertical" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp">
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:text="Vibração" />
+
+        <CheckBox
+            android:id="@+id/settings_vibration"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Cor"
+        android:textStyle="bold"
+        android:textSize="15sp"/>
+    <Spinner
+        android:id="@+id/settings_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:entries="@array/cores">
+    </Spinner>
 </LinearLayout>

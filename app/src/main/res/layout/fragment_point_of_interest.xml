@@ -178,7 +178,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/colorPrimary"
+                    android:backgroundTint="?colorPrimary"
                     android:drawableLeft="@drawable/ic_star"
                     android:text="Votar"
                     android:textColor="@color/white" />
@@ -189,7 +189,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:backgroundTint="?colorPrimaryDark"
                     android:drawableLeft="@drawable/ic_map"
                     android:drawableTint="@color/white"
                     android:text="Ver Mapa"

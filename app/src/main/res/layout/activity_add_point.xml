@@ -33,7 +33,7 @@
                     android:padding="4dp"
                     android:text="Informações"
 
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="18dp" />
 
                 <android.support.design.widget.TextInputLayout
@@ -94,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:padding="4dp"
                     android:text="Fotografias "
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="18dp" />
 
                 <HorizontalScrollView
@@ -175,7 +175,7 @@
                     android:layout_height="wrap_content"
                     android:padding="4dp"
                     android:text="Localização"
-                    android:textColor="@color/colorPrimary"
+                    android:textColor="?colorPrimary"
                     android:textSize="18dp" />
 
                 <LinearLayout
@@ -197,7 +197,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:backgroundTint="@color/colorPrimary"
+                        android:backgroundTint="?colorPrimary"
                         android:drawableLeft="@drawable/ic_gps"
                         android:text="Mapa"
                         android:textColor="@color/white" />

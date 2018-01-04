@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,18 +17,29 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.PolyUtil;
+import com.google.maps.android.data.Geometry;
+import com.google.maps.android.data.geojson.GeoJsonFeature;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
+import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
+
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
+import estg.ipp.pt.aroundtmegaesousa.utils.MapUtils;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
+
     private String mParam1;
     private String mParam2;
 
@@ -38,23 +50,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private View filterBar;
     private View clearFilter;
     private FilterDialogFragment mFilterDialog;
+    private GeoJsonLayer tamega;
 
-
-    private OnFragmentInteractionListener mListener;
 
     public MapFragment() {
 
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MapFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static MapFragment newInstance(String param1, String param2) {
         MapFragment fragment = new MapFragment();
         Bundle args = new Bundle();
@@ -67,7 +70,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = getActivity();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -90,6 +92,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         mFilterDialog = new FilterDialogFragment();
 
+        if (mContext != null) {
+            ((OnFragmentsChangeViewsListener) mContext).changeActionBarTitle(getString(R.string.title_fragment_map));
+        }
         return mContentView;
     }
 
@@ -109,23 +114,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         //desenhar pontos!
         addMarker(new LatLng(41.047010, -8.287442), "Casa", "Casa do paulinho na casa");
 
+        try {
+            tamega = new GeoJsonLayer(mGoogleMap, R.raw.tamegaesousa_json, mContext);
+            GeoJsonPolygonStyle style = tamega.getDefaultPolygonStyle();
+           /* style.setFillColor(ContextCompat.getColor(mContext, R.color.colorAccent));*/
+            style.setStrokeColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark));
+            style.setStrokeWidth(6f);
+            tamega.addLayerToMap();
+       /*     MapUtils.containsLocation(tamega, new LatLng(41.047010, -8.287442));*/
 
-
-        /*getApi().getListOfPoints("London", "attraction", "Restaurant")
-                .enqueue(new Callback<List<Point>>() {
-                    @Override
-                    public void onResponse(Call<List<Point>> call, Response<List<Point>> response) {
-                        List<Point> points = response.body();
-                        for (Point point : points) {
-                            addMarker(new LatLng(point.getLat(), point.getLng()), point.getName(), point.getAddress());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<Point>> call, Throwable t) {
-                        Toast.makeText(MainActivity.this, "Erro ao obter resposta", Toast.LENGTH_SHORT).show();
-                    }
-                });*/
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -147,18 +149,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-       /* if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        //context instanceof OnFragmentInteractionListener &&
+        if (context instanceof OnFragmentsChangeViewsListener) {
+            mContext = context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }*/
+          /*  throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");*/
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mContext = null;
     }
 
 

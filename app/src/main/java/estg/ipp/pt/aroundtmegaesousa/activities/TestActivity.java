@@ -36,7 +36,7 @@ public class TestActivity extends AppCompatActivity {
     private TextView quote;
     private FirebaseFirestore db;
     private DocumentReference mDocRef;
-    private String TAG = "test";
+    private String TAG = "TestActivityTag";
     private FirebaseAuth mFirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private TextView loginName;
@@ -129,6 +129,7 @@ public class TestActivity extends AppCompatActivity {
         mAuthStateListener = new AuthStateListener();
         db = FirebaseFirestore.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
+        Log.d(TAG,"onCreate");
     }
 
 
@@ -161,6 +162,7 @@ public class TestActivity extends AppCompatActivity {
             FirebaseUser user = firebaseAuth.getCurrentUser();
             if (user != null) {
                 //signed in
+                Log.d(TAG,"SIGNED IN");
                 initLayout();
                 onSignInInitialize(user.getDisplayName());
             } else {

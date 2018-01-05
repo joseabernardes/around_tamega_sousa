@@ -17,7 +17,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.AndroidException;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,16 +27,15 @@ import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import estg.ipp.pt.aroundtmegaesousa.MapPickerActivity;
 import estg.ipp.pt.aroundtmegaesousa.R;
-import estg.ipp.pt.aroundtmegaesousa.utils.MapUtils;
+import estg.ipp.pt.aroundtmegaesousa.models.City;
+import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
@@ -57,23 +55,13 @@ public class AddPointActivity extends AppCompatActivity {
     private LatLng coordinates;
     private EditText location;
     private AlertDialog dialog;
+    private City city;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        SharedPreferences m = PreferenceManager.getDefaultSharedPreferences(this);
-        int theme = m.getInt("AppliedTheme", SettingsActivity.LIGHT_GREEN);
-        if (theme == SettingsActivity.LIGHT_GREEN) {
-
-            setTheme(R.style.AppTheme);
-        } else if (theme == SettingsActivity.DARK_GREEN) {
-            setTheme(R.style.AppTheme_Secondary);
-        } else if (theme == SettingsActivity.BROWN) {
-            setTheme(R.style.AppTheme_Brown);
-        }
-
+        ThemeUtils.changeTheme(this);
         setContentView(estg.ipp.pt.aroundtmegaesousa.R.layout.activity_add_point);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.title_activity_add_point);
@@ -84,6 +72,9 @@ public class AddPointActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(AddPointActivity.this, MapPickerActivity.class);
+                if (coordinates != null) {
+                    i.putExtra(MapPickerActivity.MAP_PARAM, coordinates);
+                }
                 startActivityForResult(i, REQUEST_MAP_POINT);
             }
         });
@@ -96,6 +87,7 @@ public class AddPointActivity extends AppCompatActivity {
         location = findViewById(R.id.location);
         if (savedInstanceState != null) { //recuperar estado
             coordinates = savedInstanceState.getParcelable(MapPickerActivity.MAP_PARAM);
+            city = (City) savedInstanceState.getSerializable(MapPickerActivity.CITY_PARAM);
             photos = (ArrayList<File>) savedInstanceState.getSerializable(PHOTOS_KEY);
             for (int i = 0; i < 5; i++) {
                 Object obj = savedInstanceState.getParcelable(THUMBS_KEY + i);
@@ -245,7 +237,8 @@ public class AddPointActivity extends AppCompatActivity {
         if (requestCode == REQUEST_MAP_POINT) {
             if (resultCode == Activity.RESULT_OK) {
                 coordinates = data.getParcelableExtra(MapPickerActivity.MAP_PARAM);
-                location.setText("(" + coordinates.latitude + ", " + coordinates.longitude + ")");
+                city = (City) data.getSerializableExtra(MapPickerActivity.CITY_PARAM);
+                location.setText(coordinates.latitude + ", " + coordinates.longitude + "\n" + "(" + city.getName() + ")");
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 Toast.makeText(this, getString(R.string.warn_location_not_defined), Toast.LENGTH_SHORT).show();
@@ -321,6 +314,7 @@ public class AddPointActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable(MapPickerActivity.MAP_PARAM, coordinates);
+        outState.putSerializable(MapPickerActivity.CITY_PARAM, city);
         outState.putSerializable(PHOTOS_KEY, photos);
         for (int i = 0; i < 5; i++) {
             Drawable drawable = imageViewList.get(i).getDrawable();

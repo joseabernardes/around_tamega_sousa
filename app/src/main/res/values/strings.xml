@@ -32,7 +32,7 @@
     <string name="title_fragment_list_favo">Favoritos</string>
     <string name="title_fragment_list_my_points">Os Meus Pontos</string>
     <string name="title_fragment_poi">Ponto de Interesse</string>
-
+    <string name="title_dialog_city">Indique o Concelho</string>
 
 
     <!-- Warnings -->
@@ -46,6 +46,10 @@
     <string name="message_submit_point">Deseja adicionar o ponto de interesse?</string>
     <string name="message_submit_point_yes">Adicionar</string>
     <string name="message_submit_point_no">Voltar</string>
+    <string name="message_dialog_city">Não foi possivel determinar o seu concelho com precisão</string>
+
+
+
 
     <string name="apply">Aplicar</string>
     <string name="cancel">Cancelar</string>

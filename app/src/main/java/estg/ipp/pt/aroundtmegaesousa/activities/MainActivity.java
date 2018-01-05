@@ -2,57 +2,57 @@ package estg.ipp.pt.aroundtmegaesousa.activities;
 
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Arrays;
+
 import estg.ipp.pt.aroundtmegaesousa.R;
-import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
 import estg.ipp.pt.aroundtmegaesousa.fragments.ListFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.MapFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
-import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener, OnFragmentsChangeViewsListener {
 
     private String TAG = "MainActivity";
-
+    public static final int RC_SIGN_IN = 1;
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private FloatingActionButton fab;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences m = PreferenceManager.getDefaultSharedPreferences(this);
-        int theme = m.getInt("AppliedTheme", SettingsActivity.LIGHT_GREEN);
-        if (theme == SettingsActivity.LIGHT_GREEN) {
-
-            setTheme(R.style.AppTheme);
-        } else if (theme == SettingsActivity.DARK_GREEN) {
-            setTheme(R.style.AppTheme_Secondary);
-        }else if (theme == SettingsActivity.BROWN){
-            setTheme(R.style.AppTheme_Brown);
-        }
+        ThemeUtils.changeTheme(this);
         setContentView(R.layout.activity_main);
+
+        mAuthStateListener = new AuthStateListener();
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
 
         //Connect Views
         toolbar = findViewById(R.id.toolbar);
@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddPointActivity.class);
-              /*  intent.putExtra("edittext", text.getText().toString());*/
                 startActivity(intent);
             }
         });
@@ -71,9 +70,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         if (findViewById(R.id.container) != null) { //phone
             Log.d(TAG, "onCreate: Phone Layout");
-
             Fragment fragment = ListFragment.newInstance(ListFragment.LIST, "bb");
-
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.container, fragment)
@@ -87,21 +84,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.interest_points);
 
 
-
-
-
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
 
     @Override
     public void onBackPressed() {
@@ -211,5 +199,68 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return fab.isShown();
     }
 
+    //------------------------------ AUTH ------------------------------//
 
+
+    private void onSignInInitialize(String string) {
+      /*  loginName.setText(string);*/
+    }
+
+    private void onSignOutCleanup() {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) { //se foi do meu pedido de login
+            if (resultCode == RESULT_OK) { //se retornou sucesso
+     /*           initLayout();*/
+                Toast.makeText(this, "Signed in", Toast.LENGTH_SHORT).show();
+            } else if (resultCode == RESULT_CANCELED) { // se o utilizador cancelou BACK ou sem ligação á internet
+                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    private class AuthStateListener implements FirebaseAuth.AuthStateListener {
+        @Override
+        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if (user != null) {
+                //signed in
+   /*             initLayout();*/
+                onSignInInitialize(user.getDisplayName());
+            } else {
+                //signed out
+                onSignOutCleanup();
+                startActivityForResult(
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setIsSmartLockEnabled(false)
+                                .setAvailableProviders(
+                                        Arrays.asList(
+                                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
+                                                new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()
+                                        ))
+                                .setLogo(R.drawable.around_logo)
+                                .setTheme(R.style.LoginTheme)
+                                .build(),
+                        RC_SIGN_IN);
+            }
+        }
+    }
 }

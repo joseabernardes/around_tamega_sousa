@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             setTheme(R.style.AppTheme_Secondary);
         }else if (theme == SettingsActivity.BROWN){
             setTheme(R.style.AppTheme_Brown);
+        } else if (theme == SettingsActivity.BLUE) {
+            setTheme(R.style.AppTheme_Blue);
         }
         setContentView(R.layout.activity_main);
 

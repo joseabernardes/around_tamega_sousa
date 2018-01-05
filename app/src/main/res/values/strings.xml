@@ -61,6 +61,8 @@
     <string-array name="cores">
         <item>Verde Claro</item>
         <item>Verde Escuro</item>
+        <item>Castanho</item>
+        <item>Azul</item>
     </string-array>
     <string-array name="type_of_location_add">
         <item>Parque</item>

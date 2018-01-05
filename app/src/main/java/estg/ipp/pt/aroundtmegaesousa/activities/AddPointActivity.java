@@ -61,6 +61,8 @@ public class AddPointActivity extends AppCompatActivity {
             setTheme(R.style.AppTheme_Secondary);
         } else if (theme == SettingsActivity.BROWN) {
             setTheme(R.style.AppTheme_Brown);
+        }else if (theme == SettingsActivity.BLUE) {
+            setTheme(R.style.AppTheme_Blue);
         }
 
         setContentView(estg.ipp.pt.aroundtmegaesousa.R.layout.activity_add_point);

@@ -25,6 +25,7 @@ public class SettingsActivity extends AppCompatActivity {
     public static final int LIGHT_GREEN = 0;
     public static final int DARK_GREEN = 1;
     public static final int BROWN = 2;
+    public static final int BLUE = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,8 @@ public class SettingsActivity extends AppCompatActivity {
             setTheme(R.style.AppTheme_Secondary);
         } else if (theme == SettingsActivity.BROWN) {
             setTheme(R.style.AppTheme_Brown);
+        } else if (theme == SettingsActivity.BLUE) {
+            setTheme(R.style.AppTheme_Blue);
         }
         setContentView(R.layout.activity_settings);
 

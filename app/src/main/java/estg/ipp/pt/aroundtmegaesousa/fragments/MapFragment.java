@@ -115,7 +115,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         addMarker(new LatLng(41.047010, -8.287442), "Casa", "Casa do paulinho na casa");
 
         try {
-            tamega = new GeoJsonLayer(mGoogleMap, R.raw.tamegaesousa_json, mContext);
+            tamega = new GeoJsonLayer(mGoogleMap, R.raw.tamegaesousa, mContext);
             GeoJsonPolygonStyle style = tamega.getDefaultPolygonStyle();
            /* style.setFillColor(ContextCompat.getColor(mContext, R.color.colorAccent));*/
             style.setStrokeColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark));

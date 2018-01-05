@@ -3,15 +3,23 @@ package estg.ipp.pt.aroundtmegaesousa;
 import android.*;
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 
@@ -24,6 +32,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -40,15 +49,18 @@ import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import estg.ipp.pt.aroundtmegaesousa.models.City;
 import estg.ipp.pt.aroundtmegaesousa.utils.LocationUtils;
 import estg.ipp.pt.aroundtmegaesousa.utils.MapUtils;
 
 public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnMapClickListener {
 
-
+    private static final String TAG = "MapPicker";
+    public static final String MAP_PARAM = "latlng";
     private SupportMapFragment mMapFragment;
     private GoogleMap mGoogleMap;
     private Toolbar toolbar;
@@ -56,7 +68,8 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
     private boolean permissionLocation;
     private boolean locationEnable;
     private Marker marker;
-
+    private LatLng savedInstance;
+    private AlertDialog mDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +84,10 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
         mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
 
+        if (savedInstanceState != null) { //recuperar estado
+            savedInstance = new LatLng(savedInstanceState.getDouble("lat"), savedInstanceState.getDouble("lng"));
+        }
+
 
     }
 
@@ -82,7 +99,7 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                zoomToLocation(marker.getPosition(), 16);
+                zoomToLocation(marker.getPosition(), 14);
                 marker.showInfoWindow();
                 return true;
             }
@@ -101,12 +118,10 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
         try {
-            tamega = new GeoJsonLayer(mGoogleMap, R.raw.tamegaesousa_json, this);
+            tamega = new GeoJsonLayer(mGoogleMap, R.raw.tamegaesousa, this);
             googleMap.addPolyline(new PolylineOptions()
                     .addAll(MapUtils.getListFromGeoJson(tamega))
                     .color(ContextCompat.getColor(this, R.color.colorPrimaryDark)));
-
-
 
 /*
             GeoJsonPolygonStyle style = tamega.getDefaultPolygonStyle();
@@ -116,12 +131,14 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
             tamega.addLayerToMap();*/
        /*     MapUtils.containsLocation(tamega, new LatLng(41.047010, -8.287442));*/
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (IOException | JSONException ex) {
+            ex.printStackTrace();
         }
 
+        //recover state
+        if (savedInstance != null) {
+            marker = addMarker(savedInstance);
+        }
 
     }
 
@@ -134,7 +151,7 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
             }
             marker = addMarker(latLng);
         } else {
-            Toast.makeText(this, "Não percente ao Tamega e Sousa!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.warn_map_not_inside), Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -150,8 +167,7 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_save_point:
-                //TODO
-                Toast.makeText(this, "Guardar", Toast.LENGTH_SHORT).show();
+                submitPoint();
 
                 return true;
             default:
@@ -159,6 +175,79 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
 
 
         }
+    }
+
+    private List<GeoJsonLayer> getGeoJsonCities() throws IOException, JSONException {
+        List<GeoJsonLayer> cities = new ArrayList<>();
+        cities.add(new GeoJsonLayer(mGoogleMap, R.raw.amarante, this));
+        cities.add(new GeoJsonLayer(mGoogleMap, R.raw.baiao, this));
+        cities.add(new GeoJsonLayer(mGoogleMap, R.raw.cas_paiva, this));
+        cities.add(new GeoJsonLayer(mGoogleMap, R.raw.cel_bastos, this));
+        cities.add(new GeoJsonLayer(mGoogleMap, R.raw.cinfaes, this));
+        cities.add(new GeoJsonLayer(mGoogleMap, R.raw.felgas, this));
+        cities.add(new GeoJsonLayer(mGoogleMap, R.raw.lousada, this));
+        cities.add(new GeoJsonLayer(mGoogleMap, R.raw.marco, this));
+        cities.add(new GeoJsonLayer(mGoogleMap, R.raw.pacos, this));
+        cities.add(new GeoJsonLayer(mGoogleMap, R.raw.penafiel, this));
+        cities.add(new GeoJsonLayer(mGoogleMap, R.raw.resende, this));
+        return cities;
+    }
+
+    private AlertDialog createDialogCities(List<City> cities) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Indique o Concelho");
+        ArrayAdapter<City> adapter = new ArrayAdapter<City>(this, android.R.layout.select_dialog_singlechoice);
+        adapter.addAll(cities);
+        builder.setPositiveButton("Adicionar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                ListView lw = ((AlertDialog) dialog).getListView();
+                City checkedItem = (City) lw.getAdapter().getItem(lw.getCheckedItemPosition());
+                Toast.makeText(MapPickerActivity.this, checkedItem.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+
+        return builder.create();
+    }
+
+    private void submitPoint() {
+        Intent returnIntent = new Intent();
+        if (marker != null) {
+            try {
+                List<GeoJsonLayer> geoJsonCities = getGeoJsonCities();
+                List<City> cities = MapUtils.getCityOfLocation(geoJsonCities, marker.getPosition());
+
+
+                if (cities.size() == 0) {
+                    //APARECER TODOS
+                } else if (cities.size() == 1) {
+
+                    returnIntent.putExtra(MAP_PARAM, marker.getPosition());
+                    setResult(Activity.RESULT_OK, returnIntent);
+                    finish();
+                    //NICE
+                } else if (cities.size() > 1) {
+                    mDialog = createDialogCities(cities);
+                    mDialog.show();
+                }
+                Toast.makeText(this, cities.toString(), Toast.LENGTH_SHORT).show();
+
+            } catch (IOException | JSONException ex) {
+                ex.printStackTrace();
+            }
+
+        } else {
+            setResult(Activity.RESULT_CANCELED, returnIntent);
+            finish();
+        }
+
+
     }
 
 
@@ -208,6 +297,16 @@ public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCa
         } else {
             Toast.makeText(this, getString(R.string.warn_location_disable), Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (marker != null) {
+            outState.putDouble("lat", marker.getPosition().latitude);
+            outState.putDouble("lng", marker.getPosition().longitude);
+        }
+        super.onSaveInstanceState(outState);
     }
 
 

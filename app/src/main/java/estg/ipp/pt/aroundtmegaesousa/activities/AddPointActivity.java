@@ -2,6 +2,8 @@ package estg.ipp.pt.aroundtmegaesousa.activities;
 
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -11,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -19,10 +22,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -31,6 +37,7 @@ import java.util.List;
 
 import estg.ipp.pt.aroundtmegaesousa.MapPickerActivity;
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.utils.MapUtils;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
@@ -47,6 +54,10 @@ public class AddPointActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ArrayList<File> photos;
     private Button mapButton;
+    private LatLng coordinates;
+    private EditText location;
+    private AlertDialog dialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +78,7 @@ public class AddPointActivity extends AppCompatActivity {
 
         setContentView(estg.ipp.pt.aroundtmegaesousa.R.layout.activity_add_point);
         toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.add_point);
+        toolbar.setTitle(R.string.title_activity_add_point);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mapButton = findViewById(R.id.map_button);
@@ -84,8 +95,9 @@ public class AddPointActivity extends AppCompatActivity {
         imageViewList.add(2, (ImageView) findViewById(R.id.img_2));
         imageViewList.add(3, (ImageView) findViewById(R.id.img_3));
         imageViewList.add(4, (ImageView) findViewById(R.id.img_4));
-
+        location = findViewById(R.id.location);
         if (savedInstanceState != null) { //recuperar estado
+            coordinates = savedInstanceState.getParcelable(MapPickerActivity.MAP_PARAM);
             photos = (ArrayList<File>) savedInstanceState.getSerializable(PHOTOS_KEY);
             for (int i = 0; i < 5; i++) {
                 Object obj = savedInstanceState.getParcelable(THUMBS_KEY + i);
@@ -110,8 +122,6 @@ public class AddPointActivity extends AppCompatActivity {
 
 
         //checkGalleryAppAvailability();
-
-
         /**
          * gallery
          */
@@ -129,8 +139,32 @@ public class AddPointActivity extends AppCompatActivity {
                 }
             });
         }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.message_submit_point));
+        builder.setTitle(getString(R.string.title_activity_add_point));
+        builder.setPositiveButton(getString(R.string.message_submit_point_yes), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                addPoint();
+            }
+        });
+        builder.setNegativeButton(getString(R.string.message_submit_point_no), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.dismiss();
+            }
+        });
+        dialog = builder.create();
     }
 
+    private void addPoint() {
+        String coordinatesString;
+        if (coordinates != null) {
+            coordinatesString = coordinates.toString();
+        } else {
+            coordinatesString = "NOTDEFINED";
+        }
+        Toast.makeText(this, coordinatesString, Toast.LENGTH_SHORT).show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -143,8 +177,7 @@ public class AddPointActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_check:
-                //TODO
-
+                dialog.show();
 
                 return true;
             default:
@@ -210,6 +243,18 @@ public class AddPointActivity extends AppCompatActivity {
                 }
             }
         });
+
+        if (requestCode == REQUEST_MAP_POINT) {
+            if (resultCode == Activity.RESULT_OK) {
+                coordinates = data.getParcelableExtra(MapPickerActivity.MAP_PARAM);
+                location.setText("(" + coordinates.latitude + ", " + coordinates.longitude + ")");
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                Toast.makeText(this, getString(R.string.warn_location_not_defined), Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
     }
 
     private void addPhotoToList(File imageFile, int tag) {
@@ -220,7 +265,7 @@ public class AddPointActivity extends AppCompatActivity {
     }
 
     private void closeImage() {
-        toolbar.setTitle(R.string.add_point);
+        toolbar.setTitle(R.string.title_activity_add_point);
         updateMenuItem("Adicionar", R.drawable.ic_check);
         expandedImageView.setVisibility(View.GONE);
         expandedImageView.setDisplayMatrix(new Matrix());
@@ -277,6 +322,7 @@ public class AddPointActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(MapPickerActivity.MAP_PARAM, coordinates);
         outState.putSerializable(PHOTOS_KEY, photos);
         for (int i = 0; i < 5; i++) {
             Drawable drawable = imageViewList.get(i).getDrawable();

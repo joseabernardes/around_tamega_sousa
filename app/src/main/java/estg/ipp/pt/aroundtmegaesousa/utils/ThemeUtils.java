@@ -25,6 +25,9 @@ public class ThemeUtils {
             case SettingsActivity.BROWN:
                 context.setTheme(R.style.AppTheme_Brown);
                 break;
+            case SettingsActivity.BLUE:
+                context.setTheme(R.style.AppTheme_Blue);
+                break;
         }
     }
 }

@@ -49,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         ThemeUtils.changeTheme(this);
         setContentView(R.layout.activity_main);
-
         mAuthStateListener = new AuthStateListener();
         mFirebaseAuth = FirebaseAuth.getInstance();
 

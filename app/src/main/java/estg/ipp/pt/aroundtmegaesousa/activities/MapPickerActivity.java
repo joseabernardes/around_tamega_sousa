@@ -44,7 +44,7 @@ import estg.ipp.pt.aroundtmegaesousa.utils.LocationUtils;
 import estg.ipp.pt.aroundtmegaesousa.utils.MapUtils;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
-public class MapPickerActivity extends AppCompatActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnMapClickListener {
+public class MapPickerActivity extends BaseActivity implements OnMapReadyCallback, ActivityCompat.OnRequestPermissionsResultCallback, GoogleMap.OnMapClickListener {
 
     private static final String TAG = "MapPicker";
     public static final String MAP_PARAM = "latlng";

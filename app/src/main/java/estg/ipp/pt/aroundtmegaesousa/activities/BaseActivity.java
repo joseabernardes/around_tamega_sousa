@@ -27,9 +27,7 @@ public class BaseActivity extends AppCompatActivity implements FirebaseAuth.Auth
 
 
     private void onSignInInitialize(FirebaseUser user) {
-        Log.d(TAG, this.toString());
         if (this instanceof MainActivity) {
-            Log.d(TAG, "ENTROU!!!");
             MainActivity mainActivity = ((MainActivity) this);
             mainActivity.addUserInfo(user);
         }
@@ -51,20 +49,15 @@ public class BaseActivity extends AppCompatActivity implements FirebaseAuth.Auth
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
         Log.d(TAG, "onAuthState");
         FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) {
-            //signed in
+        if (user != null) {    //signed in
             onSignInInitialize(user);
-            Log.d(TAG, "SIGNED IN");
-/*            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);*/
-        } else {
-            Log.d(TAG, "nao tem login");
+        } else { //nao tem login
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();

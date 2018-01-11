@@ -29,7 +29,7 @@ import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
     private Toolbar tb;
     private Spinner sp;

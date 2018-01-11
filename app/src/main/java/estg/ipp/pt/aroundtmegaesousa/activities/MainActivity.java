@@ -2,16 +2,18 @@ package estg.ipp.pt.aroundtmegaesousa.activities;
 
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -19,14 +21,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-
-import java.util.Arrays;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.fragments.ListFragment;
@@ -152,11 +151,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             case R.id.settings:
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
-                break;
+                return false;
             case R.id.logout:
-                fragment = PointOfInterestFragment.newInstance("S", "SS");
-                fab.hide();
-                break;
+                AuthUI.getInstance().signOut(this);
+                return true;
+               /* break;*/
         }
 
         replaceFragment(fragment);
@@ -202,10 +201,22 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     protected void addUserInfo(FirebaseUser user) {
-        Picasso.with(this).load(user.getPhotoUrl()).fit().centerInside().into(userIcon);
         userName.setText(user.getDisplayName());
+        Picasso.with(this).load(user.getPhotoUrl()).fit().centerInside().into(userIcon, new Callback() {
+            @Override
+            public void onSuccess() {
+                Bitmap imageBitmap = ((BitmapDrawable) userIcon.getDrawable()).getBitmap();
+                RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), imageBitmap);
+                imageDrawable.setCircular(true);
+                imageDrawable.setCornerRadius(Math.max(imageBitmap.getWidth(), imageBitmap.getHeight()) / 2.0f);
+                userIcon.setImageDrawable(imageDrawable);
+            }
 
+            @Override
+            public void onError() {
+                userIcon.setImageResource(R.mipmap.ic_launcher_round);
+            }
+        });
 
     }
-
 }

@@ -9,9 +9,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/around_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/around_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.TestActivity">
@@ -20,7 +20,13 @@
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.AddPointActivity"
             android:windowSoftInputMode="stateHidden" />
@@ -31,13 +37,9 @@
 
         <activity android:name=".activities.SettingsActivity" />
         <activity android:name=".activities.MapPickerActivity" />
-        <activity android:name=".activities.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".activities.LoginActivity" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+
     </application>
 
 </manifest>

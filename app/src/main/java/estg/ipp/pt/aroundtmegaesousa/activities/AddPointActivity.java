@@ -39,7 +39,7 @@ import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
-public class AddPointActivity extends AppCompatActivity {
+public class AddPointActivity extends BaseActivity {
 
     private static final int REQUEST_PHOTO_PERMISSIONS = 100;
     private static final int REQUEST_MAP_POINT = 420;

@@ -6,9 +6,54 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="estg.ipp.pt.aroundtmegaesousa.activities.LoginActivity">
-    <ProgressBar
+
+    <View
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal|center_vertical" />
+        android:layout_height="0dp"
+        android:layout_weight="25" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="50"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_warning" />
+
+        <TextView
+            android:id="@+id/error_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="Error"
+            android:textSize="8pt" />
+
+        <Button
+            android:id="@+id/try_again"
+            style="@style/ButtonAccent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:text="Tentar Novamente"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="25" />
 
 </LinearLayout>
+
+    <!--
+    <ProgressBar
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal|center_vertical" />-->

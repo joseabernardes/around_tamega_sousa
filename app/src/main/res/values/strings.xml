@@ -41,8 +41,9 @@
     <string name="warn_location_disable">Localização desligada</string>
     <string name="warn_map_not_inside">Não percente ao Tâmega e Sousa</string>
     <string name="warn_location_not_defined">Localização não definida</string>
-
-
+    <string name="warn_login_unknown_error">Erro desconhecido</string>
+    <string name="warn_login_unknown_response">Resposta desconhecida</string>
+    <string name="warn_login_no_connection">Sem ligação à internet</string>
     <!-- Messages -->
     <string name="message_submit_point">Deseja adicionar o ponto de interesse?</string>
     <string name="message_submit_point_yes">Adicionar</string>

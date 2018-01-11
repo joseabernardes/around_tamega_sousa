@@ -10,21 +10,21 @@
 
     <style name="AppTheme_Secondary" parent="Theme.AppCompat.Light.NoActionBar">
 
-        <item name ="colorPrimary">@color/colorPrimarySec</item>
+        <item name="colorPrimary">@color/colorPrimarySec</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkSec</item>
         <item name="colorAccent">@color/colorAccentSec</item>
     </style>
 
     <style name="AppTheme_Brown" parent="Theme.AppCompat.Light.NoActionBar">
 
-        <item name ="colorPrimary">@color/colorPrimaryBrown</item>
+        <item name="colorPrimary">@color/colorPrimaryBrown</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkBrown</item>
         <item name="colorAccent">@color/colorPrimaryAccentBrown</item>
     </style>
 
     <style name="AppTheme_Blue" parent="Theme.AppCompat.Light.NoActionBar">
 
-        <item name ="colorPrimary">@color/colorPrimaryBlue</item>
+        <item name="colorPrimary">@color/colorPrimaryBlue</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkBlue</item>
         <item name="colorAccent">@color/colorPrimaryAccentBlue</item>
     </style>
@@ -69,22 +69,22 @@
         <item name="colorButtonNormal">?colorPrimary</item>
     </style>
 
-<!--    <style name="LoginTheme" parent="FirebaseUI">
-        <item name="colorPrimary">?colorPrimary</item>
-        <item name="colorPrimaryDark">?colorPrimaryDark</item>
-        <item name="colorAccent">?colorAccent</item>
-        <item name="colorButtonNormal">?colorAccent</item>
-        <item name="colorControlNormal">@android:color/white</item>
-        <item name="colorControlActivated">@android:color/white</item>
-        <item name="colorControlHighlight">@android:color/white</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:textColorSecondary">@android:color/white</item>
-        <item name="android:windowBackground">?colorPrimary</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="android:textColorHint">@android:color/white</item>
-    </style>-->
+    <!--    <style name="LoginTheme" parent="FirebaseUI">
+            <item name="colorPrimary">?colorPrimary</item>
+            <item name="colorPrimaryDark">?colorPrimaryDark</item>
+            <item name="colorAccent">?colorAccent</item>
+            <item name="colorButtonNormal">?colorAccent</item>
+            <item name="colorControlNormal">@android:color/white</item>
+            <item name="colorControlActivated">@android:color/white</item>
+            <item name="colorControlHighlight">@android:color/white</item>
+            <item name="android:textColor">@android:color/white</item>
+            <item name="android:textColorPrimary">@android:color/white</item>
+            <item name="android:textColorSecondary">@android:color/white</item>
+            <item name="android:windowBackground">?colorPrimary</item>
+            <item name="windowActionBar">false</item>
+            <item name="windowNoTitle">true</item>
+            <item name="android:textColorHint">@android:color/white</item>
+        </style>-->
     <style name="LoginTheme" parent="FirebaseUI">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -101,7 +101,6 @@
         <item name="windowNoTitle">true</item>
         <item name="android:textColorHint">@android:color/white</item>
     </style>
-
 
 
     <style name="FirebaseUI.AuthMethodPicker.Logo">
@@ -127,12 +126,21 @@
         <item name="colorAccent">?colorPrimary</item>
 
         <item name="android:textColorHint">@color/greyDisabled</item>
-   <item name="android:textSize">16sp</item><!--
+        <item name="android:textSize">16sp</item><!--
         &lt;!&ndash; Label color in TRUE state and bar color FALSE and TRUE State &ndash;&gt;
 
         <item name="colorControlNormal">@color/Color Name</item>
         <item name="colorControlActivated">@color/Color Name</item>-->
 
+    </style>
+
+
+    <style name="ButtonPrimary" parent="Base.TextAppearance.AppCompat.Button">
+        <item name="backgroundTint">?colorPrimary</item>
+    </style>
+
+    <style name="ButtonAccent" parent="Base.TextAppearance.AppCompat.Button">
+        <item name="backgroundTint">?colorAccent</item>
     </style>
 
 </resources>

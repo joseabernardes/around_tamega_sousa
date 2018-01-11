@@ -26,6 +26,7 @@ import android.widget.Toast;
 import java.util.Set;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
 
 public class SettingsActivity extends AppCompatActivity {
@@ -42,24 +43,11 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences m = PreferenceManager.getDefaultSharedPreferences(this);
-        final int theme = m.getInt("AppliedTheme", SettingsActivity.LIGHT_GREEN);
         themeSettings = false;
         themeFirst = true;
-
         themeSettings =  getIntent().getBooleanExtra("theme",themeSettings);
-        if (theme == SettingsActivity.LIGHT_GREEN) {
-
-            setTheme(R.style.AppTheme);
-        } else if (theme == SettingsActivity.DARK_GREEN) {
-            setTheme(R.style.AppTheme_Secondary);
-        } else if (theme == SettingsActivity.BROWN) {
-            setTheme(R.style.AppTheme_Brown);
-        } else if (theme == SettingsActivity.BLUE) {
-            setTheme(R.style.AppTheme_Blue);
-        }
+        ThemeUtils.changeTheme(this);
         setContentView(R.layout.activity_settings);
-
 
         tb = findViewById(R.id.toolbar);
         tb.setTitle("Settings");
@@ -71,7 +59,7 @@ public class SettingsActivity extends AppCompatActivity {
         final CheckBox checkBox_sound = findViewById(R.id.settings_sound);
         final CheckBox checkBox_vibration = findViewById(R.id.settings_vibration);
 
-
+        SharedPreferences m = PreferenceManager.getDefaultSharedPreferences(this);
         int color = m.getInt("AppliedTheme", LIGHT_GREEN);
         sp.setSelection(color);
 

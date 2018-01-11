@@ -14,6 +14,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -133,11 +135,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
 
     private void addMarker(LatLng latLng, String title, String content) {
-       /* LatLng latLng = new LatLng(41.36688992,-8.1947654);*/
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker);
         Marker marker = mGoogleMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .title(title)
-                .snippet(content));
+                .snippet(content)
+                .icon(icon));
     }
 
     private void zoomToLocation(LatLng latLng, float zoom) {

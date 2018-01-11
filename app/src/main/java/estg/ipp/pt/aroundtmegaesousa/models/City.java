@@ -1,17 +1,34 @@
 package estg.ipp.pt.aroundtmegaesousa.models;
 
+import java.io.Serializable;
+
 /**
  * Created by José Bernardes on 02/01/2018.
  */
 
-public class City {
+public class City implements Serializable {
 
     private String id;
     private String name;
+    private int geoJsonFileID;
 
     public City(String id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public City(String id, String name, int geoJsonFileID) {
+        this.id = id;
+        this.name = name;
+        this.geoJsonFileID = geoJsonFileID;
+    }
+
+    public int getGeoJsonFileID() {
+        return geoJsonFileID;
+    }
+
+    public void setGeoJsonFileID(int geoJsonFileID) {
+        this.geoJsonFileID = geoJsonFileID;
     }
 
     public String getId() {

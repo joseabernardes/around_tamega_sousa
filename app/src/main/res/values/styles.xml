@@ -69,7 +69,7 @@
         <item name="colorButtonNormal">?colorPrimary</item>
     </style>
 
-    <style name="LoginTheme" parent="FirebaseUI">
+<!--    <style name="LoginTheme" parent="FirebaseUI">
         <item name="colorPrimary">?colorPrimary</item>
         <item name="colorPrimaryDark">?colorPrimaryDark</item>
         <item name="colorAccent">?colorAccent</item>
@@ -84,7 +84,25 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:textColorHint">@android:color/white</item>
+    </style>-->
+    <style name="LoginTheme" parent="FirebaseUI">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorButtonNormal">@color/colorAccent</item>
+        <item name="colorControlNormal">@android:color/white</item>
+        <item name="colorControlActivated">@android:color/white</item>
+        <item name="colorControlHighlight">@android:color/white</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:textColorHint">@android:color/white</item>
     </style>
+
+
 
     <style name="FirebaseUI.AuthMethodPicker.Logo">
         <item name="android:layout_width">wrap_content</item>

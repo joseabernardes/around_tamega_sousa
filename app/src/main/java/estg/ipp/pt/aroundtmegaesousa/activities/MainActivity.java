@@ -17,12 +17,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 
@@ -33,30 +35,31 @@ import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener, OnFragmentsChangeViewsListener {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener, OnFragmentsChangeViewsListener {
 
     private String TAG = "MainActivity";
-    public static final int RC_SIGN_IN = 1;
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private FloatingActionButton fab;
-    private FirebaseAuth mFirebaseAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private ImageView userIcon;
+    private TextView userName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         ThemeUtils.changeTheme(this);
         setContentView(R.layout.activity_main);
-        mAuthStateListener = new AuthStateListener();
-        mFirebaseAuth = FirebaseAuth.getInstance();
 
 
         //Connect Views
+
         toolbar = findViewById(R.id.toolbar);
         drawer = findViewById(R.id.drawer_layout); //main layout
         navigationView = findViewById(R.id.nav_view); //navigation drawer
+
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,8 +88,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.interest_points);
-
-
+        View headerLayout = navigationView.getHeaderView(0);
+        userIcon = headerLayout.findViewById(R.id.user_icon);
+        userName = headerLayout.findViewById(R.id.user_name);
     }
 
 
@@ -160,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-
     @Override
     public void replaceFragment(Fragment fragment) {
         if (fragment != null) {
@@ -198,68 +201,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return fab.isShown();
     }
 
-    //------------------------------ AUTH ------------------------------//
+    protected void addUserInfo(FirebaseUser user) {
+        Picasso.with(this).load(user.getPhotoUrl()).fit().centerInside().into(userIcon);
+        userName.setText(user.getDisplayName());
 
-
-    private void onSignInInitialize(String string) {
-      /*  loginName.setText(string);*/
-    }
-
-    private void onSignOutCleanup() {
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN) { //se foi do meu pedido de login
-            if (resultCode == RESULT_OK) { //se retornou sucesso
-     /*           initLayout();*/
-                Toast.makeText(this, "Signed in", Toast.LENGTH_SHORT).show();
-            } else if (resultCode == RESULT_CANCELED) { // se o utilizador cancelou BACK ou sem ligação á internet
-                Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
-                finish();
-            }
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mFirebaseAuth.addAuthStateListener(mAuthStateListener);
-    }
-
-    private class AuthStateListener implements FirebaseAuth.AuthStateListener {
-        @Override
-        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-            FirebaseUser user = firebaseAuth.getCurrentUser();
-            if (user != null) {
-                //signed in
-   /*             initLayout();*/
-                onSignInInitialize(user.getDisplayName());
-            } else {
-                //signed out
-                onSignOutCleanup();
-                startActivityForResult(
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder()
-                                .setIsSmartLockEnabled(false)
-                                .setAvailableProviders(
-                                        Arrays.asList(
-                                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
-                                                new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()
-                                        ))
-                                .setLogo(R.drawable.around_logo)
-                                .setTheme(R.style.LoginTheme)
-                                .build(),
-                        RC_SIGN_IN);
-            }
-        }
-    }
 }

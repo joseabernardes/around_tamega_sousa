@@ -129,7 +129,7 @@ public class TestActivity extends AppCompatActivity {
         mAuthStateListener = new AuthStateListener();
         db = FirebaseFirestore.getInstance();
         mFirebaseAuth = FirebaseAuth.getInstance();
-        Log.d(TAG,"onCreate");
+        Log.d(TAG, "onCreate");
     }
 
 
@@ -151,6 +151,7 @@ public class TestActivity extends AppCompatActivity {
                 Toast.makeText(this, "Signed in", Toast.LENGTH_SHORT).show();
             } else if (resultCode == RESULT_CANCELED) { // se o utilizador cancelou BACK ou sem ligação á internet
                 Toast.makeText(this, "Sign in canceled", Toast.LENGTH_SHORT).show();
+                //SE NAO TIVER LIGAÇÃO Á INTERNET
                 finish();
             }
         }
@@ -162,7 +163,7 @@ public class TestActivity extends AppCompatActivity {
             FirebaseUser user = firebaseAuth.getCurrentUser();
             if (user != null) {
                 //signed in
-                Log.d(TAG,"SIGNED IN");
+                Log.d(TAG, "SIGNED IN");
                 initLayout();
                 onSignInInitialize(user.getDisplayName());
             } else {

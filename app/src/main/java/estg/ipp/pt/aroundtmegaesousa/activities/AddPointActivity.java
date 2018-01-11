@@ -133,6 +133,7 @@ public class AddPointActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.message_submit_point));
         builder.setTitle(getString(R.string.title_activity_add_point));
+
         builder.setPositiveButton(getString(R.string.message_submit_point_yes), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 addPoint();

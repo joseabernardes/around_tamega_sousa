@@ -7,7 +7,10 @@
     android:orientation="vertical"
     tools:context="estg.ipp.pt.aroundtmegaesousa.activities.SettingsActivity">
 
+
     <include layout="@layout/toolbar" />
+
+
 
     <TextView
         android:layout_width="match_parent"

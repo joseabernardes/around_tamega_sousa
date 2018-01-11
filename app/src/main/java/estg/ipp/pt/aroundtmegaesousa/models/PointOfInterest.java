@@ -8,6 +8,7 @@ import java.util.List;
 
 public class PointOfInterest {
 
+    private int id;
     private String name;
     private String description;
     private GeoPoint location;
@@ -22,7 +23,7 @@ public class PointOfInterest {
     public PointOfInterest() {
     }
 
-    public PointOfInterest(String name){
+    public PointOfInterest(String name) {
         this.name = name;
     }
 
@@ -33,6 +34,14 @@ public class PointOfInterest {
         this.typeOfLocation = typeOfLocation;
         this.photos = photos;
         this.user = user;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

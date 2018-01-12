@@ -24,7 +24,7 @@ public class BaseActivity extends AppCompatActivity implements FirebaseAuth.Auth
     private String TAG = "BaseActivity";
     public static final int RC_SIGN_IN = 1;
     protected FirebaseAuth mFirebaseAuth;
-
+    protected FirebaseUser user;
 
     private void onSignInInitialize(FirebaseUser user) {
         if (this instanceof MainActivity) {

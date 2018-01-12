@@ -266,7 +266,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void addUserInfo(FirebaseUser user) {
         userName.setText(user.getDisplayName());
         Log.d("AQUI", "addUserInfo");
-        new UploadImage().execute(user.getUid());
+        new LoadImage().execute(user.getUid());
 //        loadImageBitmap(getApplicationContext(), user.getUid());
 /*
         Bitmap bitmap = loadImageBitmap(getApplicationContext(), user.getUid());
@@ -302,7 +302,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
-    private class UploadImage extends AsyncTask<String, Void, Bitmap> {
+    private class LoadImage extends AsyncTask<String, Void, Bitmap> {
 
         private Bitmap uploadImage(String file) {
             Bitmap bitmap = null;
@@ -341,11 +341,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
 
         protected void onPostExecute(Bitmap result) {
-            RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), result);
-            imageDrawable.setCircular(true);
-            imageDrawable.setCornerRadius(Math.max(result.getWidth(), result.getHeight()) / 2.0f);
-            userIcon.setImageDrawable(imageDrawable);
-
+            if (result != null) {
+                RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), result);
+                imageDrawable.setCircular(true);
+                imageDrawable.setCornerRadius(Math.max(result.getWidth(), result.getHeight()) / 2.0f);
+                userIcon.setImageDrawable(imageDrawable);
+            }
         }
 
 

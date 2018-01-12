@@ -1,21 +1,24 @@
 package estg.ipp.pt.aroundtmegaesousa.models;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.Date;
 import java.util.List;
 
 
 public class PointOfInterest {
 
-    private int id;
     private String name;
     private String description;
     private GeoPoint location;
-    private String typeOfLocation;
+    private int typeOfLocation;
     private List<String> photos;
     private String user;
     private int avgRatting;
+    private Date date;
+    private String city;
     /*
     private List<Map<String, Object>> classifications; //array de objetos
     */
@@ -27,21 +30,33 @@ public class PointOfInterest {
         this.name = name;
     }
 
-    public PointOfInterest(String name, String description, LatLng location, String typeOfLocation, List<String> photos, String user) {
+    /**
+     * @param name
+     * @param description
+     * @param location
+     * @param typeOfLocation
+     * @param photos
+     * @param user
+     * @param date
+     */
+    public PointOfInterest(String name, String description, LatLng location,String city, int typeOfLocation, List<String> photos, String user, Date date) {
         this.name = name;
         this.description = description;
         this.location = new GeoPoint(location.latitude, location.longitude);
         this.typeOfLocation = typeOfLocation;
         this.photos = photos;
         this.user = user;
+        this.date = date;
+        this.city = city;
+
     }
 
-    public int getId() {
-        return id;
+    public String getCity() {
+        return city;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public Date getDate() {
+        return date;
     }
 
     public String getName() {
@@ -56,7 +71,7 @@ public class PointOfInterest {
         return location;
     }
 
-    public String getTypeOfLocation() {
+    public int getTypeOfLocation() {
         return typeOfLocation;
     }
 

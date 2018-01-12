@@ -12,17 +12,23 @@ import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
@@ -30,16 +36,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.models.City;
+import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.models.TypeOfLocation;
+import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
+import estg.ipp.pt.aroundtmegaesousa.utils.FirestoreHelper;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
-public class AddPointActivity extends BaseActivity {
+public class AddPointActivity extends BaseActivity  {
 
     private static final int REQUEST_PHOTO_PERMISSIONS = 100;
     private static final int REQUEST_MAP_POINT = 420;
@@ -56,6 +69,9 @@ public class AddPointActivity extends BaseActivity {
     private EditText location;
     private AlertDialog dialog;
     private City city;
+    private EditText name;
+    private EditText description;
+    private Spinner typeOfLocation;
 
 
     @Override
@@ -63,6 +79,9 @@ public class AddPointActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ThemeUtils.changeTheme(this);
         setContentView(estg.ipp.pt.aroundtmegaesousa.R.layout.activity_add_point);
+        name = findViewById(R.id.name);
+        description = findViewById(R.id.description);
+        typeOfLocation = findViewById(R.id.typeOfLocation);
         toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.title_activity_add_point);
         setSupportActionBar(toolbar);
@@ -145,16 +164,35 @@ public class AddPointActivity extends BaseActivity {
             }
         });
         dialog = builder.create();
+
+
+        ArrayAdapter<TypeOfLocation> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item);
+        adapter.addAll(Enums.getTypeOfLocations());
+        typeOfLocation.setAdapter(adapter);
     }
 
+
+    /**
+     * Metodo responsavel por adicionar um ponto de interesse
+     */
     private void addPoint() {
         String coordinatesString;
-        if (coordinates != null) {
-            coordinatesString = coordinates.toString();
-        } else {
-            coordinatesString = "NOTDEFINED";
+        String name = this.name.getText().toString();
+        String description = this.description.getText().toString();
+        List<String> photos = new ArrayList<>();
+        for (File file : this.photos) {
+            if (file != null) {
+                photos.add(file.getAbsolutePath());
+            }
         }
-        Toast.makeText(this, coordinatesString, Toast.LENGTH_SHORT).show();
+        if (coordinates != null && !name.isEmpty() && !description.isEmpty() && city != null && !photos.isEmpty()) {
+            int typeID = ((TypeOfLocation) typeOfLocation.getSelectedItem()).getId();
+            PointOfInterest pointOfInterest = new PointOfInterest(name, description, coordinates, city.getId(), typeID, photos, this.user.getUid(), Calendar.getInstance().getTime());
+            new FirestoreHelper().addPoint(this, pointOfInterest);
+            finish();
+        } else {
+            Toast.makeText(this, getString(R.string.warn_params_not_fulfilled), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -328,4 +366,6 @@ public class AddPointActivity extends BaseActivity {
         }
         super.onSaveInstanceState(outState);
     }
+
+
 }

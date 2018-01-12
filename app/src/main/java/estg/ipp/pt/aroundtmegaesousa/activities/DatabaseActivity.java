@@ -40,7 +40,7 @@ public class DatabaseActivity extends AppCompatActivity {
         db.close();
     }
 
-    public void deletePoi(PointOfInterest p) throws Exception {
+/*    public void deletePoi(PointOfInterest p) throws Exception {
         DbHelper dbH = new DbHelper(this);
         SQLiteDatabase db = dbH.getWritableDatabase();
         long row = db.delete("poi", "id =" + p.getId(), null);
@@ -49,5 +49,5 @@ public class DatabaseActivity extends AppCompatActivity {
             throw new Exception("Não foi possível inserir!");
         }
         db.close();
-    }
+    }*/
 }

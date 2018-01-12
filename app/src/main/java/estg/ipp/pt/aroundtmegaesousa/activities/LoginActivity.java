@@ -77,6 +77,8 @@ public class LoginActivity extends AppCompatActivity{
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) { //se foi do meu pedido de login
             if (resultCode == RESULT_OK) { //se retornou sucesso
+                FirebaseUser user = mFirebaseAuth.getCurrentUser();
+
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);

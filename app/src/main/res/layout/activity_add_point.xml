@@ -71,22 +71,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginTop="4dp"
-                    android:entries="@array/type_of_location_add"
                     android:paddingBottom="16dp"
                     android:paddingTop="16dp" />
-
-                <!--           <TextView
-                               android:layout_width="match_parent"
-                               android:layout_height="wrap_content"
-                               android:padding="4dp"
-                               android:paddingBottom="8dp"
-                               android:paddingTop="8dp"
-                               android:text="Fotografias"
-                               android:textColor="@color/greyPrimary"
-                               android:textSize="15dp" />
-           -->
-
-
                 <TextView
 
                     android:layout_width="match_parent"

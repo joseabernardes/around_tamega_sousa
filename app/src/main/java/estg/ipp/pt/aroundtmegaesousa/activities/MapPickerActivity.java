@@ -40,6 +40,7 @@ import java.util.List;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.models.City;
+import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
 import estg.ipp.pt.aroundtmegaesousa.utils.LocationUtils;
 import estg.ipp.pt.aroundtmegaesousa.utils.MapUtils;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
@@ -81,18 +82,7 @@ public class MapPickerActivity extends BaseActivity implements OnMapReadyCallbac
             savedInstance = savedInstanceState.getParcelable(MAP_PARAM);
         }
 
-        cities = new ArrayList<>();
-        cities.add(new City("amarante", "Amarante", R.raw.amarante));
-        cities.add(new City("baiao", "Baião", R.raw.baiao));
-        cities.add(new City("cas_paiva", "Castelo de Paiva", R.raw.cas_paiva));
-        cities.add(new City("cel_bastos", "Celorico de Bastos", R.raw.cel_bastos));
-        cities.add(new City("cinfaes", "Cinfães", R.raw.cinfaes));
-        cities.add(new City("felgas", "Felgueiras", R.raw.felgas));
-        cities.add(new City("lousada", "Lousada", R.raw.lousada));
-        cities.add(new City("marco", "Marco de Canaveses", R.raw.marco));
-        cities.add(new City("pacos", "Paços de Ferreira", R.raw.pacos));
-        cities.add(new City("penafiel", "Penafiel", R.raw.penafiel));
-        cities.add(new City("resende", "Resende", R.raw.resende));
+        cities = Enums.getCities();
 
     }
 

@@ -12,12 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+
 import java.util.ArrayList;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ListItemAdapter;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.utils.FirestoreHelper;
 
 
 public class ListFragment extends Fragment {
@@ -40,6 +44,9 @@ public class ListFragment extends Fragment {
     private View filterBar;
     private View clearFilter;
     private FilterDialogFragment mFilterDialog;
+
+    private FirebaseFirestore mFirestore;
+    private Query mQuery;
 
 
     public ListFragment() {
@@ -69,6 +76,11 @@ public class ListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View mContentView = inflater.inflate(R.layout.fragment_list, container, false);
+
+        mFirestore = FirebaseFirestore.getInstance();
+
+        mQuery = mFirestore.collection(FirestoreHelper.POINTS_COLLECTION)
+                .orderBy("date", Query.Direction.DESCENDING);
 
 
         ArrayList<PointOfInterest> contacts = new ArrayList<PointOfInterest>();

@@ -31,7 +31,7 @@ public class FirestoreHelper {
     }
 
 
-    public void addPoint(final Activity context, PointOfInterest point) {
+    public void addPoint(final FirestoreCommunication context, PointOfInterest point) {
         points.add(point).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
@@ -42,13 +42,8 @@ public class FirestoreHelper {
                     id = documentReference.getId();
                     result = true;
                 }
-                if (context instanceof FirestoreCommunication) {
-                    Log.d("", "TRUE " + context.getLocalClassName());
-                    ((FirestoreCommunication) context).addPointResult(result, id);
-                } else {
+                context.addPointResult(result, id);
 
-                    Log.d("", "NOT INSTANCE " + context.getLocalClassName());
-                }
             }
         });
     }

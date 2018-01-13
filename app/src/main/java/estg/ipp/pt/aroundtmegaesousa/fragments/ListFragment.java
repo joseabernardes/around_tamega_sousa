@@ -11,8 +11,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
@@ -24,7 +26,7 @@ import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirestoreHelper;
 
 
-public class ListFragment extends Fragment {
+public class ListFragment extends Fragment implements ListItemAdapter.OnItemSelectedListener {
 
 
     private static final String ARG_PARAM1 = "param1";
@@ -44,6 +46,7 @@ public class ListFragment extends Fragment {
     private View filterBar;
     private View clearFilter;
     private FilterDialogFragment mFilterDialog;
+    private ListItemAdapter itemAdapter;
 
     private FirebaseFirestore mFirestore;
     private Query mQuery;
@@ -74,8 +77,11 @@ public class ListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View mContentView = inflater.inflate(R.layout.fragment_list, container, false);
+        recyclerView = mContentView.findViewById(R.id.recycler);
+        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        clearFilter = mContentView.findViewById(R.id.button_clear_filter);
+
 
         mFirestore = FirebaseFirestore.getInstance();
 
@@ -83,16 +89,14 @@ public class ListFragment extends Fragment {
                 .orderBy("date", Query.Direction.DESCENDING);
 
 
-        ArrayList<PointOfInterest> contacts = new ArrayList<PointOfInterest>();
-        recyclerView = mContentView.findViewById(R.id.recycler);
-
+/*        ArrayList<PointOfInterest> contacts = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             contacts.add(new PointOfInterest("Parque das Nações do Douro " + i));
-        }
+        }*/
 
-        ListItemAdapter lia = new ListItemAdapter(mContext, contacts);
-        recyclerView.setAdapter(lia);
-        recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+
+        itemAdapter = new ListItemAdapter(this, mQuery);
+        recyclerView.setAdapter(itemAdapter);
 
         filterBar = mContentView.findViewById(R.id.filter_bar);
         filterBar.setOnClickListener(new View.OnClickListener() {
@@ -101,7 +105,6 @@ public class ListFragment extends Fragment {
                 mFilterDialog.show(getChildFragmentManager(), FilterDialogFragment.TAG);
             }
         });
-        clearFilter = mContentView.findViewById(R.id.button_clear_filter);
 
 
         mFilterDialog = new FilterDialogFragment();
@@ -163,14 +166,53 @@ public class ListFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onItemSelected(PointOfInterest pointOfInterest) {
+
+        Fragment fragment = PointOfInterestFragment.newInstance(pointOfInterest.getName(), "SS");
+        if (mContext instanceof OnFragmentsChangeViewsListener) {
+            OnFragmentsChangeViewsListener mListener = (OnFragmentsChangeViewsListener) mContext;
+            mListener.replaceFragment(fragment);
+            mListener.changeActionBarTitle(mContext.getString(R.string.title_fragment_poi));
+            mListener.showFloatingButton(false);
+        }
+
+    }
+
+    @Override
+    public void onError(FirebaseFirestoreException e) {
+        Toast.makeText(mContext, "Raia", Toast.LENGTH_SHORT).show();
+    }
+
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
+
+
     @Override
     public void onDetach() {
         super.onDetach();
         mContext = null;
     }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (itemAdapter != null) {
+            itemAdapter.startListening();
+        }
+
+    }
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (itemAdapter != null) {
+            itemAdapter.stopListening();
+        }
+
     }
 }

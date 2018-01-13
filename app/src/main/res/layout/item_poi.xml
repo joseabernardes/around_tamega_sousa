@@ -19,15 +19,22 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/poi" />
+            android:src="@drawable/default_point" />
+
+        <ProgressBar
+            android:id="@+id/image_loading_progress"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="50dp" />
 
         <RelativeLayout
             android:id="@+id/item_desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
+            android:layout_alignBottom="@+id/list_poi_img"
             android:background="#89000000"
-            android:layout_alignBottom="@+id/list_poi_img">
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/item_desc_name"
@@ -36,8 +43,7 @@
                 android:paddingBottom="4dp"
                 android:text="Parque das Nações do Douro"
                 android:textColor="@color/white"
-                android:textSize="20sp"
-                />
+                android:textSize="20sp" />
 
             <android.support.v7.widget.AppCompatRatingBar
                 android:id="@+id/item_desc_rating_bar"
@@ -58,8 +64,7 @@
                 android:layout_toEndOf="@+id/item_desc_rating_bar"
                 android:text="(3.3)"
                 android:textColor="@color/white"
-                android:textSize="12dp"
-                />
+                android:textSize="12dp" />
         </RelativeLayout>
 
 

@@ -16,7 +16,7 @@ public class PointOfInterest {
     private int typeOfLocation;
     private List<String> photos;
     private String user;
-    private int avgRatting;
+    private float avgRatting;
     private Date date;
     private String city;
     /*
@@ -114,7 +114,7 @@ public class PointOfInterest {
         return user;
     }
 
-    public int getAvgRatting() {
+    public float getAvgRatting() {
         return avgRatting;
     }
 

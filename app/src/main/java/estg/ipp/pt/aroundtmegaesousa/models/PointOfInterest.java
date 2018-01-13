@@ -4,6 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -118,5 +119,26 @@ public class PointOfInterest {
         return avgRatting;
     }
 
+    public List<String> getPhotoThumbs() {
+        List<String> thumbs = new ArrayList<>();
+        for (String thumb : photos) {
+            thumbs.add(convertPhotoURL(thumb));
+        }
+        return thumbs;
+    }
+
+    public String getFirstPhotoThumb(){
+        String photo = photos.get(0);
+        if(photo != null){
+            return convertPhotoURL(photo);
+        }else{
+            return null;
+        }
+    }
+
+    private String convertPhotoURL(String url) {
+        int last = url.lastIndexOf('.');
+        return url.substring(0, last) + "_250_thumb." + url.substring(last);
+    }
 
 }

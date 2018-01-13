@@ -83,8 +83,8 @@ public class BaseActivity extends AppCompatActivity implements FirebaseAuth.Auth
     public void addPointResult(boolean result, final String documentID, int resultCode, NotificationUtils nt) {
 
         if (result) {
-            nt.updateStatus(001,100);
-            nt.finalNotify(001,"Adicionado");
+            nt.updateStatus(100);
+            nt.finalNotify("Adicionado");
         } else {
             String message = getString(R.string.message_snackbar_not_added);
             if (resultCode == FirestoreHelper.RESULT_FAIL_ADD_DATABASE) {

@@ -54,7 +54,7 @@ public class ListItemAdapter extends PointOfInterestAdapter {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(getPointOfInterest(position),mListener);
+        holder.bind(getPointOfInterest(position), mListener);
     }
 
     @Override
@@ -78,12 +78,13 @@ public class ListItemAdapter extends PointOfInterestAdapter {
             ratingBar = itemView.findViewById(R.id.item_desc_rating_bar);
             ratingText = itemView.findViewById(R.id.item_rating_text);
             progressBar = itemView.findViewById(R.id.image_loading_progress);
-            progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(progressBar.getContext(),R.color.greyDisabled),android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(progressBar.getContext(), R.color.greyDisabled), android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressBar.setVisibility(View.VISIBLE);
         }
 
         public void bind(final PointOfInterest pointOfInterest, final OnItemSelectedListener mListener) {
             name.setText(pointOfInterest.getName());
-            String imageURL = pointOfInterest.getPhotos().get(0);
+            String imageURL = pointOfInterest.getFirstPhotoThumb();
             if (imageURL != null) {
                 Picasso.with(image.getContext()).load(imageURL).fit().placeholder(R.drawable.default_point).centerInside().into(image, new Callback() {
                     @Override
@@ -92,6 +93,7 @@ public class ListItemAdapter extends PointOfInterestAdapter {
                             progressBar.setVisibility(View.GONE);
                         }
                     }
+
                     @Override
                     public void onError() {
 

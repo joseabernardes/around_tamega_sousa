@@ -83,7 +83,7 @@ public class BaseActivity extends AppCompatActivity implements FirebaseAuth.Auth
 
     @Override
     public void addPointResult(boolean result, final String documentID, int resultCode) {
-        NotificationUtils notificationUtils = new NotificationUtils(this, AddPointTask.CHANNEL_ID, "Adição de Ponto", "Ponto Adicionado", R.drawable.logo_around, 002);
+        NotificationUtils notificationUtils = new NotificationUtils(this, AddPointTask.CHANNEL_ID, "Adicionar ponto", "Ponto adicionado com sucesso", R.drawable.logo_around, 002);
         Intent intent = new Intent(this, RandomActivity.class);
         intent.putExtra("documentID", documentID);
         PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);

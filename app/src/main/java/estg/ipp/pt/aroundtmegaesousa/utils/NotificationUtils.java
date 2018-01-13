@@ -21,10 +21,18 @@ public class NotificationUtils {
     private int id;
     private int current;
 
-    public NotificationUtils(Context context, String CHANNEL_ID) {
+    public NotificationUtils(Context context, String CHANNEL_ID, String title, int icon, int id) {
         this.mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         this.mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID);
+        mBuilder.setContentTitle(title)
+                .setSmallIcon(icon)
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon));
+
+        this.id = id;
+        current = 0;
+
     }
+
 
     public NotificationUtils(Context context, String CHANNEL_ID, String title, String content, int icon, int id) {
         this.mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

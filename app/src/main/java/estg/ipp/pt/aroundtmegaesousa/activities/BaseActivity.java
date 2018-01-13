@@ -32,6 +32,7 @@ public class BaseActivity extends AppCompatActivity implements FirebaseAuth.Auth
     private String TAG = "BaseActivity";
     protected FirebaseAuth mFirebaseAuth;
     protected FirebaseUser user;
+
     private void onSignInInitialize(FirebaseUser user) {
         if (this instanceof MainActivity) {
             MainActivity mainActivity = ((MainActivity) this);
@@ -78,36 +79,18 @@ public class BaseActivity extends AppCompatActivity implements FirebaseAuth.Auth
     }
 
     @Override
-    public void addPointResult(boolean result, final String id) {
-        Log.d("", "addPointResult: " + result + " id " + id);
-      /*  AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());*/
+    public void addPointResult(boolean result, final String documentID, int resultCode) {
+
         if (result) {
-
             Toast.makeText(this, getString(R.string.message_snackbar_added), Toast.LENGTH_SHORT).show();
-         /*   builder.setMessage(getString(R.string.message_snackbar_added));
-            builder.setTitle(getString(R.string.message_snackbar_added));
-            builder.setPositiveButton(getString(R.string.message_snackbar_action), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    Toast.makeText(BaseActivity.this, "abrir " + id, Toast.LENGTH_SHORT).show();
-                }
-            });
-            builder.setNegativeButton(getString(R.string.message_submit_point_no), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.dismiss();
-                }
-            });
-*/
         } else {
-            Toast.makeText(this, getString(R.string.message_snackbar_not_added), Toast.LENGTH_SHORT).show();
-         /*   builder.setMessage(getString(R.string.message_snackbar_not_added));
-            builder.setTitle(getString(R.string.message_snackbar_not_added));
-            builder.setPositiveButton(getString(R.string.message_submit_point_no), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.dismiss();
-                }
-            });*/
+            String message = getString(R.string.message_snackbar_not_added);
+            if (resultCode == FirestoreHelper.RESULT_FAIL_ADD_DATABASE) {
+                message = getString(R.string.message_snackbar_not_added_database);
+            } else if (resultCode == FirestoreHelper.RESULT_FAIL_UPLOAD_IMAGES) {
+                message = getString(R.string.message_snackbar_not_added_upload);
+            }
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         }
-/*     builder.create().show();*/
-
     }
 }

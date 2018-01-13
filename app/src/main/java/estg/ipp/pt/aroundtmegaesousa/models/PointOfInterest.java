@@ -31,6 +31,8 @@ public class PointOfInterest {
     }
 
     /**
+     * Constructor with the list of images
+     *
      * @param name
      * @param description
      * @param location
@@ -39,7 +41,7 @@ public class PointOfInterest {
      * @param user
      * @param date
      */
-    public PointOfInterest(String name, String description, LatLng location,String city, int typeOfLocation, List<String> photos, String user, Date date) {
+    public PointOfInterest(String name, String description, LatLng location, String city, int typeOfLocation, List<String> photos, String user, Date date) {
         this.name = name;
         this.description = description;
         this.location = new GeoPoint(location.latitude, location.longitude);
@@ -49,6 +51,35 @@ public class PointOfInterest {
         this.date = date;
         this.city = city;
 
+    }
+
+    /**
+     * Constructor without the list of images and the date
+     *
+     * @param name
+     * @param description
+     * @param location
+     * @param typeOfLocation
+     * @param user
+     */
+    public PointOfInterest(String name, String description, LatLng location, String city, int typeOfLocation, String user) {
+        this.name = name;
+        this.description = description;
+        this.location = new GeoPoint(location.latitude, location.longitude);
+        this.typeOfLocation = typeOfLocation;
+        this.photos = photos;
+        this.user = user;
+        this.date = date;
+        this.city = city;
+
+    }
+
+    public void setPhotos(List<String> photos) {
+        this.photos = photos;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public String getCity() {

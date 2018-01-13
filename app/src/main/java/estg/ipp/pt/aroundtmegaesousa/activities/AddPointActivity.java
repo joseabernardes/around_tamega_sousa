@@ -74,7 +74,6 @@ public class AddPointActivity extends BaseActivity {
     private Menu menu;
     private Toolbar toolbar;
     private ArrayList<File> photos;
-    private List<String> photosURL;
     private Button mapButton;
     private LatLng coordinates;
     private EditText location;
@@ -83,7 +82,6 @@ public class AddPointActivity extends BaseActivity {
     private EditText name;
     private EditText description;
     private Spinner typeOfLocation;
-    private int count;
 
 
     @Override
@@ -91,7 +89,6 @@ public class AddPointActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ThemeUtils.changeTheme(this);
         setContentView(estg.ipp.pt.aroundtmegaesousa.R.layout.activity_add_point);
-        photosURL = new ArrayList<>();
         name = findViewById(R.id.name);
         description = findViewById(R.id.description);
         typeOfLocation = findViewById(R.id.typeOfLocation);
@@ -193,16 +190,17 @@ public class AddPointActivity extends BaseActivity {
         final String name = this.name.getText().toString();
         final String description = this.description.getText().toString();
 
-        count = 0;
-        for (File file : this.photos) {
+        List<File> tempList = new ArrayList<>();
+        for (File file : photos) {
             if (file != null) {
-                count++;
+                tempList.add(file);
             }
         }
-        Toast.makeText(this, String.valueOf(count), Toast.LENGTH_SHORT).show();
-        if (coordinates != null && !name.isEmpty() && !description.isEmpty() && city != null && count != 0) {
+        Toast.makeText(this, String.valueOf(tempList.size()), Toast.LENGTH_SHORT).show();
+        if (coordinates != null && !name.isEmpty() && !description.isEmpty() && city != null && !tempList.isEmpty()) {
             int typeID = ((TypeOfLocation) typeOfLocation.getSelectedItem()).getId();
-            new AddPointTask(name, description, coordinates, city.getId(), typeID, user.getUid(), count, photos, this).execute();
+            PointOfInterest pointOfInterest = new PointOfInterest(name, description, coordinates, city.getId(), typeID, user.getUid());
+            new AddPointTask(pointOfInterest, tempList, this).execute();
             finish();
         } else {
             Toast.makeText(this, getString(R.string.warn_params_not_fulfilled), Toast.LENGTH_SHORT).show();

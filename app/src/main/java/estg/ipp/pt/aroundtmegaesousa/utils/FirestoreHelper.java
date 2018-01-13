@@ -12,6 +12,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.internal.FirebaseAppHelper;
 
+import estg.ipp.pt.aroundtmegaesousa.activities.BaseActivity;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
 /**
@@ -20,36 +21,39 @@ import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
 public class FirestoreHelper {
 
-    private FirebaseFirestore db;
+    public static final int RESULT_SUCCESS = 1;
+    public static final int RESULT_FAIL_UPLOAD_IMAGES = 2;
+    public static final int RESULT_FAIL_ADD_DATABASE = 3;
     public static final String POINTS_COLLECTION = "points";
+    public static final String PHOTOS_DIRECTORY = "photos";
+    private FirebaseFirestore db;
     private CollectionReference points;
+    private BaseActivity context;
 
 
-    public FirestoreHelper() {
+    public FirestoreHelper(BaseActivity context) {
+        this.context = context;
         db = FirebaseFirestore.getInstance();
         points = db.collection(POINTS_COLLECTION);
     }
 
 
-    public void addPoint(final FirestoreCommunication context, PointOfInterest point) {
+    public void addPointToDatabase(PointOfInterest point) {
         points.add(point).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
-                boolean result = false;
-                String id = null;
                 if (task.isSuccessful()) {
                     DocumentReference documentReference = task.getResult();
-                    id = documentReference.getId();
-                    result = true;
+                    context.addPointResult(true, documentReference.getId(), RESULT_SUCCESS);
+                } else {
+                    context.addPointResult(false, null, RESULT_FAIL_ADD_DATABASE);
                 }
-                context.addPointResult(result, id);
-
             }
         });
     }
 
     public interface FirestoreCommunication {
-        void addPointResult(boolean result, String id);
+        void addPointResult(boolean result, String documentID, int resultCode);
 
     }
 }

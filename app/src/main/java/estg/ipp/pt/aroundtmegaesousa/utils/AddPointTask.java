@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 import estg.ipp.pt.aroundtmegaesousa.activities.AddPointActivity;
+import estg.ipp.pt.aroundtmegaesousa.activities.BaseActivity;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.models.TypeOfLocation;
 
@@ -32,65 +33,49 @@ import estg.ipp.pt.aroundtmegaesousa.models.TypeOfLocation;
 
 public class AddPointTask extends AsyncTask<String, String, String> {
 
-    private String name;
-    private String description;
-    private String userID;
-    private LatLng coordinates;
-    private String cityID;
-    private int typeID;
-    private int count;
+
     private List<File> photos;
     private FirebaseStorage storage;
     private List<String> photosURL;
-    private Activity context;
+    private BaseActivity context;
+    private PointOfInterest pointOfInterest;
 
-    public AddPointTask(String name, String desc, LatLng coordinates, String cityID, int typeID, String userID, int count, List<File> photos, Activity context) {
-        this.name = name;
-        this.description = desc;
-        this.cityID = cityID;
-        this.coordinates = coordinates;
-        this.typeID = typeID;
-        this.userID = userID;
-        this.count = count;
+    public AddPointTask(PointOfInterest pointOfInterest, List<File> photos, BaseActivity context) {
+        this.pointOfInterest = pointOfInterest;
         this.photos = photos;
-        this.photosURL = new ArrayList<String>();
+        this.photosURL = new ArrayList<>();
         this.context = context;
         this.storage = FirebaseStorage.getInstance();
     }
 
     @Override
     protected String doInBackground(String... strings) {
-
-        for (File file : this.photos) {
-            if (file != null) {
-//                photos.add(file.getAbsolutePath());
-                Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-                byte[] data = baos.toByteArray();
-
-                String path = "photos/" + UUID.randomUUID() + ".png";
-                final StorageReference photoRef = storage.getReference(path);
-
-
-                UploadTask uploadTask = photoRef.putBytes(data);
-                uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            synchronized (photosURL) {
-                                photosURL.add(task.getResult().getDownloadUrl().toString());
-                                if (photosURL.size() == count) {
-                                    PointOfInterest pointOfInterest = new PointOfInterest(name, description, coordinates, cityID, typeID, photosURL, userID, Calendar.getInstance().getTime());
-                                    new FirestoreHelper().addPoint(context, pointOfInterest);
-                                }
+        for (File file : photos) {
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+            String path = FirestoreHelper.PHOTOS_DIRECTORY + UUID.randomUUID() + ".jpeg";
+            StorageReference photoRef = storage.getReference(path);
+            UploadTask uploadTask = photoRef.putBytes(data);
+            uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        synchronized (photosURL) {
+                            photosURL.add(task.getResult().getDownloadUrl().toString());
+                            if (photosURL.size() == photos.size()) { //se já fez upload de todas as fotos
+                                pointOfInterest.setPhotos(photosURL);
+                                pointOfInterest.setDate(Calendar.getInstance().getTime());
+                                new FirestoreHelper(context).addPointToDatabase(pointOfInterest);
                             }
-                        } else {
-                            Toast.makeText(context, "RAIA", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        context.addPointResult(false, null, FirestoreHelper.RESULT_FAIL_UPLOAD_IMAGES);
                     }
-                });
-            }
+                }
+            });
+
         }
         return null;
     }

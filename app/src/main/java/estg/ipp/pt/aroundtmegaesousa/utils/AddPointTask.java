@@ -2,7 +2,9 @@ package estg.ipp.pt.aroundtmegaesousa.utils;
 
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -27,6 +29,7 @@ import java.util.UUID;
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.activities.AddPointActivity;
 import estg.ipp.pt.aroundtmegaesousa.activities.BaseActivity;
+import estg.ipp.pt.aroundtmegaesousa.activities.RandomActivity;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.models.TypeOfLocation;
 
@@ -55,9 +58,31 @@ public class AddPointTask extends AsyncTask<String, String, String> {
     @Override
     protected String doInBackground(String... strings) {
         int notifyID = 001;
-        final int incr = photos.size();
-        final NotificationUtils notificationUtils = new NotificationUtils(context, CHANNEL_ID, "Adição de ponto", "Adição em progresso", R.drawable.logo_around, notifyID);
+        int incr = 0;
 
+        switch (photos.size()) {
+            case 1:
+                incr = 50;
+                break;
+            case 2:
+                incr = 25;
+                break;
+            case 3:
+                incr = 18;
+                break;
+            case 4:
+                incr = 12;
+                break;
+            case 5:
+                incr = 10;
+                break;
+        }
+
+        final int inc = incr;
+
+        final NotificationUtils notificationUtils = new NotificationUtils(context, CHANNEL_ID, "Adição de ponto", "Adição em progresso", R.drawable.logo_around, notifyID);
+        notificationUtils.setSticky();
+        final Intent intent = new Intent(context, RandomActivity.class);
         for (File file : photos) {
             Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -71,17 +96,18 @@ public class AddPointTask extends AsyncTask<String, String, String> {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                     if (task.isSuccessful()) {
-                        notificationUtils.updateStatus(50);
+                        notificationUtils.updateStatus(inc);
                         synchronized (photosURL) {
                             photosURL.add(task.getResult().getDownloadUrl().toString());
                             if (photosURL.size() == photos.size()) { //se já fez upload de todas as fotos
                                 pointOfInterest.setPhotos(photosURL);
                                 pointOfInterest.setDate(Calendar.getInstance().getTime());
-                                new FirestoreHelper(context).addPointToDatabase(pointOfInterest, notificationUtils);
+                                notificationUtils.finishStatus();
+                                new FirestoreHelper(context).addPointToDatabase(pointOfInterest);
                             }
                         }
                     } else {
-                        context.addPointResult(false, null, FirestoreHelper.RESULT_FAIL_UPLOAD_IMAGES, notificationUtils);
+                        context.addPointResult(false, null, FirestoreHelper.RESULT_FAIL_UPLOAD_IMAGES);
                     }
                 }
             });

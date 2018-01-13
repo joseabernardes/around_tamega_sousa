@@ -304,7 +304,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private class LoadImage extends AsyncTask<String, Void, Bitmap> {
 
-        private Bitmap uploadImage(String file) {
+        private Bitmap loadImage(String file) {
             Bitmap bitmap = null;
             FileInputStream fiStream;
             boolean run = true;
@@ -337,7 +337,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         @Override
         protected Bitmap doInBackground(String... strings) {
-            return uploadImage(strings[0]);
+            return loadImage(strings[0]);
         }
 
         protected void onPostExecute(Bitmap result) {

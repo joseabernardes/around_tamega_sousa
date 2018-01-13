@@ -1,6 +1,9 @@
 package estg.ipp.pt.aroundtmegaesousa.utils;
 
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
@@ -38,22 +41,22 @@ public class FirestoreHelper {
     }
 
 
-    public void addPointToDatabase(PointOfInterest point ,final NotificationUtils notificationUtils) {
+    public void addPointToDatabase(PointOfInterest point) {
         points.add(point).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {
                     DocumentReference documentReference = task.getResult();
-                    context.addPointResult(true, documentReference.getId(), RESULT_SUCCESS,notificationUtils);
+                    context.addPointResult(true, documentReference.getId(), RESULT_SUCCESS);
                 } else {
-                    context.addPointResult(false, null, RESULT_FAIL_ADD_DATABASE,notificationUtils);
+                    context.addPointResult(false, null, RESULT_FAIL_ADD_DATABASE);
                 }
             }
         });
     }
 
     public interface FirestoreCommunication {
-        void addPointResult(boolean result, String documentID, int resultCode,NotificationUtils nt);
+        void addPointResult(boolean result, String documentID, int resultCode);
 
     }
 }

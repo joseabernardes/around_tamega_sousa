@@ -1,5 +1,6 @@
 package estg.ipp.pt.aroundtmegaesousa.activities;
 
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.Arrays;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.utils.AddPointTask;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirestoreHelper;
 import estg.ipp.pt.aroundtmegaesousa.utils.NotificationUtils;
 
@@ -80,11 +82,15 @@ public class BaseActivity extends AppCompatActivity implements FirebaseAuth.Auth
     }
 
     @Override
-    public void addPointResult(boolean result, final String documentID, int resultCode, NotificationUtils nt) {
-
+    public void addPointResult(boolean result, final String documentID, int resultCode) {
+        NotificationUtils notificationUtils = new NotificationUtils(this, AddPointTask.CHANNEL_ID, "Adição de Ponto", "Ponto Adicionado", R.drawable.logo_around, 002);
+        Intent intent = new Intent(this, RandomActivity.class);
+        intent.putExtra("documentID", documentID);
+        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        notificationUtils.cancelNotify(001);
         if (result) {
-            nt.updateStatus(001,100);
-            nt.finalNotify(001,"Adicionado");
+            notificationUtils.notification();
+            notificationUtils.setAction(pi);
         } else {
             String message = getString(R.string.message_snackbar_not_added);
             if (resultCode == FirestoreHelper.RESULT_FAIL_ADD_DATABASE) {
@@ -92,7 +98,8 @@ public class BaseActivity extends AppCompatActivity implements FirebaseAuth.Auth
             } else if (resultCode == FirestoreHelper.RESULT_FAIL_UPLOAD_IMAGES) {
                 message = getString(R.string.message_snackbar_not_added_upload);
             }
-            Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            NotificationUtils notificationError = new NotificationUtils(this, AddPointTask.CHANNEL_ID, "Adição de Ponto", message, R.drawable.logo_around, 003);
+            notificationError.notification();
         }
     }
 }

@@ -38,22 +38,22 @@ public class FirestoreHelper {
     }
 
 
-    public void addPointToDatabase(PointOfInterest point) {
+    public void addPointToDatabase(PointOfInterest point ,final NotificationUtils notificationUtils) {
         points.add(point).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {
                     DocumentReference documentReference = task.getResult();
-                    context.addPointResult(true, documentReference.getId(), RESULT_SUCCESS);
+                    context.addPointResult(true, documentReference.getId(), RESULT_SUCCESS,notificationUtils);
                 } else {
-                    context.addPointResult(false, null, RESULT_FAIL_ADD_DATABASE);
+                    context.addPointResult(false, null, RESULT_FAIL_ADD_DATABASE,notificationUtils);
                 }
             }
         });
     }
 
     public interface FirestoreCommunication {
-        void addPointResult(boolean result, String documentID, int resultCode);
+        void addPointResult(boolean result, String documentID, int resultCode,NotificationUtils nt);
 
     }
 }

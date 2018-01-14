@@ -14,16 +14,17 @@ import estg.ipp.pt.aroundtmegaesousa.R;
  * Created by PC on 13/01/2018.
  */
 
-public class NotificationUtils {
+public class AppNotification {
 
+    public static final String DEFAULT_CHANNEL = "around.t.s";
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     private int id;
     private int current;
 
-    public NotificationUtils(Context context, String CHANNEL_ID, String title, int icon, int id) {
+    public AppNotification(Context context, String title, int icon, int id) {
         this.mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        this.mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID);
+        this.mBuilder = new NotificationCompat.Builder(context, DEFAULT_CHANNEL);
         mBuilder.setContentTitle(title)
                 .setSmallIcon(icon)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon));
@@ -34,7 +35,7 @@ public class NotificationUtils {
     }
 
 
-    public NotificationUtils(Context context, String CHANNEL_ID, String title, String content, int icon, int id) {
+    public AppNotification(Context context, String CHANNEL_ID, String title, String content, int icon, int id) {
         this.mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         this.mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID);
         mBuilder.setContentTitle(title)
@@ -67,7 +68,10 @@ public class NotificationUtils {
         mNotifyManager.cancel(idCancel);
     }
 
-    public void notification() {
+    /**
+     * Show the notification
+     */
+    public void show() {
         mNotifyManager.notify(id, mBuilder.build());
     }
 
@@ -78,8 +82,8 @@ public class NotificationUtils {
     }
 
     public void setSticky() {
-//        Notification note = this.mBuilder.build();
-//        note.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
+//        AppNotification note = this.mBuilder.build();
+//        note.flags |= AppNotification.FLAG_NO_CLEAR | AppNotification.FLAG_ONGOING_EVENT;
 //        mNotifyManager.notify(id, note);
         mBuilder.setOngoing(true);
     }

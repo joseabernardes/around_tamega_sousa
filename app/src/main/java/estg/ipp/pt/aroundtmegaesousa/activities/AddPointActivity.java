@@ -162,8 +162,6 @@ public class AddPointActivity extends BaseActivity {
         adapter.addAll(Enums.getTypeOfLocations());
         typeOfLocation.setAdapter(adapter);
     }
-
-
     /**
      * Metodo responsavel por adicionar um ponto de interesse
      */

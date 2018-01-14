@@ -14,7 +14,8 @@ public class PointOfInterest implements Serializable {
 
     private String name;
     private String description;
-    private MyGeoPoint location;
+    private double latitude;
+    private double longitude;
     private int typeOfLocation;
     private List<String> photos;
     private String user;
@@ -46,7 +47,8 @@ public class PointOfInterest implements Serializable {
     public PointOfInterest(String name, String description, LatLng location, String city, int typeOfLocation, List<String> photos, String user, Date date) {
         this.name = name;
         this.description = description;
-        this.location = new MyGeoPoint(location.latitude, location.longitude);
+        this.latitude = location.latitude;
+        this.longitude = location.longitude;
         this.typeOfLocation = typeOfLocation;
         this.photos = photos;
         this.user = user;
@@ -67,7 +69,8 @@ public class PointOfInterest implements Serializable {
     public PointOfInterest(String name, String description, LatLng location, String city, int typeOfLocation, String user) {
         this.name = name;
         this.description = description;
-        this.location = new MyGeoPoint(location.latitude, location.longitude);
+        this.latitude = location.latitude;
+        this.longitude = location.longitude;
         this.typeOfLocation = typeOfLocation;
         this.photos = photos;
         this.user = user;
@@ -100,8 +103,16 @@ public class PointOfInterest implements Serializable {
         return description;
     }
 
-    public MyGeoPoint getLocation() {
-        return location;
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public LatLng getLocation() {
+        return new LatLng(this.latitude, this.longitude);
     }
 
     public int getTypeOfLocation() {

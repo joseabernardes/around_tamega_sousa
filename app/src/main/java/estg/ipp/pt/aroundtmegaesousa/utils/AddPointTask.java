@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,40 +25,45 @@ import java.util.UUID;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.activities.RandomActivity;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.FirebaseServiceCommunication;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.services.UploadFirebaseService;
 
 /**
  * Created by PC on 12/01/2018.
  */
 
-public class AddPointTask extends AsyncTask<String, Integer, String> implements FirebaseHelper.FirebaseCommunication {
-
-    public static final String CHANNEL_ID = "firestore";
+public class AddPointTask extends AsyncTask<String, Double, String> {
+    public static final String TAG = UploadFirebaseService.TAG;
     private List<File> photos;
     private PointOfInterest pointOfInterest;
     private FirebaseHelper firebaseHelper;
-    private FirebaseTaskCommunication context;
+    private FirebaseServiceCommunication mListener;
 
-    public AddPointTask(PointOfInterest pointOfInterest, List<File> photos, FirebaseTaskCommunication context) {
+
+    public AddPointTask(PointOfInterest pointOfInterest, List<File> photos, FirebaseServiceCommunication mListener) {
         this.pointOfInterest = pointOfInterest;
         this.photos = photos;
-        this.context = context;
-        firebaseHelper = new FirebaseHelper(this);
+        this.mListener = mListener;
+        firebaseHelper = new FirebaseHelper(mListener);
+
     }
 
 
     @Override
     protected void onPreExecute() {
-        context.createProgressNotification();
-
+        Log.d(TAG, "onPreExecute: ");
+        mListener.createProgressNotification();
     }
 
     @Override
     protected String doInBackground(String... strings) {
+        Log.d(TAG, "doInBackground: ");
         firebaseHelper.addPointToFirebase(pointOfInterest, photos);
 
 
-
+        return null;
+    }
 
 
       /*  int notifyID = 001;
@@ -119,54 +125,4 @@ public class AddPointTask extends AsyncTask<String, Integer, String> implements 
             });
 
         }*/
-        return null;
-    }
-
-
-    private List<byte[]> bitmapFileToBytes(File file) {
-        List<byte[]> images = new ArrayList<>();
-        Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        images.add(baos.toByteArray());
-        baos = new ByteArrayOutputStream();
-        Bitmap thumb = ThumbnailUtils.extractThumbnail(bitmap, 256, 256);
-        thumb.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-        images.add(baos.toByteArray());
-        return images;
-    }
-
-
-    @Override
-    public void addPointResult(boolean result, String documentID, int resultCode) {
-        context.createResultNotification(result,documentID,resultCode);
-    }
-
-    @Override
-    protected void onProgressUpdate(Integer... values) {
-        context.updateProgressNotification();
-    }
-
-    @Override
-    public void updateProgress(int progress) {
-        publishProgress(progress);
-    }
-
-    @Override
-    public void onFinishImageUpload(int progress) {
-
-    }
-
-
-    public interface FirebaseTaskCommunication {
-
-        void createProgressNotification();
-
-        void updateProgressNotification();
-
-        void createResultNotification(boolean result, final String documentID, int resultCode);
-
-
-    }
-
 }

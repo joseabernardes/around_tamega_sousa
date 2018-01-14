@@ -7,8 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.services.UploadFirebaseService;
 
 /**
  * Created by PC on 13/01/2018.
@@ -20,52 +22,42 @@ public class AppNotification {
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     private int id;
-    private int current;
 
+    /**
+     * Constructor for progress notification
+     *
+     * @param context
+     * @param title
+     * @param icon
+     * @param id
+     */
     public AppNotification(Context context, String title, int icon, int id) {
         this.mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         this.mBuilder = new NotificationCompat.Builder(context, DEFAULT_CHANNEL);
         mBuilder.setContentTitle(title)
                 .setSmallIcon(icon)
-                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon));
-
+                .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon))
+                .setOngoing(true);
         this.id = id;
-        current = 0;
-
     }
 
-
-    public AppNotification(Context context, String CHANNEL_ID, String title, String content, int icon, int id) {
+    /**
+     * Constructor for regular notification
+     *
+     * @param context
+     * @param title
+     * @param content
+     * @param icon
+     * @param id
+     */
+    public AppNotification(Context context, String title, String content, int icon, int id) {
         this.mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        this.mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID);
+        this.mBuilder = new NotificationCompat.Builder(context, DEFAULT_CHANNEL);
         mBuilder.setContentTitle(title)
                 .setContentText(content)
                 .setSmallIcon(icon)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon));
-
         this.id = id;
-        current = 0;
-
-    }
-
-    public void showNotify() {
-        mBuilder.setProgress(100, 1, false);
-        mNotifyManager.notify(id, mBuilder.build());
-    }
-
-    public void finishStatus() {
-        mBuilder.setProgress(100, 100, false);
-        mNotifyManager.notify(id, mBuilder.build());
-    }
-
-    public void updateStatus(int progress) {
-        current = current + progress;
-        mBuilder.setProgress(100, current, false);
-        mNotifyManager.notify(id, mBuilder.build());
-    }
-
-    public void cancelNotify(int idCancel) {
-        mNotifyManager.cancel(idCancel);
     }
 
     /**
@@ -75,17 +67,19 @@ public class AppNotification {
         mNotifyManager.notify(id, mBuilder.build());
     }
 
+    public void updateStatus(double progress) {
+        mBuilder.setProgress(100, (int) progress, false);
+        show();
+    }
+
+    public void cancelNotification(int idCancel) {
+        mNotifyManager.cancel(idCancel);
+    }
+
     public void setAction(PendingIntent pendingIntent) {
         mBuilder.setContentIntent(pendingIntent);
         mBuilder.setAutoCancel(true);
-        mNotifyManager.notify(id, mBuilder.build());
-    }
-
-    public void setSticky() {
-//        AppNotification note = this.mBuilder.build();
-//        note.flags |= AppNotification.FLAG_NO_CLEAR | AppNotification.FLAG_ONGOING_EVENT;
-//        mNotifyManager.notify(id, note);
-        mBuilder.setOngoing(true);
+        show();
     }
 
 

@@ -28,8 +28,8 @@ public class DatabaseActivity extends AppCompatActivity {
         values.put("description", poi.getDescription());
         values.put("rating", poi.getAvgRatting());
         values.put("typeofLocal", poi.getTypeOfLocation());
-        values.put("latitude", poi.getLocation().getLatitude());
-        values.put("longitude", poi.getLocation().getLongitude());
+/*        values.put("latitude", poi.getLocation().getLatitude());
+        values.put("longitude", poi.getLocation().getLongitude());*/
         values.put("typeOfPoi", type);
 
 

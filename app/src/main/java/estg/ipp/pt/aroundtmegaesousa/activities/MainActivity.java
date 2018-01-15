@@ -188,6 +188,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
+    @Override
+    public FirebaseUser getLoggedUser() {
+        return user;
+    }
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {

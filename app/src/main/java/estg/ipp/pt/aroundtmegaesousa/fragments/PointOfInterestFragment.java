@@ -3,6 +3,7 @@ package estg.ipp.pt.aroundtmegaesousa.fragments;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,15 +15,21 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import org.w3c.dom.Text;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.activities.AddPointActivity;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
+import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
 
 public class PointOfInterestFragment extends Fragment {
@@ -38,6 +45,7 @@ public class PointOfInterestFragment extends Fragment {
     private AlertDialog dialog;
     private String mParam1;
     private String mParam2;
+    private PointOfInterest poi;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -82,24 +90,45 @@ public class PointOfInterestFragment extends Fragment {
         title.setText(mParam1);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        OnFragmentsChangeViewsListener context = (OnFragmentsChangeViewsListener) mContext;
 
-        String[] options = new String[]{
-                "Editar",
-                "Eliminar",
-                "Ir para Google Maps",
-                "Ir para o caralho"
-        };
-        builder.setSingleChoiceItems(options, 0, new DialogInterface.OnClickListener() {
+        poi = new PointOfInterest("Grande Vulcão do Saara", "Um grande vulcão que se situa no Deserto do Saara", new LatLng(1123121, 123123), "Panamá", 1, "aPOLc3VHSyblhskPqbOF60F5Vek1");
+
+        final String[] options;
+        if (context.getLoggedUser().getUid().equals(poi.getUser())) {
+            options = new String[]{
+                    getString(R.string.edit_poi),
+                    getString(R.string.delete_poi),
+                    getString(R.string.google_maps),
+                    getString(R.string.add_favorites),
+//                    getString(R.string.remove_favorites)
+            };
+        } else {
+            options = new String[]{
+                    getString(R.string.google_maps),
+                    getString(R.string.add_favorites),
+//                    getString(R.string.remove_favorites)
+            };
+        }
+
+
+        builder.setItems(options, new DialogInterface.OnClickListener() {
+
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (which == 1) {
-                    Toast.makeText(mContext, "EDITAR", Toast.LENGTH_SHORT).show();
-                } else if (which == 2) {
-                    Toast.makeText(mContext, "Eliminar", Toast.LENGTH_SHORT).show();
-                } else if (which == 3) {
+                if (options[which].equals(getString(R.string.edit_poi))) {
+                    Intent intent = new Intent(mContext, AddPointActivity.class);
+                    intent.setAction(AddPointActivity.EDIT_POI_ACTION);
+                    intent.putExtra("POI", poi);
+                    Toast.makeText(mContext, "editar", Toast.LENGTH_SHORT).show();
+                } else if (options[which].equals(getString(R.string.delete_poi))) {
+                    Toast.makeText(mContext, "eliminar", Toast.LENGTH_SHORT).show();
+                } else if (options[which].equals(getString(R.string.google_maps))) {
                     Toast.makeText(mContext, "MAPS", Toast.LENGTH_SHORT).show();
-                } else if (which == 4) {
-                    Toast.makeText(mContext, "CARALHO", Toast.LENGTH_SHORT).show();
+                } else if (options[which].equals(getString(R.string.add_favorites))) {
+                    Toast.makeText(mContext, "ADD Favoritos", Toast.LENGTH_SHORT).show();
+                } else if (options[which].equals(getString(R.string.remove_favorites))) {
+                    Toast.makeText(mContext, "REMOVE Favoritos", Toast.LENGTH_SHORT).show();
                 }
             }
         });

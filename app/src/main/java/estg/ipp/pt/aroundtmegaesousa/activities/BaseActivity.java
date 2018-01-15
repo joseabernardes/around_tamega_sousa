@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
  * Created by José Bernardes on 09/01/2018.
  */
 
-public class BaseActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
+public abstract class BaseActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
 
     private String TAG = "BaseActivity";
     protected FirebaseAuth mFirebaseAuth;

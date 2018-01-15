@@ -179,7 +179,6 @@ public class AddPointActivity extends BaseActivity {
                 tempList.add(file);
             }
         }
-        Toast.makeText(this, String.valueOf(tempList.size()), Toast.LENGTH_SHORT).show();
         if (coordinates != null && !name.isEmpty() && !description.isEmpty() && city != null && !tempList.isEmpty()) {
             int typeID = ((TypeOfLocation) typeOfLocation.getSelectedItem()).getId();
             PointOfInterest pointOfInterest = new PointOfInterest(name, description, coordinates, city.getId(), typeID, user.getUid());

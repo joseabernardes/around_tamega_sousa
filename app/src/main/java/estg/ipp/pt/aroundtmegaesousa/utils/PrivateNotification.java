@@ -15,6 +15,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.Date;
+
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.services.UploadFirebaseService;
 
@@ -82,7 +84,7 @@ public class PrivateNotification {
         boolean notif = m.getBoolean("sound", false);
         boolean vibration = m.getBoolean("vibration", false);
         if (vibration) {
-            mBuilder.setVibrate(new long[]{0,1000});
+            mBuilder.setVibrate(new long[]{0, 1000});
         }
         if (notif) {
             mBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
@@ -108,12 +110,10 @@ public class PrivateNotification {
     }
 
     /**
-     * Cancel a notification by ID
-     *
-     * @param idCancel
+     * Cancel the notification
      */
-    public void cancelNotification(int idCancel) {
-        mNotifyManager.cancel(idCancel);
+    public void cancel() {
+        mNotifyManager.cancel(id);
     }
 
     /**
@@ -127,5 +127,19 @@ public class PrivateNotification {
         show();
     }
 
+    /**
+     * Get the notification ID
+     *
+     * @return
+     */
+    public int getId() {
+        return id;
+    }
 
+
+    public static int getRandomID() {
+        return (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+
+
+    }
 }

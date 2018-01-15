@@ -170,7 +170,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         if (mContext instanceof OnFragmentsChangeViewsListener) {
             OnFragmentsChangeViewsListener mListener = (OnFragmentsChangeViewsListener) mContext;
             mListener.replaceFragment(fragment);
-            mListener.changeActionBarTitle(mContext.getString(R.string.title_fragment_poi));
+            mListener.changeActionBarTitle(pointOfInterest.getName());
             mListener.showFloatingButton(false);
         }
 

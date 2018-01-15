@@ -11,6 +11,8 @@ import com.google.firebase.FirebaseApp;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.activities.RandomActivity;
@@ -22,22 +24,19 @@ import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
 public class UploadFirebaseService extends Service implements FirebaseServiceCommunication {
     public static final String TAG = "UploadFirebaseService";
-    private static final int PROGRESS_NOTIFICATION_ID = 0;
-    private static final int RESULT_NOTIFICATION_ID = 1;
     public static final String START_UPLOAD_ACTION = "upload";
     public static final String CANCEL_UPLOAD_ACTION = "cancel_upload";
     public static final String POI_PARAM = "poi";
     public static final String FILES_PARAM = "files";
     private AddPointTask task;
-    private List<PrivateNotification> notifications;
+    private PrivateNotification progressNotification;
+    private PrivateNotification resultNotification;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
-        notifications = new ArrayList<>();
         FirebaseApp.initializeApp(this);
-
     }
 
     @Override
@@ -63,30 +62,29 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
         }
         return START_REDELIVER_INTENT;
     }
+
     @Override
     public void createProgressNotification() {
         Log.d(TAG, "createProgressNotification:");
-        PrivateNotification notification = new PrivateNotification(this, getString(R.string.title_notification_add_point), R.drawable.ic_cloud_upload, PROGRESS_NOTIFICATION_ID);
-        notifications.add(PROGRESS_NOTIFICATION_ID, notification);
-        notification.show();
+        progressNotification = new PrivateNotification(this, getString(R.string.title_notification_add_point), R.drawable.ic_cloud_upload, PrivateNotification.getRandomID());
+        progressNotification.show();
     }
 
     @Override
     public void updateProgressNotification(double progress) {
         Log.d(TAG, "updateProgressNotification: " + progress);
-        notifications.get(PROGRESS_NOTIFICATION_ID).updateStatus(progress);
+        progressNotification.updateStatus(progress);
     }
 
     @Override
     public void createResultNotification(boolean result, String documentID, int resultCode) {
         Log.d(TAG, "createResultNotification: " + result);
-        PrivateNotification notification;
         if (result) {
             Intent intent = new Intent(this, RandomActivity.class);
             intent.putExtra("documentID", documentID);
             PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            notification = new PrivateNotification(this, getString(R.string.title_notification_add_point), getString(R.string.message_notification_added), R.drawable.ic_check, RESULT_NOTIFICATION_ID);
-            notification.setAction(pi);
+            resultNotification = new PrivateNotification(this, getString(R.string.title_notification_add_point), getString(R.string.message_notification_added), R.drawable.ic_check, PrivateNotification.getRandomID());
+            resultNotification.setAction(pi);
         } else {
             String message = getString(R.string.message_notification_not_added);
             if (resultCode == FirebaseHelper.RESULT_FAIL_ADD_DATABASE) {
@@ -94,12 +92,12 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
             } else if (resultCode == FirebaseHelper.RESULT_FAIL_UPLOAD_IMAGES) {
                 message = getString(R.string.message_notification_not_added_upload);
             }
-            notification = new PrivateNotification(this, getString(R.string.title_notification_add_point), message, R.drawable.ic_close, RESULT_NOTIFICATION_ID);
+            resultNotification = new PrivateNotification(this, getString(R.string.title_notification_add_point), message, R.drawable.ic_close, PrivateNotification.getRandomID());
 
         }
-        notification.cancelNotification(PROGRESS_NOTIFICATION_ID);
-        notification.show();
-        notifications.add(RESULT_NOTIFICATION_ID, notification);
+
+        progressNotification.cancel();
+        resultNotification.show();
         stopSelf();//stop the service
     }
 

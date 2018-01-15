@@ -38,6 +38,13 @@
     <string name="title_notification_add_point">Adicionar Ponto de Interesse</string>
 
 
+    <!-- Menu do poi-->
+    <string name="edit_poi">Editar</string>
+    <string name="delete_poi">Eliminar</string>
+    <string name="google_maps">Ir para o Google Maps</string>
+    <string name="add_favorites">Adicionar aos Favoritos</string>
+    <string name="remove_favorites">Remover dos Favoritos</string>
+
     <!-- Warnings -->
     <string name="warn_permission_dennied">Permissões negadas</string>
     <string name="warn_location_disable">Localização desligada</string>

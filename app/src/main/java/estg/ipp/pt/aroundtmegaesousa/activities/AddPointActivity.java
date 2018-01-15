@@ -47,6 +47,9 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 public class AddPointActivity extends BaseActivity {
 
     private static final int REQUEST_PHOTO_PERMISSIONS = 100;
+    public static final String EDIT_POI_ACTION = "edit";
+    public static final String DELETE_POI_ACTION = "delete";
+    public static final String ADD_POI_ACTION = "add";
     private static final int REQUEST_MAP_POINT = 420;
     private static final String PHOTOS_KEY = "photos_list";
     private static final String THUMBS_KEY = "img_";
@@ -370,6 +373,29 @@ public class AddPointActivity extends BaseActivity {
 
         }
         super.onSaveInstanceState(outState);
+    }
+
+
+    private void POI() {
+        Intent intent = getIntent();
+        if (intent.getAction() == AddPointActivity.EDIT_POI_ACTION) {
+            PointOfInterest poi = (PointOfInterest) intent.getExtras().getSerializable("POI");
+            this.name.setText(poi.getName());
+            this.description.setText(poi.getDescription());
+            List<City> cities = Enums.getCities();
+            for (City city1 : cities) {
+                if (city1.getId().equals(poi.getCity())) {
+                    this.city = city1;
+                }
+            }
+            this.location.setText(poi.getLatitude() + "-" + poi.getLongitude() + "\n" + "(" + poi.getCity() + ")");
+
+        } else if (intent.getAction() == AddPointActivity.ADD_POI_ACTION) {
+
+        } else if (intent.getAction() == AddPointActivity.DELETE_POI_ACTION) {
+            PointOfInterest poi = (PointOfInterest) intent.getExtras().getSerializable("POI");
+
+        }
     }
 
 

@@ -22,23 +22,25 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.AddPointActivity"
             android:windowSoftInputMode="stateHidden" />
-
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCBx-45Hg-e9lFQEVCppN23ItZQODdaPKM" />
-
         <activity android:name=".activities.SettingsActivity" />
         <activity android:name=".activities.MapPickerActivity" />
         <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.DatabaseActivity" />
-        <activity android:name=".activities.RandomActivity"></activity>
+        <activity android:name=".activities.RandomActivity" />
+
+        <service
+            android:name=".services.UploadFirebaseService"
+            android:enabled="true"
+            android:process=":uploadFirebaseService"/>
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCBx-45Hg-e9lFQEVCppN23ItZQODdaPKM" />
     </application>
 
 </manifest>

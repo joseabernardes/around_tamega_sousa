@@ -4,16 +4,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 
-public class PointOfInterest {
+public class PointOfInterest implements Serializable {
 
     private String name;
     private String description;
-    private GeoPoint location;
+    private double latitude;
+    private double longitude;
     private int typeOfLocation;
     private List<String> photos;
     private String user;
@@ -45,7 +47,8 @@ public class PointOfInterest {
     public PointOfInterest(String name, String description, LatLng location, String city, int typeOfLocation, List<String> photos, String user, Date date) {
         this.name = name;
         this.description = description;
-        this.location = new GeoPoint(location.latitude, location.longitude);
+        this.latitude = location.latitude;
+        this.longitude = location.longitude;
         this.typeOfLocation = typeOfLocation;
         this.photos = photos;
         this.user = user;
@@ -66,7 +69,8 @@ public class PointOfInterest {
     public PointOfInterest(String name, String description, LatLng location, String city, int typeOfLocation, String user) {
         this.name = name;
         this.description = description;
-        this.location = new GeoPoint(location.latitude, location.longitude);
+        this.latitude = location.latitude;
+        this.longitude = location.longitude;
         this.typeOfLocation = typeOfLocation;
         this.photos = photos;
         this.user = user;
@@ -99,8 +103,16 @@ public class PointOfInterest {
         return description;
     }
 
-    public GeoPoint getLocation() {
-        return location;
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public LatLng getLocation() {
+        return new LatLng(this.latitude, this.longitude);
     }
 
     public int getTypeOfLocation() {
@@ -127,11 +139,11 @@ public class PointOfInterest {
         return thumbs;
     }
 
-    public String getFirstPhotoThumb(){
+    public String getFirstPhotoThumb() {
         String photo = photos.get(0);
-        if(photo != null){
+        if (photo != null) {
             return convertPhotoURL(photo);
-        }else{
+        } else {
             return null;
         }
     }

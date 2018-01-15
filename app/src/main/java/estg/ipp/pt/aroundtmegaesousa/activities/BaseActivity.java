@@ -1,36 +1,20 @@
 package estg.ipp.pt.aroundtmegaesousa.activities;
 
-import android.app.PendingIntent;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import java.util.Arrays;
-
-import estg.ipp.pt.aroundtmegaesousa.R;
-import estg.ipp.pt.aroundtmegaesousa.utils.AddPointTask;
-import estg.ipp.pt.aroundtmegaesousa.utils.FirestoreHelper;
-import estg.ipp.pt.aroundtmegaesousa.utils.NotificationUtils;
 
 /**
  * Created by José Bernardes on 09/01/2018.
  */
 
-public class BaseActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener, FirestoreHelper.FirestoreCommunication {
+public class BaseActivity extends AppCompatActivity implements FirebaseAuth.AuthStateListener {
 
     private String TAG = "BaseActivity";
     protected FirebaseAuth mFirebaseAuth;
@@ -81,25 +65,5 @@ public class BaseActivity extends AppCompatActivity implements FirebaseAuth.Auth
         mFirebaseAuth.addAuthStateListener(this);
     }
 
-    @Override
-    public void addPointResult(boolean result, final String documentID, int resultCode) {
-        NotificationUtils notificationUtils = new NotificationUtils(this, AddPointTask.CHANNEL_ID, "Adicionar ponto", "Ponto adicionado com sucesso", R.drawable.logo_around, 002);
-        Intent intent = new Intent(this, RandomActivity.class);
-        intent.putExtra("documentID", documentID);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        notificationUtils.cancelNotify(001);
-        if (result) {
-            notificationUtils.notification();
-            notificationUtils.setAction(pi);
-        } else {
-            String message = getString(R.string.message_snackbar_not_added);
-            if (resultCode == FirestoreHelper.RESULT_FAIL_ADD_DATABASE) {
-                message = getString(R.string.message_snackbar_not_added_database);
-            } else if (resultCode == FirestoreHelper.RESULT_FAIL_UPLOAD_IMAGES) {
-                message = getString(R.string.message_snackbar_not_added_upload);
-            }
-            NotificationUtils notificationError = new NotificationUtils(this, AddPointTask.CHANNEL_ID, "Adição de Ponto", message, R.drawable.logo_around, 003);
-            notificationError.notification();
-        }
-    }
+
 }

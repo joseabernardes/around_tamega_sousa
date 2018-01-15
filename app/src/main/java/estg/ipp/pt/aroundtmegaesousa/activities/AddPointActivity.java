@@ -5,23 +5,15 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,34 +22,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.time.LocalDateTime;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.models.City;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.models.TypeOfLocation;
+import estg.ipp.pt.aroundtmegaesousa.services.UploadFirebaseService;
 import estg.ipp.pt.aroundtmegaesousa.utils.AddPointTask;
 import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
-import estg.ipp.pt.aroundtmegaesousa.utils.FirestoreHelper;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
@@ -181,12 +163,10 @@ public class AddPointActivity extends BaseActivity {
         typeOfLocation.setAdapter(adapter);
     }
 
-
     /**
      * Metodo responsavel por adicionar um ponto de interesse
      */
     private void addPoint() {
-        Log.d("qlq merda", "addPoint: ");
         final String name = this.name.getText().toString();
         final String description = this.description.getText().toString();
 
@@ -200,7 +180,19 @@ public class AddPointActivity extends BaseActivity {
         if (coordinates != null && !name.isEmpty() && !description.isEmpty() && city != null && !tempList.isEmpty()) {
             int typeID = ((TypeOfLocation) typeOfLocation.getSelectedItem()).getId();
             PointOfInterest pointOfInterest = new PointOfInterest(name, description, coordinates, city.getId(), typeID, user.getUid());
-            new AddPointTask(pointOfInterest, tempList, this).execute();
+            Intent intent = new Intent(this, UploadFirebaseService.class);
+            intent.setAction(UploadFirebaseService.START_UPLOAD_ACTION);
+            intent.putExtra(UploadFirebaseService.POI_PARAM, pointOfInterest);
+            intent.putExtra(UploadFirebaseService.FILES_PARAM, (Serializable) tempList);
+            intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+
+
+                    /*
+                       PointOfInterest pointOfInterest = (PointOfInterest) intent.getSerializableExtra(POI_PARAM);
+                List<File> photos = (List<File>) intent.getSerializableExtra(FILES_PARAM);
+                     */
+            startService(intent);
+/*            new AddPointTask(pointOfInterest, tempList, this).execute();*/
             finish();
         } else {
             Toast.makeText(this, getString(R.string.warn_params_not_fulfilled), Toast.LENGTH_SHORT).show();
@@ -239,7 +231,7 @@ public class AddPointActivity extends BaseActivity {
 /*                Bitmap myBitmap = BitmapFactory.decodeFile(image.getAbsolutePath());
                 imageView.setImageBitmap(myBitmap);*/
                 expandedImageView.setVisibility(View.VISIBLE);
-                updateMenuItem("Eliminar", R.drawable.ic_cancel);
+                updateMenuItem("Eliminar", R.drawable.ic_close);
                 toolbar.setTitle("Imagem " + image.getName());
                 imageOpen = true;
             } else {

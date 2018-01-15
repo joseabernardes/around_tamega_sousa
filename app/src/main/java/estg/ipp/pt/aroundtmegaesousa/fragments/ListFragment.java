@@ -4,8 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DialogTitle;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,13 +15,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 
-import java.util.ArrayList;
-
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ListItemAdapter;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
-import estg.ipp.pt.aroundtmegaesousa.utils.FirestoreHelper;
+import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
 
 public class ListFragment extends Fragment implements ListItemAdapter.OnItemSelectedListener {
@@ -85,7 +81,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
 
         mFirestore = FirebaseFirestore.getInstance();
 
-        mQuery = mFirestore.collection(FirestoreHelper.POINTS_COLLECTION)
+        mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
                 .orderBy("date", Query.Direction.DESCENDING);
 
 

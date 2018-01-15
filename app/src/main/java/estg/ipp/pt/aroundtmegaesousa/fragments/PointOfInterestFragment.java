@@ -119,26 +119,29 @@ public class PointOfInterestFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (options[which].equals(getString(R.string.edit_poi))) {
+
                     Intent intent = new Intent(mContext, AddPointActivity.class);
                     intent.setAction(AddPointActivity.EDIT_POI_ACTION);
                     intent.putExtra("POI", poi);
-                    Toast.makeText(mContext, "editar", Toast.LENGTH_SHORT).show();
+
+
                 } else if (options[which].equals(getString(R.string.delete_poi))) {
+
                     FirebaseHelper fbh = new FirebaseHelper();
                     fbh.deletePOI(poi.getId(), PointOfInterestFragment.this);
+
                 } else if (options[which].equals(getString(R.string.google_maps))) {
 
-//                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,Uri.parse("https://www.google.com/maps/dir/?api=1&query=41.145042, -8.611419"));
-//                    startActivity(intent);
-                    Uri gmmIntentUri = Uri.parse("geo:37.7749,-122.4194");
+                    Uri gmmIntentUri = Uri.parse("geo:" + poi.getLatitude() + "," + poi.getLongitude() + "?q=" + poi.getLatitude() + "," + poi.getLongitude());
                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                     mapIntent.setPackage("com.google.android.apps.maps");
                     startActivity(mapIntent);
 
                 } else if (options[which].equals(getString(R.string.add_favorites))) {
-                    Toast.makeText(mContext, "ADD Favoritos", Toast.LENGTH_SHORT).show();
+
+
                 } else if (options[which].equals(getString(R.string.remove_favorites))) {
-                    Toast.makeText(mContext, "REMOVE Favoritos", Toast.LENGTH_SHORT).show();
+
                 }
             }
         });
@@ -235,7 +238,7 @@ public class PointOfInterestFragment extends Fragment {
 
     public void deleteSuccess(boolean success) {
         if (success) {
-//            Toast.makeText(mContext, "Removido com sucesso", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "Removido com sucesso", Toast.LENGTH_SHORT).show();
             getActivity().onBackPressed();
         } else {
             Toast.makeText(mContext, "Não Removido", Toast.LENGTH_SHORT).show();

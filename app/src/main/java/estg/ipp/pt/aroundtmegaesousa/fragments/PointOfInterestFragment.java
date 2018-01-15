@@ -1,17 +1,23 @@
 package estg.ipp.pt.aroundtmegaesousa.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -29,7 +35,7 @@ public class PointOfInterestFragment extends Fragment {
     private ImageView[] dots;
     LinearLayout sliderDotspanel;
     private TextView title;
-
+    private AlertDialog dialog;
     private String mParam1;
     private String mParam2;
     private static final String ARG_PARAM1 = "param1";
@@ -64,6 +70,7 @@ public class PointOfInterestFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View mContentView = inflater.inflate(R.layout.fragment_point_of_interest, container, false);
+        setHasOptionsMenu(true);
 
         mPager = mContentView.findViewById(R.id.slider);
         sliderDotspanel = mContentView.findViewById(R.id.slider_dots);
@@ -73,6 +80,31 @@ public class PointOfInterestFragment extends Fragment {
         dots = new ImageView[numImages];
         title = mContentView.findViewById(R.id.title);
         title.setText(mParam1);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+        String[] options = new String[]{
+                "Editar",
+                "Eliminar",
+                "Ir para Google Maps",
+                "Ir para o caralho"
+        };
+
+        builder.setSingleChoiceItems(options, 0, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 1) {
+                    Toast.makeText(mContext, "EDITAR", Toast.LENGTH_SHORT).show();
+                } else if (which == 2) {
+                    Toast.makeText(mContext, "Eliminar", Toast.LENGTH_SHORT).show();
+                } else if (which == 3) {
+                    Toast.makeText(mContext, "MAPS", Toast.LENGTH_SHORT).show();
+                } else if (which == 4) {
+                    Toast.makeText(mContext, "CARALHO", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        dialog = builder.create();
 
         for (int i = 0; i < numImages; i++) {
             dots[i] = new ImageView(mContext);
@@ -139,5 +171,27 @@ public class PointOfInterestFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.menu_point_of_interest, menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_options:
+                dialog.show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 }

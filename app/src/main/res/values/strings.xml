@@ -23,6 +23,7 @@
     <string name="save_place">Selecionar</string>
     <string name="close">Check</string>
 
+    <string name="options">Opções</string>
 
     <!-- Title -->
     <string name="title_activity_add_point">Adicionar Ponto</string>

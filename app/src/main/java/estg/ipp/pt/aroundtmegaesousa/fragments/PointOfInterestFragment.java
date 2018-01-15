@@ -89,7 +89,6 @@ public class PointOfInterestFragment extends Fragment {
                 "Ir para Google Maps",
                 "Ir para o caralho"
         };
-
         builder.setSingleChoiceItems(options, 0, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

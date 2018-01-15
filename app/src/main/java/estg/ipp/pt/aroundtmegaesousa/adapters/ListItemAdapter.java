@@ -84,7 +84,10 @@ public class ListItemAdapter extends PointOfInterestAdapter {
 
         public void bind(final PointOfInterest pointOfInterest, final OnItemSelectedListener mListener) {
             name.setText(pointOfInterest.getName());
-            String imageURL = pointOfInterest.getPhotos().get(0);
+            String imageURL = null;
+            if (!pointOfInterest.getPhotos().isEmpty()) {
+                imageURL = pointOfInterest.getPhotos().get(0);
+            }
             if (imageURL != null) {
                 Picasso.with(image.getContext()).load(imageURL).fit().placeholder(R.drawable.default_point).centerInside().into(image, new Callback() {
                     @Override

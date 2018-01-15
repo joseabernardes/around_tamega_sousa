@@ -93,6 +93,7 @@ public abstract class PointOfInterestAdapter extends RecyclerView.Adapter<ListIt
         Log.d(TAG, "onEvent:numChanges:" + documentSnapshots.getDocumentChanges().size());
         for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
             PointOfInterest pointOfInterest = change.getDocument().toObject(PointOfInterest.class);
+            pointOfInterest.setId(change.getDocument().getId());
             switch (change.getType()) {
                 case ADDED:
                     onDocumentAdded(pointOfInterest, change.getNewIndex());

@@ -81,7 +81,7 @@ public class PrivateNotification {
         boolean notif = m.getBoolean("sound", false);
         boolean vibration = m.getBoolean("vibration", false);
         if (vibration) {
-            mBuilder.setVibrate(new long[]{1000});
+            mBuilder.setVibrate(new long[]{0,1000});
         }
         if (notif) {
             mBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);

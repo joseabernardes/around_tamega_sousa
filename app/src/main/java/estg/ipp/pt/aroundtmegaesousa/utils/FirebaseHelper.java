@@ -26,6 +26,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
@@ -59,7 +60,8 @@ public class FirebaseHelper {
     private List<String> photosThumbURL;
     private float photosProgressSteps;
     private double onGoingProgress;
-    private double[] progress;
+    private double[] lastProgressPhotos;
+    private double[] lastProgressThumbs;
 
 
     public FirebaseHelper(FirebaseServiceCommunication mListener) {
@@ -71,13 +73,24 @@ public class FirebaseHelper {
                         .build());
         this.storage = FirebaseStorage.getInstance();
         points = db.collection(POINTS_COLLECTION);
-        progress = new double[5];
+
     }
 
-
+    /**
+     * Add a point and their photos to firebase
+     *
+     * @param pointOfInterest
+     * @param photos
+     */
     public void addPointToFirebase(PointOfInterest pointOfInterest, List<File> photos) {
-        photosProgressSteps = PHOTOS_PERCENTAGE / photos.size();
-        addImagesToStorage(photos, pointOfInterest);
+        List<List<byte[]>> list = getListOfBitmapsAsBytes(photos);
+        photosProgressSteps = PHOTOS_PERCENTAGE / (photos.size() * 2);
+
+        this.photosURL = new ArrayList<>();
+        this.photosThumbURL = new ArrayList<>();
+        lastProgressPhotos = new double[photos.size()];
+        lastProgressThumbs = new double[photos.size()];
+        addImagesToStorage(list.get(0), list.get(1), pointOfInterest);
     }
 
 
@@ -98,31 +111,33 @@ public class FirebaseHelper {
     }
 
 
-    private void addImagesToStorage(final List<File> photos, final PointOfInterest pointOfInterest) {
+    private void addImagesToStorage(final List<byte[]> photos, final List<byte[]> photosThumbs, final PointOfInterest pointOfInterest) {
         Log.d(TAG, "addImagesToStorage: ");
-        this.photosURL = new ArrayList<>();
-        this.photosThumbURL = new ArrayList<>();
+        addImages(photos, pointOfInterest, photosURL, lastProgressPhotos, "PHOTOS");//photos
+        addImages(photosThumbs, pointOfInterest, photosThumbURL, lastProgressThumbs, "THUMBS");//thumbs
+    }
+
+
+    private void addImages(final List<byte[]> photos, final PointOfInterest pointOfInterest, final List<String> urlList, final double[] lastProgress, final String type) {
         for (int i = 0; i < photos.size(); i++) {
-
             final int position = i;
- /*
-        for (File file : photos) {*/
-            List<byte[]> images = bitmapFileToBytes(photos.get(i));
             String uID = UUID.randomUUID().toString();
-            String path = FirebaseHelper.PHOTOS_DIRECTORY + uID + ".jpeg";
+            String path = FirebaseHelper.PHOTOS_DIRECTORY + "/" + uID + ".jpeg";
             StorageReference photoRef = storage.getReference(path);
-            UploadTask uploadTask = photoRef.putBytes(images.get(0));
-
+            UploadTask uploadTask = photoRef.putBytes(photos.get(i));
             uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                     if (task.isSuccessful()) {
                         synchronized (photosURL) {
-                            photosURL.add(task.getResult().getDownloadUrl().toString());
-                            if (photosURL.size() == photos.size()) { //se já fez upload de todas as fotos
-                                pointOfInterest.setPhotos(photosURL);
-                                pointOfInterest.setDate(Calendar.getInstance().getTime());
-                                addPointToDatabase(pointOfInterest);
+                            synchronized (photosThumbURL) {
+                                urlList.add(task.getResult().getDownloadUrl().toString());
+                                if (photosURL.size() == photosURL.size() && photosThumbURL.size() == photos.size()) { //se já fez upload de todas as fotos
+                                    pointOfInterest.setPhotos(photosURL);
+                                    pointOfInterest.setPhotosThumbs(photosThumbURL);
+                                    pointOfInterest.setDate(Calendar.getInstance().getTime());
+                                    addPointToDatabase(pointOfInterest);
+                                }
                             }
                         }
                     } else {
@@ -133,29 +148,38 @@ public class FirebaseHelper {
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                     double actual = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    onGoingProgress += actual - progress[position]; //o que vem menos o anterior
-                    progress[position] = actual;
+                    onGoingProgress += actual - lastProgress[position]; //o que vem menos o anterior
+                    lastProgress[position] = actual;
+                    Log.d(TAG, "P: " + position + "T: " + type + " oG: " + onGoingProgress);
                     mListener.updateProgressNotification((onGoingProgress * photosProgressSteps));
+                    Log.d(TAG, "% " + (onGoingProgress * photosProgressSteps));
                 }
             });
-
         }
 
 
     }
 
+    private List<List<byte[]>> getListOfBitmapsAsBytes(List<File> files) {
+        List<byte[]> photos = new ArrayList<>();
+        List<byte[]> photoThumbs = new ArrayList<>();
+        for (File file : files) {
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+            Bitmap thumb = ThumbnailUtils.extractThumbnail(bitmap, 256, 256);
+            photos.add(convertBitmapToByte(bitmap));
+            photoThumbs.add(convertBitmapToByte(thumb));
+        }
+        List<List<byte[]>> list = new ArrayList<>();
+        list.add(photos);
+        list.add(photoThumbs);
+        return list;
+    }
 
-    private List<byte[]> bitmapFileToBytes(File file) {
-        List<byte[]> images = new ArrayList<>();
-        Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+
+    private byte[] convertBitmapToByte(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        images.add(baos.toByteArray());
-        baos = new ByteArrayOutputStream();
-        Bitmap thumb = ThumbnailUtils.extractThumbnail(bitmap, 256, 256);
-        thumb.compress(Bitmap.CompressFormat.JPEG, 80, baos);
-        images.add(baos.toByteArray());
-        return images;
+        return baos.toByteArray();
     }
 
 }

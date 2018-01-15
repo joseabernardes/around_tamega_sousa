@@ -140,7 +140,7 @@ public class FirebaseHelper {
                         synchronized (photosURL) {
                             synchronized (photosThumbURL) {
                                 urlList.add(task.getResult().getDownloadUrl().toString());
-                                if (photosURL.size() == photosURL.size() && photosThumbURL.size() == photos.size()) { //se já fez upload de todas as fotos
+                                if (photosURL.size() == photos.size() && photosThumbURL.size() == photos.size()) { //se já fez upload de todas as fotos
                                     pointOfInterest.setPhotos(photosURL);
                                     pointOfInterest.setPhotosThumbs(photosThumbURL);
                                     pointOfInterest.setDate(Calendar.getInstance().getTime());

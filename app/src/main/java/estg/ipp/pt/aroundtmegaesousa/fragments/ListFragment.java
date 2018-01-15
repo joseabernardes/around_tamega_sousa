@@ -166,7 +166,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     @Override
     public void onItemSelected(PointOfInterest pointOfInterest) {
 
-        Fragment fragment = PointOfInterestFragment.newInstance(pointOfInterest.getName(), "SS");
+        Fragment fragment = PointOfInterestFragment.newInstance(pointOfInterest);
         if (mContext instanceof OnFragmentsChangeViewsListener) {
             OnFragmentsChangeViewsListener mListener = (OnFragmentsChangeViewsListener) mContext;
             mListener.replaceFragment(fragment);

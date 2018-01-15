@@ -30,6 +30,15 @@ public class Enums {
         return cities;
     }
 
+    public static City getCityByID(String id) {
+        for (City city : getCities()) {
+            if (city.getId().equals(id)) {
+                return city;
+            }
+        }
+        return null;
+    }
+
 
     public static List<TypeOfLocation> getTypeOfLocations() {
         List<TypeOfLocation> typeOfLocations = new ArrayList<>();
@@ -43,5 +52,13 @@ public class Enums {
         return typeOfLocations;
     }
 
+    public static TypeOfLocation getTypeOfLocationByID(int id) {
+        for (TypeOfLocation type : getTypeOfLocations()) {
+            if (type.getId() == id) {
+                return type;
+            }
+        }
+        return null;
+    }
 
 }

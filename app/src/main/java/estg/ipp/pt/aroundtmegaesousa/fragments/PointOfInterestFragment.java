@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.AppCompatRatingBar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,11 +27,16 @@ import com.google.firebase.auth.FirebaseUser;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Type;
+
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.activities.AddPointActivity;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
+import estg.ipp.pt.aroundtmegaesousa.models.City;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.models.TypeOfLocation;
+import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
 
@@ -45,11 +51,13 @@ public class PointOfInterestFragment extends Fragment {
     LinearLayout sliderDotspanel;
     private TextView title;
     private AlertDialog dialog;
-    private String mParam1;
-    private String mParam2;
-    private PointOfInterest poi;
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_POI = "arg_poi";
+    private PointOfInterest pointOfInterest;
+    private AppCompatRatingBar ratingBar;
+    private TextView ratingText;
+    private TextView description;
+    private TextView location;
+    private TextView localType;
 
 
     private OnFragmentInteractionListener mListener;
@@ -58,11 +66,10 @@ public class PointOfInterestFragment extends Fragment {
     }
 
 
-    public static PointOfInterestFragment newInstance(String param1, String param2) {
+    public static PointOfInterestFragment newInstance(PointOfInterest pointOfInterest) {
         PointOfInterestFragment fragment = new PointOfInterestFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(ARG_POI, pointOfInterest);
         fragment.setArguments(args);
         return fragment;
     }
@@ -72,8 +79,7 @@ public class PointOfInterestFragment extends Fragment {
         super.onCreate(savedInstanceState);
         mContext = getActivity();
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            pointOfInterest = (PointOfInterest) getArguments().getSerializable(ARG_POI);
         }
     }
 
@@ -81,23 +87,38 @@ public class PointOfInterestFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View mContentView = inflater.inflate(R.layout.fragment_point_of_interest, container, false);
         setHasOptionsMenu(true);
-
         mPager = mContentView.findViewById(R.id.slider);
         sliderDotspanel = mContentView.findViewById(R.id.slider_dots);
         mImageAdapter = new ImageAdapter(mContext);
         mPager.setAdapter(mImageAdapter);
         numImages = mImageAdapter.getCount();
         dots = new ImageView[numImages];
+        //find
         title = mContentView.findViewById(R.id.title);
-        title.setText(mParam1);
+        ratingBar = mContentView.findViewById(R.id.rating_bar);
+        ratingText = mContentView.findViewById(R.id.rating_text);
+        description = mContentView.findViewById(R.id.description);
+        location = mContentView.findViewById(R.id.location);
+        localType = mContentView.findViewById(R.id.local_type);
 
+
+        title.setText(pointOfInterest.getName());
+        description.setText(pointOfInterest.getDescription());
+        ratingBar.setRating(pointOfInterest.getAvgRatting());
+        ratingText.setText(String.valueOf(pointOfInterest.getAvgRatting()));
+        City city = Enums.getCityByID(pointOfInterest.getCity());
+        if (city != null) {
+            location.setText(city.getName());
+        }
+        TypeOfLocation typeOfLocation = Enums.getTypeOfLocationByID(pointOfInterest.getTypeOfLocation());
+        if (city != null) {
+            localType.setText(typeOfLocation.getType());
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         OnFragmentsChangeViewsListener context = (OnFragmentsChangeViewsListener) mContext;
 
-        poi = new PointOfInterest("Grande Vulcão do Saara", "Um grande vulcão que se situa no Deserto do Saara", new LatLng(1123121, 123123), "Panamá", 1, "Sv4yF6IPDBX9c8g37PZFlwUZNch2");
-        poi.setId("GirCIOWq7mw8GJCC1jle");
         final String[] options;
-        if (context.getLoggedUser().getUid().equals(poi.getUser())) {
+        if (context.getLoggedUser().getUid().equals(pointOfInterest.getUser())) {
             options = new String[]{
                     getString(R.string.edit_poi),
                     getString(R.string.delete_poi),
@@ -121,11 +142,11 @@ public class PointOfInterestFragment extends Fragment {
                 if (options[which].equals(getString(R.string.edit_poi))) {
                     Intent intent = new Intent(mContext, AddPointActivity.class);
                     intent.setAction(AddPointActivity.EDIT_POI_ACTION);
-                    intent.putExtra("POI", poi);
+                    intent.putExtra("POI", pointOfInterest);
                     Toast.makeText(mContext, "editar", Toast.LENGTH_SHORT).show();
                 } else if (options[which].equals(getString(R.string.delete_poi))) {
                     FirebaseHelper fbh = new FirebaseHelper();
-                    fbh.deletePOI(poi.getId(), PointOfInterestFragment.this);
+                    fbh.deletePOI(pointOfInterest.getId(), PointOfInterestFragment.this);
                 } else if (options[which].equals(getString(R.string.google_maps))) {
 
 //                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,Uri.parse("https://www.google.com/maps/dir/?api=1&query=41.145042, -8.611419"));

@@ -162,6 +162,7 @@ public class AddPointActivity extends BaseActivity {
         adapter.addAll(Enums.getTypeOfLocations());
         typeOfLocation.setAdapter(adapter);
     }
+
     /**
      * Metodo responsavel por adicionar um ponto de interesse
      */
@@ -183,6 +184,7 @@ public class AddPointActivity extends BaseActivity {
             intent.setAction(UploadFirebaseService.START_UPLOAD_ACTION);
             intent.putExtra(UploadFirebaseService.POI_PARAM, pointOfInterest);
             intent.putExtra(UploadFirebaseService.FILES_PARAM, (Serializable) tempList);
+            intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
 
 
                     /*
@@ -229,7 +231,7 @@ public class AddPointActivity extends BaseActivity {
 /*                Bitmap myBitmap = BitmapFactory.decodeFile(image.getAbsolutePath());
                 imageView.setImageBitmap(myBitmap);*/
                 expandedImageView.setVisibility(View.VISIBLE);
-                updateMenuItem("Eliminar", R.drawable.ic_cancel);
+                updateMenuItem("Eliminar", R.drawable.ic_close);
                 toolbar.setTitle("Imagem " + image.getName());
                 imageOpen = true;
             } else {

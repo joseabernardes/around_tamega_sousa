@@ -70,7 +70,7 @@ public class AddPointTask extends AsyncTask<String, Double, String> {
 
         final int inc = 60 / photos.size();
 
-        final AppNotification notificationUtils = new AppNotification(context, CHANNEL_ID, "A adicionar Ponto...", R.drawable.logo_around, notifyID);
+        final NotificationUtils notificationUtils = new NotificationUtils(context, CHANNEL_ID, "A adicionar Ponto...", R.drawable.logo_around, notifyID);
         notificationUtils.setSticky();
         final Intent intent = new Intent(context, RandomActivity.class);
         for (File file : photos) {

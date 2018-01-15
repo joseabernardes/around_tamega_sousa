@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.google.firebase.FirebaseApp;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,7 @@ import estg.ipp.pt.aroundtmegaesousa.activities.RandomActivity;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.FirebaseServiceCommunication;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.utils.AddPointTask;
-import estg.ipp.pt.aroundtmegaesousa.utils.AppNotification;
+import estg.ipp.pt.aroundtmegaesousa.utils.NotificationUtils;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
 public class UploadFirebaseService extends Service implements FirebaseServiceCommunication {
@@ -26,16 +28,15 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
     public static final String CANCEL_UPLOAD_ACTION = "cancel_upload";
     public static final String POI_PARAM = "poi";
     public static final String FILES_PARAM = "files";
-
-
     private AddPointTask task;
-    private List<AppNotification> notifications;
+    private List<NotificationUtils> notifications;
 
 
     @Override
     public void onCreate() {
         super.onCreate();
         notifications = new ArrayList<>();
+        FirebaseApp.initializeApp(this);
 
     }
 
@@ -54,14 +55,52 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
                 break;
             case CANCEL_UPLOAD_ACTION:
                 //cancelar
+                //not used
                 task.cancel(true);
                 break;
 
 
         }
+        return START_REDELIVER_INTENT;
+    }
+    @Override
+    public void createProgressNotification() {
+        Log.d(TAG, "createProgressNotification:");
+        NotificationUtils notification = new NotificationUtils(this, getString(R.string.title_notification_add_point), R.drawable.ic_cloud_upload, PROGRESS_NOTIFICATION_ID);
+        notifications.add(PROGRESS_NOTIFICATION_ID, notification);
+        notification.show();
+    }
 
+    @Override
+    public void updateProgressNotification(double progress) {
+        Log.d(TAG, "updateProgressNotification: " + progress);
+        notifications.get(PROGRESS_NOTIFICATION_ID).updateStatus(progress);
+    }
 
-        return START_NOT_STICKY;
+    @Override
+    public void createResultNotification(boolean result, String documentID, int resultCode) {
+        Log.d(TAG, "createResultNotification: " + result);
+        NotificationUtils notification;
+        if (result) {
+            Intent intent = new Intent(this, RandomActivity.class);
+            intent.putExtra("documentID", documentID);
+            PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            notification = new NotificationUtils(this, getString(R.string.title_notification_add_point), getString(R.string.message_notification_added), R.drawable.ic_check, RESULT_NOTIFICATION_ID);
+            notification.setAction(pi);
+        } else {
+            String message = getString(R.string.message_notification_not_added);
+            if (resultCode == FirebaseHelper.RESULT_FAIL_ADD_DATABASE) {
+                message = getString(R.string.message_notification_not_added_database);
+            } else if (resultCode == FirebaseHelper.RESULT_FAIL_UPLOAD_IMAGES) {
+                message = getString(R.string.message_notification_not_added_upload);
+            }
+            notification = new NotificationUtils(this, getString(R.string.title_notification_add_point), message, R.drawable.ic_close, RESULT_NOTIFICATION_ID);
+
+        }
+        notification.cancelNotification(PROGRESS_NOTIFICATION_ID);
+        notification.show();
+        notifications.add(RESULT_NOTIFICATION_ID, notification);
+        stopSelf();//stop the service
     }
 
 
@@ -72,43 +111,8 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
 
 
     @Override
-    public void createProgressNotification() {
-        Log.d(TAG, "createProgressNotification:");
-        AppNotification notification = new AppNotification(this, "Adicionar Ponto de Interesse", R.drawable.ic_check, PROGRESS_NOTIFICATION_ID);
-        notifications.add(PROGRESS_NOTIFICATION_ID, notification);
-        notification.show();
-    }
-
-    @Override
-    public void updateProgressNotification(double progress) {
-        Log.d(TAG, "updateProgressNotification: ");
-        notifications.get(PROGRESS_NOTIFICATION_ID).updateStatus(progress);
-    }
-
-    @Override
-    public void createResultNotification(boolean result, String documentID, int resultCode) {
-        Log.d(TAG, "createResultNotification: " + result);
-        AppNotification notification = new AppNotification(this, "Adicionar ponto", "Ponto adicionado com sucesso", R.drawable.logo_around, RESULT_NOTIFICATION_ID);
-        notifications.add(RESULT_NOTIFICATION_ID, notification);
-        notification.cancelNotification(PROGRESS_NOTIFICATION_ID);
-
-        Intent intent = new Intent(this, RandomActivity.class);
-        intent.putExtra("documentID", documentID);
-        PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        if (result) {
-            notification.setAction(pi);
-            notification.show();
-        } else {
-            String message = getString(R.string.message_snackbar_not_added);
-            if (resultCode == FirebaseHelper.RESULT_FAIL_ADD_DATABASE) {
-                message = getString(R.string.message_snackbar_not_added_database);
-            } else if (resultCode == FirebaseHelper.RESULT_FAIL_UPLOAD_IMAGES) {
-                message = getString(R.string.message_snackbar_not_added_upload);
-            }
-            AppNotification notificationError = new AppNotification(this, "Adição de Ponto", message, R.drawable.logo_around, RESULT_NOTIFICATION_ID);
-            notificationError.show();
-        }
-
-        stopSelf();
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
     }
 }

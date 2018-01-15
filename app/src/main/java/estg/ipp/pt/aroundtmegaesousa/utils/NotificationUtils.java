@@ -16,7 +16,7 @@ import estg.ipp.pt.aroundtmegaesousa.services.UploadFirebaseService;
  * Created by PC on 13/01/2018.
  */
 
-public class AppNotification {
+public class NotificationUtils {
 
     public static final String DEFAULT_CHANNEL = "around.t.s";
     private NotificationManager mNotifyManager;
@@ -31,7 +31,7 @@ public class AppNotification {
      * @param icon
      * @param id
      */
-    public AppNotification(Context context, String title, int icon, int id) {
+    public NotificationUtils(Context context, String title, int icon, int id) {
         this.mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         this.mBuilder = new NotificationCompat.Builder(context, DEFAULT_CHANNEL);
         mBuilder.setContentTitle(title)
@@ -50,7 +50,7 @@ public class AppNotification {
      * @param icon
      * @param id
      */
-    public AppNotification(Context context, String title, String content, int icon, int id) {
+    public NotificationUtils(Context context, String title, String content, int icon, int id) {
         this.mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         this.mBuilder = new NotificationCompat.Builder(context, DEFAULT_CHANNEL);
         mBuilder.setContentTitle(title)
@@ -67,15 +67,30 @@ public class AppNotification {
         mNotifyManager.notify(id, mBuilder.build());
     }
 
+    /**
+     * Show de notification with the given progress
+     *
+     * @param progress
+     */
     public void updateStatus(double progress) {
         mBuilder.setProgress(100, (int) progress, false);
         show();
     }
 
+    /**
+     * Cancel a notification by ID
+     *
+     * @param idCancel
+     */
     public void cancelNotification(int idCancel) {
         mNotifyManager.cancel(idCancel);
     }
 
+    /**
+     * Sets a pending intent to be trigged on notification click
+     *
+     * @param pendingIntent
+     */
     public void setAction(PendingIntent pendingIntent) {
         mBuilder.setContentIntent(pendingIntent);
         mBuilder.setAutoCancel(true);

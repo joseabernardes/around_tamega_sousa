@@ -16,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.internal.FirebaseAppHelper;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -57,20 +58,25 @@ public class FirebaseHelper {
     private List<String> photosURL;
     private List<String> photosThumbURL;
     private float photosProgressSteps;
-    private double current;
+    private double onGoingProgress;
+    private double[] progress;
 
 
     public FirebaseHelper(FirebaseServiceCommunication mListener) {
         this.mListener = mListener;
         db = FirebaseFirestore.getInstance();
+        db.setFirestoreSettings(
+                new FirebaseFirestoreSettings.Builder()
+                        .setPersistenceEnabled(false)
+                        .build());
         this.storage = FirebaseStorage.getInstance();
         points = db.collection(POINTS_COLLECTION);
+        progress = new double[5];
     }
 
 
     public void addPointToFirebase(PointOfInterest pointOfInterest, List<File> photos) {
         photosProgressSteps = PHOTOS_PERCENTAGE / photos.size();
-        current = 0;
         addImagesToStorage(photos, pointOfInterest);
     }
 
@@ -81,8 +87,7 @@ public class FirebaseHelper {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {
-
-                    mListener.updateProgressNotification(current + (100 * DATABASE_PERCENTAGE));
+                    mListener.updateProgressNotification((onGoingProgress * photosProgressSteps) + (100 * DATABASE_PERCENTAGE));
                     DocumentReference documentReference = task.getResult();
                     mListener.createResultNotification(true, documentReference.getId(), RESULT_SUCCESS);
                 } else {
@@ -97,8 +102,12 @@ public class FirebaseHelper {
         Log.d(TAG, "addImagesToStorage: ");
         this.photosURL = new ArrayList<>();
         this.photosThumbURL = new ArrayList<>();
-        for (File file : photos) {
-            List<byte[]> images = bitmapFileToBytes(file);
+        for (int i = 0; i < photos.size(); i++) {
+
+            final int position = i;
+ /*
+        for (File file : photos) {*/
+            List<byte[]> images = bitmapFileToBytes(photos.get(i));
             String uID = UUID.randomUUID().toString();
             String path = FirebaseHelper.PHOTOS_DIRECTORY + uID + ".jpeg";
             StorageReference photoRef = storage.getReference(path);
@@ -109,7 +118,6 @@ public class FirebaseHelper {
                 public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                     if (task.isSuccessful()) {
                         synchronized (photosURL) {
-                            current = current + (photosProgressSteps * 100);
                             photosURL.add(task.getResult().getDownloadUrl().toString());
                             if (photosURL.size() == photos.size()) { //se já fez upload de todas as fotos
                                 pointOfInterest.setPhotos(photosURL);
@@ -124,8 +132,10 @@ public class FirebaseHelper {
             }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    mListener.updateProgressNotification(current + (progress * photosProgressSteps));
+                    double actual = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                    onGoingProgress += actual - progress[position]; //o que vem menos o anterior
+                    progress[position] = actual;
+                    mListener.updateProgressNotification((onGoingProgress * photosProgressSteps));
                 }
             });
 
@@ -148,12 +158,6 @@ public class FirebaseHelper {
         return images;
     }
 
-    public interface FirebaseCommunication {
-        void addPointResult(boolean result, String documentID, int resultCode);
-
-        void updateProgress(double progress);
-
-    }
 }
           /*  notificationUtils.showNotify();*/
 /*            //Thumbnail

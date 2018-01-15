@@ -12,6 +12,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -34,6 +36,7 @@ import java.util.UUID;
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.activities.BaseActivity;
 import estg.ipp.pt.aroundtmegaesousa.activities.RandomActivity;
+import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.FirebaseServiceCommunication;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.services.UploadFirebaseService;
@@ -63,6 +66,11 @@ public class FirebaseHelper {
     private double[] lastProgressPhotos;
     private double[] lastProgressThumbs;
 
+
+    public FirebaseHelper() {
+        db = FirebaseFirestore.getInstance();
+        points = db.collection(POINTS_COLLECTION);
+    }
 
     public FirebaseHelper(FirebaseServiceCommunication mListener) {
         this.mListener = mListener;
@@ -180,6 +188,23 @@ public class FirebaseHelper {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         return baos.toByteArray();
+    }
+
+    public void deletePOI(String id, final PointOfInterestFragment context) {
+        Task task = points.document(id)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        context.deleteSuccess(true);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        context.deleteSuccess(false);
+                    }
+                });
     }
 
 }

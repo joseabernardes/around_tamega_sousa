@@ -391,9 +391,6 @@ public class AddPointActivity extends BaseActivity {
 
         } else if (intent.getAction() == AddPointActivity.ADD_POI_ACTION) {
 
-        } else if (intent.getAction() == AddPointActivity.DELETE_POI_ACTION) {
-            PointOfInterest poi = (PointOfInterest) intent.getExtras().getSerializable("POI");
-
         }
     }
 

@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.w3c.dom.Text;
 
@@ -30,6 +31,7 @@ import estg.ipp.pt.aroundtmegaesousa.activities.AddPointActivity;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
 
 public class PointOfInterestFragment extends Fragment {
@@ -92,8 +94,8 @@ public class PointOfInterestFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         OnFragmentsChangeViewsListener context = (OnFragmentsChangeViewsListener) mContext;
 
-        poi = new PointOfInterest("Grande Vulcão do Saara", "Um grande vulcão que se situa no Deserto do Saara", new LatLng(1123121, 123123), "Panamá", 1, "aPOLc3VHSyblhskPqbOF60F5Vek1");
-
+        poi = new PointOfInterest("Grande Vulcão do Saara", "Um grande vulcão que se situa no Deserto do Saara", new LatLng(1123121, 123123), "Panamá", 1, "Sv4yF6IPDBX9c8g37PZFlwUZNch2");
+        poi.setId("GirCIOWq7mw8GJCC1jle");
         final String[] options;
         if (context.getLoggedUser().getUid().equals(poi.getUser())) {
             options = new String[]{
@@ -122,9 +124,17 @@ public class PointOfInterestFragment extends Fragment {
                     intent.putExtra("POI", poi);
                     Toast.makeText(mContext, "editar", Toast.LENGTH_SHORT).show();
                 } else if (options[which].equals(getString(R.string.delete_poi))) {
-                    Toast.makeText(mContext, "eliminar", Toast.LENGTH_SHORT).show();
+                    FirebaseHelper fbh = new FirebaseHelper();
+                    fbh.deletePOI(poi.getId(), PointOfInterestFragment.this);
                 } else if (options[which].equals(getString(R.string.google_maps))) {
-                    Toast.makeText(mContext, "MAPS", Toast.LENGTH_SHORT).show();
+
+//                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,Uri.parse("https://www.google.com/maps/dir/?api=1&query=41.145042, -8.611419"));
+//                    startActivity(intent);
+                    Uri gmmIntentUri = Uri.parse("geo:37.7749,-122.4194");
+                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    mapIntent.setPackage("com.google.android.apps.maps");
+                    startActivity(mapIntent);
+
                 } else if (options[which].equals(getString(R.string.add_favorites))) {
                     Toast.makeText(mContext, "ADD Favoritos", Toast.LENGTH_SHORT).show();
                 } else if (options[which].equals(getString(R.string.remove_favorites))) {
@@ -221,5 +231,14 @@ public class PointOfInterestFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
 
+    }
+
+    public void deleteSuccess(boolean success) {
+        if (success) {
+//            Toast.makeText(mContext, "Removido com sucesso", Toast.LENGTH_SHORT).show();
+            getActivity().onBackPressed();
+        } else {
+            Toast.makeText(mContext, "Não Removido", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -59,6 +59,7 @@ public class SettingsActivity extends BaseActivity {
         final CheckBox checkBox_sound = findViewById(R.id.settings_sound);
         final CheckBox checkBox_vibration = findViewById(R.id.settings_vibration);
 
+
         SharedPreferences m = PreferenceManager.getDefaultSharedPreferences(this);
         int color = m.getInt("AppliedTheme", LIGHT_GREEN);
         sp.setSelection(color);

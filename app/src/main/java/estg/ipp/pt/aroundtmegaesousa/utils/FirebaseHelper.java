@@ -353,28 +353,25 @@ public class FirebaseHelper {
     }
 
 
-}
-          /*  notificationUtils.showNotify();*/
-/*            //Thumbnail
-            String thumbPath = FirebaseHelper.PHOTOS_DIRECTORY + uID + "_thumb.jpeg";
-            StorageReference thumbRef = storage.getReference(thumbPath);
-            UploadTask uploadThumbTask = photoRef.putBytes(images.get(1));
-            uploadThumbTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        notificationUtils.updateStatus(inc);
-                        synchronized (photosURL) {
-                            photosThumbURL.add(task.getResult().getDownloadUrl().toString());
-                            if (photosURL.size() == photos.size()) { //se já fez upload de todas as fotos
-                                pointOfInterest.setPhotos(photosURL);
-                                pointOfInterest.setDate(Calendar.getInstance().getTime());
-                                notificationUtils.finishStatus();
-                                new FirebaseHelper(context).addPointToDatabase(pointOfInterest);
-                            }
-                        }
-                    } else {
-                        context.addPointResult(false, null, FirebaseHelper.RESULT_FAIL_UPLOAD_IMAGES);
-                    }
+    public void getPointOfInterestByDocumentID(String id, final FirebaseGetPointOfInterest mListener) {
+        points.document(id).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                PointOfInterest pointOfInterest = null;
+                if (task.isSuccessful()) {
+                    pointOfInterest = task.getResult().toObject(PointOfInterest.class);
+                    pointOfInterest.setId(task.getResult().getId());
                 }
-            });*/
+                mListener.getPointOfInterest(pointOfInterest);
+            }
+        });
+    }
+
+
+    public interface FirebaseGetPointOfInterest {
+
+        void getPointOfInterest(PointOfInterest pointOfInterest);
+
+    }
+
+}

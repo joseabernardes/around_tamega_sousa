@@ -49,7 +49,7 @@ import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
 public class PointOfInterestFragment extends Fragment implements View.OnClickListener {
 
-
+    public static final String DOCUMENT_ID = "document_id";
     private int numImages;
     private ViewPager mPager;
     private ImageAdapter mImageAdapter;
@@ -66,7 +66,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     private TextView location;
     private TextView localType;
     private TextView date;
-    private boolean imageOpen;
     private PhotoView expandedImageView;
     public ProgressBar progressBar;
     private FirebaseHelper fbh;
@@ -114,7 +113,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         progressBar = mContentView.findViewById(R.id.image_loading_progress);
         progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(progressBar.getContext(), R.color.greyDisabled), android.graphics.PorterDuff.Mode.MULTIPLY);
         expandedImageView = mContentView.findViewById(R.id.expanded_image);
-        imageOpen = false;
         title = mContentView.findViewById(R.id.title);
         ratingBar = mContentView.findViewById(R.id.rating_bar);
         ratingText = mContentView.findViewById(R.id.rating_text);

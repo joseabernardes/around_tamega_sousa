@@ -33,8 +33,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/list_poi_img"
-            android:background="#89000000"
-            android:padding="8dp">
+            android:background="#3c000000"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+
+            >
 
             <TextView
                 android:id="@+id/item_desc_name"

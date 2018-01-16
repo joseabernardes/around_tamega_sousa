@@ -16,7 +16,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.activities.MainActivity;
 import estg.ipp.pt.aroundtmegaesousa.activities.RandomActivity;
+import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.FirebaseServiceCommunication;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.utils.AddPointTask;
@@ -87,8 +89,8 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
     public void createResultNotification(boolean result, String documentID, int resultCode) {
         Log.d(TAG, "createResultNotification: " + result);
         if (result) {
-            Intent intent = new Intent(this, RandomActivity.class);
-            intent.putExtra("documentID", documentID);
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra(PointOfInterestFragment.DOCUMENT_ID, documentID);
             PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
             resultNotification = new PrivateNotification(this, getString(R.string.title_notification_add_point), getString(R.string.message_notification_added), R.drawable.ic_check, PrivateNotification.getRandomID());
             resultNotification.setAction(pi);

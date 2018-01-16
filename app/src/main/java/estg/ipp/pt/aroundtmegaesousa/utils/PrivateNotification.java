@@ -113,6 +113,7 @@ public class PrivateNotification {
      * Cancel the notification
      */
     public void cancel() {
+        Log.d("CANCEL", "cancel: " + String.valueOf(id));
         mNotifyManager.cancel(id);
     }
 

@@ -46,9 +46,11 @@ import estg.ipp.pt.aroundtmegaesousa.fragments.ListFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.MapFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
+import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener, OnFragmentsChangeViewsListener {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener, OnFragmentsChangeViewsListener, FirebaseHelper.FirebaseGetPointOfInterest {
 
     private String TAG = "MainActivity";
     private Toolbar toolbar;
@@ -58,22 +60,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private ImageView userIcon;
     private TextView userName;
     private OnBackPressedListener onBackPressedListener;
+    private FirebaseHelper firebaseHelper;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
+
+        super.onCreate(savedInstanceState);
         ThemeUtils.changeTheme(this);
         setContentView(R.layout.activity_main);
-
-
         //Connect Views
-
         toolbar = findViewById(R.id.toolbar);
         drawer = findViewById(R.id.drawer_layout); //main layout
         navigationView = findViewById(R.id.nav_view); //navigation drawer
-
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +82,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 startActivity(intent);
             }
         });
-
         setSupportActionBar(toolbar);
         if (findViewById(R.id.container) != null) { //phone
             Log.d(TAG, "onCreate: Phone Layout");
@@ -94,8 +93,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         } else {
             Log.d(TAG, "onCreate: TABLET Layout");
         }
-
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -105,6 +102,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         View headerLayout = navigationView.getHeaderView(0);
         userIcon = headerLayout.findViewById(R.id.user_icon);
         userName = headerLayout.findViewById(R.id.user_name);
+
+
+
+        /*
+        OPEN POI FRAGMENT
+         */
+        if (getIntent().hasExtra(PointOfInterestFragment.DOCUMENT_ID)) {
+            String documentID = getIntent().getStringExtra(PointOfInterestFragment.DOCUMENT_ID);
+            firebaseHelper = new FirebaseHelper();
+            firebaseHelper.getPointOfInterestByDocumentID(documentID, this);
+        }
+
+
     }
 
 
@@ -228,56 +238,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-//    public Bitmap loadImageBitmap(Context context, String imageName) {
-//        Bitmap bitmap = null;
-//        FileInputStream fiStream;
-//        try {
-//            fiStream = context.openFileInput(imageName);
-//            bitmap = BitmapFactory.decodeStream(fiStream);
-//            fiStream.close();
-//            flag = flase
-//            RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
-//            imageDrawable.setCircular(true);
-//            imageDrawable.setCornerRadius(Math.max(bitmap.getWidth(), bitmap.getHeight()) / 2.0f);
-//            userIcon.setImageDrawable(imageDrawable);
-//        } catch (Exception e) {
-//            Log.d("saveImage", "Exception 3, Something went wrong!");
-//            e.printStackTrace();
-//        }
-//        return bitmap;
-//    }
-
-//    private File convert(Bitmap bt, Context context, String filename) {
-//        File f = new File(context.getFilesDir(), filename);
-//        try {
-//            f.createNewFile();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        //Convert bitmap to byte array
-//        Bitmap bitmap = bt;
-//        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//        bitmap.compress(Bitmap.CompressFormat.PNG, 0 /*ignored for PNG*/, bos);
-//        byte[] bitmapdata = bos.toByteArray();
-//
-//        //write the bytes in file
-//        FileOutputStream fos = null;
-//        try {
-//            fos = new FileOutputStream(f);
-//            fos.write(bitmapdata);
-//            fos.flush();
-//            fos.close();
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        return f;
-//
-//    }
-
-
     @Override
     public boolean isShownFloatingButton() {
         return fab.isShown();
@@ -287,39 +247,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         userName.setText(user.getDisplayName());
         new LoadImage().execute(user.getUid());
     }
- /*
-       loadImageBitmap(getApplicationContext(), user.getUid());
 
-        Bitmap bitmap = loadImageBitmap(getApplicationContext(), user.getUid());
-        userIcon.setImageBitmap(bitmap);
-   File file = new File(getFilesDir().getAbsolutePath()+ "/"+ user.getUid());
-
-
-        Log.d(TAG, "addUserInfo: FILE "+file.getAbsolutePath() + "-" +file.exists());
-        Toast.makeText(this, "FILE" +file.getAbsolutePath() + "-" +String.valueOf(file.exists()) , Toast.LENGTH_SHORT).show();
-
-
-        File file = convert(bitmap, getApplicationContext(), super.user.getUid());
-
-        Picasso.with(this).load(file).fit().centerInside().into(userIcon, new Callback() {
-            @Override
-            public void onSuccess() {
-              Bitmap imageBitmap = ((BitmapDrawable) userIcon.getDrawable()).getBitmap();
-              RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), imageBitmap);
-              imageDrawable.setCircular(true);
-
-
-              imageDrawable.setCornerRadius(Math.max(imageBitmap.getWidth(), imageBitmap.getHeight()) / 2.0f);
-                userIcon.setImageDrawable(imageDrawable);
-            }
-
-            @Override
-            public void onError() {
-              userIcon.setImageResource(R.mipmap.ic_launcher_round);
-            }
-       });
-*/
-
+    @Override
+    public void getPointOfInterest(PointOfInterest pointOfInterest) {
+        Fragment fragment = PointOfInterestFragment.newInstance(pointOfInterest);
+        replaceFragment(fragment);
+        changeActionBarTitle(pointOfInterest.getName());
+        showFloatingButton(false);
+    }
 
     private class LoadImage extends AsyncTask<String, Void, Bitmap> {
 

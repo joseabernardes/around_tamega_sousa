@@ -25,6 +25,9 @@
 
     <string name="options">Opções</string>
 
+    <!-- Sim e Nao-->
+    <string name="sim">Sim</string>
+    <string name="nao">Não</string>
     <!-- Title -->
     <string name="title_activity_add_point">Adicionar Ponto</string>
     <string name="title_activity_map_picker">Selecionar localização</string>
@@ -44,6 +47,10 @@
     <string name="google_maps">Ir para o Google Maps</string>
     <string name="add_favorites">Adicionar aos Favoritos</string>
     <string name="remove_favorites">Remover dos Favoritos</string>
+
+    <!-- dialog eliminar poi-->
+    <string name="delete_poi_title">Eliminar Ponto de Interesse</string>
+    <string name="delete_poi_text">Pretende eliminar o ponto de interesse?</string>
 
     <!-- Warnings -->
     <string name="warn_permission_dennied">Permissões negadas</string>

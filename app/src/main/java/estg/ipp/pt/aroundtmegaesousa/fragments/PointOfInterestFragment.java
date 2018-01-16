@@ -198,7 +198,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         if (city != null) {
             localType.setText(typeOfLocation.getType());
         }
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         context = (OnFragmentsChangeViewsListener) mContext;
 
         fbh = new FirebaseHelper();
@@ -207,11 +207,11 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         final List<Option> options = new ArrayList<>();
 
         if (context.getLoggedUser().getUid().equals(pointOfInterest.getUser())) {
-            options.add(new Option(0, "Editar"));
-            options.add(new Option(1, "Eliminar"));
-            options.add(new Option(2, "Ir para o Google Maps"));
+            options.add(new Option(0, getString(R.string.edit_poi)));
+            options.add(new Option(1, getString(R.string.delete_poi)));
+            options.add(new Option(2, getString(R.string.google_maps)));
         } else {
-            options.add(new Option(2, "Ir para o Google Maps"));
+            options.add(new Option(2, getString(R.string.google_maps)));
         }
 
 
@@ -220,14 +220,31 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                dialog.dismiss();
                 switch (adapter.getItem(which).id) {
                     case 0:
-                        Toast.makeText(mContext, "editar", Toast.LENGTH_SHORT).show();
+
                         break;
                     case 1:
-                        fbh = new FirebaseHelper();
-                        fbh.deletePOI(pointOfInterest.getId(), PointOfInterestFragment.this);
+
+                        AlertDialog.Builder deleteDialog = new AlertDialog.Builder(mContext);
+                        deleteDialog.setTitle(getString(R.string.delete_poi_title));
+                        deleteDialog.setMessage(getString(R.string.delete_poi_text));
+
+                        deleteDialog.setPositiveButton(getString(R.string.sim), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                fbh = new FirebaseHelper();
+                                fbh.deletePOI(pointOfInterest.getId(), PointOfInterestFragment.this);
+                            }
+                        });
+                        deleteDialog.setNegativeButton(getString(R.string.nao), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        deleteDialog.show();
                         break;
                     case 2:
                         Uri gmmIntentUri = Uri.parse("geo:" + pointOfInterest.getLatitude() + "," + pointOfInterest.getLongitude() + "?q=" + pointOfInterest.getLatitude() + "," + pointOfInterest.getLongitude());
@@ -244,7 +261,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                         fbh = new FirebaseHelper();
                         fbh.removeFavorite(pointOfInterest.getId(), firebaseFavorite.getIdFavorites(), PointOfInterestFragment.this);
                 }
-                dialog.dismiss();
+
             }
         });
 
@@ -416,6 +433,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     }
 
     public void addFavoritesSucess() {
+        fbh.checkFavorites(pointOfInterest.getId(), context.getLoggedUser().getUid(), PointOfInterestFragment.this);
         Toast.makeText(mContext, "Adcionado aos Favoritos", Toast.LENGTH_SHORT).show();
     }
 
@@ -424,7 +442,8 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     }
 
     public void removeFavoritesSuccess() {
-        Toast.makeText(mContext, "Remover dos Favoritos", Toast.LENGTH_SHORT).show();
+        fbh.checkFavorites(pointOfInterest.getId(), context.getLoggedUser().getUid(), PointOfInterestFragment.this);
+        Toast.makeText(mContext, "Removido dos Favoritos", Toast.LENGTH_SHORT).show();
     }
 
     public void removeFavoritesUnSuccess() {
@@ -434,9 +453,11 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     public void existFavorite(Favorite favorite) {
         Log.d("", "existFavorite: " + favorite);
         if (favorite != null) {
+            adapter.remove(new Option(3, ""));
             adapter.add(new Option(4, "Remover dos Favoritos"));
             this.firebaseFavorite = favorite;
         } else {
+            adapter.remove(new Option(4, ""));
             adapter.add(new Option(3, "Adcionar aos Favoritos"));
         }
     }
@@ -454,6 +475,21 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         @Override
         public String toString() {
             return option;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Option option = (Option) o;
+
+            return id == option.id;
+        }
+
+        @Override
+        public int hashCode() {
+            return id;
         }
     }
 

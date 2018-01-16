@@ -260,6 +260,21 @@ public class FirebaseHelper {
 
     }
 
+
+    public void editPOI(final PointOfInterestFragment context, PointOfInterest pointOfInterest) {
+        DocumentReference poi = points.document(pointOfInterest.getId());
+        poi.set(pointOfInterest).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+
+                }
+            }
+        });
+    }
+
+
+
     public void addRating(Rating rating, String idPoi, final PointOfInterestFragment context) {
         points.document(idPoi).collection("ratings").add(rating).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
@@ -292,6 +307,7 @@ public class FirebaseHelper {
         });
 
     }
+
 
     public void editRating(String idPoi, String ratingID, float rate, final PointOfInterestFragment context) {
         DocumentReference rating = points.document(idPoi).collection("ratings").document(ratingID);

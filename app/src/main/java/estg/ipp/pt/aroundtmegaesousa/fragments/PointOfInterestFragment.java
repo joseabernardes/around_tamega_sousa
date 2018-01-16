@@ -4,12 +4,17 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatRatingBar;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,8 +22,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,13 +35,17 @@ import com.google.firebase.auth.FirebaseUser;
 import org.w3c.dom.Text;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.activities.AddPointActivity;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
 import estg.ipp.pt.aroundtmegaesousa.models.City;
+import estg.ipp.pt.aroundtmegaesousa.models.Favorite;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.models.Rating;
 import estg.ipp.pt.aroundtmegaesousa.models.TypeOfLocation;
 import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
@@ -58,7 +69,13 @@ public class PointOfInterestFragment extends Fragment {
     private TextView description;
     private TextView location;
     private TextView localType;
+    private FirebaseHelper fbh;
+    private RatingBar rt;
+    private Rating firebaseRating;
+    private Favorite firebaseFavorite;
+    private List<Option> options;
 
+    private OnFragmentsChangeViewsListener context;
 
     private OnFragmentInteractionListener mListener;
 
@@ -85,7 +102,7 @@ public class PointOfInterestFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View mContentView = inflater.inflate(R.layout.fragment_point_of_interest, container, false);
+        final View mContentView = inflater.inflate(R.layout.fragment_point_of_interest, container, false);
         setHasOptionsMenu(true);
         mPager = mContentView.findViewById(R.id.slider);
         sliderDotspanel = mContentView.findViewById(R.id.slider_dots);
@@ -101,6 +118,68 @@ public class PointOfInterestFragment extends Fragment {
         location = mContentView.findViewById(R.id.location);
         localType = mContentView.findViewById(R.id.local_type);
 
+        Button vote = mContentView.findViewById(R.id.vote);
+        vote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                View view = inflater.inflate(R.layout.rating_dialog, null);
+                builder.setView(view);
+
+                rt = view.findViewById(R.id.rating_dialog_rating_bar);
+                builder.setTitle("Classificar Ponto de Interesse");
+                final TextView tv = view.findViewById(R.id.rating_dialog_text_view);
+
+
+                context = (OnFragmentsChangeViewsListener) mContext;
+                fbh = new FirebaseHelper();
+                fbh.checkRating(pointOfInterest.getId(), context.getLoggedUser().getUid(), PointOfInterestFragment.this);
+
+
+                rt.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    @Override
+                    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                        if (rating == 1) {
+                            tv.setText("Detestei");
+                        } else if (rating == 2) {
+                            tv.setText("Mau");
+                        } else if (rating == 3) {
+                            tv.setText("Razoável");
+                        } else if (rating == 4) {
+                            tv.setText("Gostei");
+                        } else if (rating == 5) {
+                            tv.setText("Adorei");
+                        }
+                    }
+                });
+
+                builder.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Rating rating = new Rating(context.getLoggedUser().getUid(), rt.getRating());
+                        fbh = new FirebaseHelper();
+                        if (firebaseRating != null) {
+                            fbh.editRating(pointOfInterest.getId(), firebaseRating.getId(), rating.getRating(), PointOfInterestFragment.this);
+                        } else {
+                            fbh.addRating(rating, pointOfInterest.getId(), PointOfInterestFragment.this);
+                        }
+
+                    }
+                });
+
+                builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.show();
+
+
+            }
+        });
+
 
         title.setText(pointOfInterest.getName());
         description.setText(pointOfInterest.getDescription());
@@ -114,54 +193,55 @@ public class PointOfInterestFragment extends Fragment {
         if (city != null) {
             localType.setText(typeOfLocation.getType());
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        OnFragmentsChangeViewsListener context = (OnFragmentsChangeViewsListener) mContext;
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        context = (OnFragmentsChangeViewsListener) mContext;
 
-        final String[] options;
+        fbh = new FirebaseHelper();
+        fbh.checkFavorites(pointOfInterest.getId(), context.getLoggedUser().getUid(), PointOfInterestFragment.this);
+
+        options = new ArrayList<>();
+
         if (context.getLoggedUser().getUid().equals(pointOfInterest.getUser())) {
-            options = new String[]{
-                    getString(R.string.edit_poi),
-                    getString(R.string.delete_poi),
-                    getString(R.string.google_maps),
-                    getString(R.string.add_favorites),
-//                    getString(R.string.remove_favorites)
-            };
+            options.add(new Option(0, "Editar"));
+            options.add(new Option(1, "Eliminar"));
+            options.add(new Option(2, "Ir para o Google Maps"));
         } else {
-            options = new String[]{
-                    getString(R.string.google_maps),
-                    getString(R.string.add_favorites),
-//                    getString(R.string.remove_favorites)
-            };
+            options.add(new Option(2, "Ir para o Google Maps"));
         }
 
 
-        builder.setItems(options, new DialogInterface.OnClickListener() {
+        ArrayAdapter<Option> adapter = new ArrayAdapter<>(mContext, android.R.layout.select_dialog_singlechoice);
+        adapter.addAll(options);
 
+        builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (options[which].equals(getString(R.string.edit_poi))) {
-                    Toast.makeText(mContext, "editar", Toast.LENGTH_SHORT).show();
-
-                } else if (options[which].equals(getString(R.string.delete_poi))) {
-
-                    FirebaseHelper fbh = new FirebaseHelper();
-                    fbh.deletePOI(pointOfInterest.getId(), PointOfInterestFragment.this);
-
-                } else if (options[which].equals(getString(R.string.google_maps))) {
-
-                    Uri gmmIntentUri = Uri.parse("geo:" + pointOfInterest.getLatitude() + "," + pointOfInterest.getLongitude() + "?q=" + pointOfInterest.getLatitude() + "," + pointOfInterest.getLongitude());
-                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                    mapIntent.setPackage("com.google.android.apps.maps");
-                    startActivity(mapIntent);
-
-                } else if (options[which].equals(getString(R.string.add_favorites))) {
-
-
-                } else if (options[which].equals(getString(R.string.remove_favorites))) {
-
+                switch (options.get(which).id) {
+                    case 0:
+                        Toast.makeText(mContext, "editar", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 1:
+                        fbh = new FirebaseHelper();
+                        fbh.deletePOI(pointOfInterest.getId(), PointOfInterestFragment.this);
+                        break;
+                    case 2:
+                        Uri gmmIntentUri = Uri.parse("geo:" + pointOfInterest.getLatitude() + "," + pointOfInterest.getLongitude() + "?q=" + pointOfInterest.getLatitude() + "," + pointOfInterest.getLongitude());
+                        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                        mapIntent.setPackage("com.google.android.apps.maps");
+                        startActivity(mapIntent);
+                        break;
+                    case 3:
+                        fbh = new FirebaseHelper();
+                        Favorite fav = new Favorite(context.getLoggedUser().getUid());
+                        fbh.addFavorite(fav, pointOfInterest.getId(), PointOfInterestFragment.this);
+                        break;
+                    case 4:
+                        fbh = new FirebaseHelper();
+                        fbh.removeFavorite(pointOfInterest.getId(), firebaseFavorite.getIdFavorites(), PointOfInterestFragment.this);
                 }
             }
         });
+
         dialog = builder.create();
 
         for (int i = 0; i < numImages; i++) {
@@ -261,4 +341,69 @@ public class PointOfInterestFragment extends Fragment {
             Toast.makeText(mContext, "Não Removido", Toast.LENGTH_SHORT).show();
         }
     }
+
+    public void addRatingSuccess() {
+        Toast.makeText(mContext, "Classificação adicionada", Toast.LENGTH_SHORT).show();
+    }
+
+    public void addRatingUnsuccess() {
+        Toast.makeText(mContext, "Problema ao classifcar ponto", Toast.LENGTH_SHORT).show();
+    }
+
+    public void existRating(Rating rating) {
+        if (rating != null) {
+            rt.setRating(rating.getRating());
+            this.firebaseRating = rating;
+        }
+    }
+
+    public void editRatingSuccess() {
+        Toast.makeText(mContext, "Classificação alterada", Toast.LENGTH_SHORT).show();
+    }
+
+    public void editRatingUnsuccess() {
+        Toast.makeText(mContext, "Problema na alteração da classificação", Toast.LENGTH_SHORT).show();
+    }
+
+    public void addFavoritesSucess() {
+        Toast.makeText(mContext, "Adcionado aos Favoritos", Toast.LENGTH_SHORT).show();
+    }
+
+    public void addFavoritesUnSucess() {
+        Toast.makeText(mContext, "Problema ao adicionar aos Favoritos", Toast.LENGTH_SHORT).show();
+    }
+
+    public void removeFavoritesSuccess() {
+        Toast.makeText(mContext, "Remover dos Favoritos", Toast.LENGTH_SHORT).show();
+    }
+
+    public void removeFavoritesUnSuccess() {
+        Toast.makeText(mContext, "Problema ao remover dos Favoritos", Toast.LENGTH_SHORT).show();
+    }
+
+    public void existFavorite(Favorite favorite) {
+        if (favorite != null) {
+            this.firebaseFavorite = favorite;
+            options.add(new Option(4, "Remover dos Favoritos"));
+        } else {
+            options.add(new Option(3, "Adcionar aos Favoritos"));
+        }
+    }
+
+    private class Option {
+
+        int id;
+        String option;
+
+        public Option(int id, String option) {
+            this.id = id;
+            this.option = option;
+        }
+
+        @Override
+        public String toString() {
+            return option;
+        }
+    }
+
 }

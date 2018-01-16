@@ -7,7 +7,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -27,11 +30,15 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Semaphore;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.activities.BaseActivity;
@@ -65,6 +72,8 @@ public class FirebaseHelper {
     private double onGoingProgress;
     private double[] lastProgressPhotos;
     private double[] lastProgressThumbs;
+    private Semaphore thumbSemaphore;
+    private Semaphore photoSemaphore;
 
 
     public FirebaseHelper() {
@@ -93,7 +102,8 @@ public class FirebaseHelper {
     public void addPointToFirebase(PointOfInterest pointOfInterest, List<File> photos) {
         List<List<byte[]>> list = getListOfBitmapsAsBytes(photos);
         photosProgressSteps = PHOTOS_PERCENTAGE / (photos.size() * 2);
-
+        this.thumbSemaphore = new Semaphore(1);
+        this.photoSemaphore = new Semaphore(1);
         this.photosURL = new ArrayList<>();
         this.photosThumbURL = new ArrayList<>();
         lastProgressPhotos = new double[photos.size()];
@@ -121,59 +131,17 @@ public class FirebaseHelper {
 
     private void addImagesToStorage(final List<byte[]> photos, final List<byte[]> photosThumbs, final PointOfInterest pointOfInterest) {
         Log.d(TAG, "addImagesToStorage: ");
-        addImages(photos, pointOfInterest, photosURL, lastProgressPhotos, "PHOTOS");//photos
-        addImages(photosThumbs, pointOfInterest, photosThumbURL, lastProgressThumbs, "THUMBS");//thumbs
+        new UploadImage(photos, pointOfInterest, photosURL, lastProgressPhotos, photoSemaphore, "PHOTOS").execute();
+        new UploadImage(photosThumbs, pointOfInterest, photosThumbURL, lastProgressThumbs, thumbSemaphore, "TUMBS").execute();
     }
 
-
-    private void addImages(final List<byte[]> photos, final PointOfInterest pointOfInterest, final List<String> urlList, final double[] lastProgress, final String type) {
-        for (int i = 0; i < photos.size(); i++) {
-            final int position = i;
-            String uID = UUID.randomUUID().toString();
-            String path = FirebaseHelper.PHOTOS_DIRECTORY + "/" + uID + ".jpeg";
-            StorageReference photoRef = storage.getReference(path);
-            UploadTask uploadTask = photoRef.putBytes(photos.get(i));
-            uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        synchronized (photosURL) {
-                            synchronized (photosThumbURL) {
-                                urlList.add(task.getResult().getDownloadUrl().toString());
-                                if (photosURL.size() == photos.size() && photosThumbURL.size() == photos.size()) { //se já fez upload de todas as fotos
-                                    pointOfInterest.setPhotos(photosURL);
-                                    pointOfInterest.setPhotosThumbs(photosThumbURL);
-                                    pointOfInterest.setDate(Calendar.getInstance().getTime());
-                                    addPointToDatabase(pointOfInterest);
-                                }
-                            }
-                        }
-                    } else {
-                        mListener.createResultNotification(false, null, FirebaseHelper.RESULT_FAIL_UPLOAD_IMAGES);
-                    }
-                }
-            }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                    double actual = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    onGoingProgress += actual - lastProgress[position]; //o que vem menos o anterior
-                    lastProgress[position] = actual;
-                    Log.d(TAG, "P: " + position + "T: " + type + " oG: " + onGoingProgress);
-                    mListener.updateProgressNotification((onGoingProgress * photosProgressSteps));
-                    Log.d(TAG, "% " + (onGoingProgress * photosProgressSteps));
-                }
-            });
-        }
-
-
-    }
 
     private List<List<byte[]>> getListOfBitmapsAsBytes(List<File> files) {
         List<byte[]> photos = new ArrayList<>();
         List<byte[]> photoThumbs = new ArrayList<>();
         for (File file : files) {
             Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
-            Bitmap thumb = ThumbnailUtils.extractThumbnail(bitmap, 256, 256);
+            Bitmap thumb = ThumbnailUtils.extractThumbnail(bitmap, 400, 400);
             photos.add(convertBitmapToByte(bitmap));
             photoThumbs.add(convertBitmapToByte(thumb));
         }
@@ -191,8 +159,7 @@ public class FirebaseHelper {
     }
 
     public void deletePOI(String id, final PointOfInterestFragment context) {
-        Task task = points.document(id)
-                .delete()
+        points.document(id).delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -206,6 +173,86 @@ public class FirebaseHelper {
                     }
                 });
     }
+
+
+    private class UploadImage extends AsyncTask<String, Void, Void> {
+
+        private List<byte[]> photos;
+        private PointOfInterest pointOfInterest;
+        private List<String> urlList;
+        private double[] lastProgress;
+        private Semaphore semaphore;
+        private String type;
+
+        public UploadImage(List<byte[]> photos, PointOfInterest pointOfInterest, List<String> urlList, double[] lastProgress, Semaphore semaphore, String type) {
+            this.photos = photos;
+            this.pointOfInterest = pointOfInterest;
+            this.urlList = urlList;
+            this.lastProgress = lastProgress;
+            this.semaphore = semaphore;
+            this.type = type;
+        }
+
+        private void addImages() throws InterruptedException {
+            for (int i = 0; i < photos.size(); i++) {
+                final int position = i;
+                String uID = UUID.randomUUID().toString();
+                String path = FirebaseHelper.PHOTOS_DIRECTORY + "/" + uID + ".jpeg";
+                StorageReference photoRef = storage.getReference(path);
+                UploadTask uploadTask = photoRef.putBytes(photos.get(i));
+                Log.d(TAG, "TRY ACQUIRE " + type);
+                semaphore.acquire();
+                Log.d(TAG, "ACQUIRE " + type);
+                uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            synchronized (photosURL) {
+                                synchronized (photosThumbURL) {
+                                    semaphore.release();
+                                    Log.d(TAG, "RELEASE ON ! " + type);
+                                    urlList.add(task.getResult().getDownloadUrl().toString());
+                                    if (photosURL.size() == photos.size() && photosThumbURL.size() == photos.size()) { //se já fez upload de todas as fotos
+                                        pointOfInterest.setPhotos(photosURL);
+                                        pointOfInterest.setPhotosThumbs(photosThumbURL);
+                                        pointOfInterest.setDate(Calendar.getInstance().getTime());
+                                        addPointToDatabase(pointOfInterest);
+                                    }
+                                }
+                            }
+                        } else {
+                            mListener.createResultNotification(false, null, FirebaseHelper.RESULT_FAIL_UPLOAD_IMAGES);
+                        }
+                    }
+                }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        double actual = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                        onGoingProgress += actual - lastProgress[position]; //o que vem menos o anterior
+                        lastProgress[position] = actual;
+                        Log.d(TAG, "P: " + position + " oG: " + onGoingProgress + " T:" + type);
+                        mListener.updateProgressNotification((onGoingProgress * photosProgressSteps));
+                    }
+                });
+            }
+
+
+        }
+
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            try {
+                addImages();
+            } catch (InterruptedException e) {
+                mListener.createResultNotification(false, null, RESULT_FAIL_UPLOAD_IMAGES);
+            }
+            return null;
+        }
+
+
+    }
+
 
 }
           /*  notificationUtils.showNotify();*/

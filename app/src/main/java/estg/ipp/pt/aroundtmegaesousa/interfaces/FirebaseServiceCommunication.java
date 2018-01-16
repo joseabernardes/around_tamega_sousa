@@ -12,4 +12,5 @@ public interface FirebaseServiceCommunication {
 
     void createResultNotification(boolean result, final String documentID, int resultCode);
 
+
 }

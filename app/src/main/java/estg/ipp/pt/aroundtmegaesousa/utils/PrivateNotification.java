@@ -139,7 +139,9 @@ public class PrivateNotification {
 
     public static int getRandomID() {
         return (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+    }
 
-
+    public static void cancelByID(Context context, int id) {
+        ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(id);
     }
 }

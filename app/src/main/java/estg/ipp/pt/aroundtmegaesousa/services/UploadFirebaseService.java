@@ -5,6 +5,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 
@@ -28,7 +29,6 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
     public static final String CANCEL_UPLOAD_ACTION = "cancel_upload";
     public static final String POI_PARAM = "poi";
     public static final String FILES_PARAM = "files";
-    private AddPointTask task;
     private PrivateNotification progressNotification;
     private PrivateNotification resultNotification;
 
@@ -41,26 +41,33 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand: Start");
         switch (intent.getAction()) {
             case START_UPLOAD_ACTION:
-                Log.d(TAG, "onStartCommand: START_UPLOAD_ACTION");
                 PointOfInterest pointOfInterest = (PointOfInterest) intent.getSerializableExtra(POI_PARAM);
                 List<File> photos = (List<File>) intent.getSerializableExtra(FILES_PARAM);
-                task = new AddPointTask(pointOfInterest, photos, this);
-                task.execute();
-
-
+                FirebaseHelper firebaseHelper = new FirebaseHelper(this);
+                createProgressNotification();
+                firebaseHelper.addPointToFirebase(pointOfInterest, photos);
                 break;
             case CANCEL_UPLOAD_ACTION:
                 //cancelar
                 //not used
-                task.cancel(true);
                 break;
 
 
         }
         return START_REDELIVER_INTENT;
+    }
+
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        if (progressNotification != null) {
+            progressNotification.cancel();
+            Toast.makeText(this, getString(R.string.message_toast_restart_service), Toast.LENGTH_SHORT).show();
+
+        }
+        super.onTaskRemoved(rootIntent);
     }
 
     @Override

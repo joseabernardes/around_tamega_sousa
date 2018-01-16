@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,18 +20,25 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
 import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.time.LocalDateTime;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.activities.AddPointActivity;
+import estg.ipp.pt.aroundtmegaesousa.activities.MainActivity;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
 import estg.ipp.pt.aroundtmegaesousa.models.City;
@@ -40,7 +48,7 @@ import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
 
-public class PointOfInterestFragment extends Fragment {
+public class PointOfInterestFragment extends Fragment implements View.OnClickListener {
 
 
     private int numImages;
@@ -58,6 +66,10 @@ public class PointOfInterestFragment extends Fragment {
     private TextView description;
     private TextView location;
     private TextView localType;
+    private TextView date;
+    private boolean imageOpen;
+    private PhotoView expandedImageView;
+    public ProgressBar progressBar;
 
 
     private OnFragmentInteractionListener mListener;
@@ -89,23 +101,28 @@ public class PointOfInterestFragment extends Fragment {
         setHasOptionsMenu(true);
         mPager = mContentView.findViewById(R.id.slider);
         sliderDotspanel = mContentView.findViewById(R.id.slider_dots);
-        mImageAdapter = new ImageAdapter(mContext);
+        mImageAdapter = new ImageAdapter(mContext, pointOfInterest.getPhotosThumbs(), this);
         mPager.setAdapter(mImageAdapter);
         numImages = mImageAdapter.getCount();
         dots = new ImageView[numImages];
         //find
+        progressBar = mContentView.findViewById(R.id.image_loading_progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(progressBar.getContext(), R.color.greyDisabled), android.graphics.PorterDuff.Mode.MULTIPLY);
+        expandedImageView = mContentView.findViewById(R.id.expanded_image);
+        imageOpen = false;
         title = mContentView.findViewById(R.id.title);
         ratingBar = mContentView.findViewById(R.id.rating_bar);
         ratingText = mContentView.findViewById(R.id.rating_text);
         description = mContentView.findViewById(R.id.description);
         location = mContentView.findViewById(R.id.location);
         localType = mContentView.findViewById(R.id.local_type);
-
+        date = mContentView.findViewById(R.id.date);
 
         title.setText(pointOfInterest.getName());
         description.setText(pointOfInterest.getDescription());
         ratingBar.setRating(pointOfInterest.getAvgRatting());
         ratingText.setText(String.valueOf(pointOfInterest.getAvgRatting()));
+        date.setText(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(pointOfInterest.getDate()));
         City city = Enums.getCityByID(pointOfInterest.getCity());
         if (city != null) {
             location.setText(city.getName());
@@ -171,7 +188,10 @@ public class PointOfInterestFragment extends Fragment {
             params.setMargins(8, 0, 8, 0);
             sliderDotspanel.addView(dots[i], params);
         }
-        dots[0].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.indicator_active));
+        if (dots.length > 0) {
+            dots[0].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.indicator_active));
+        }
+
 
         //deve ser no onCreate provavelmente
 
@@ -187,9 +207,7 @@ public class PointOfInterestFragment extends Fragment {
                 for (int i = 0; i < numImages; i++) {
                     dots[i].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.indicator_inactive));
                 }
-
                 dots[position].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.indicator_active));
-
             }
 
             @Override
@@ -214,6 +232,30 @@ public class PointOfInterestFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    /*
+    on Click Image
+     */
+    @Override
+    public void onClick(View v) {
+        OnFragmentsChangeViewsListener context = (OnFragmentsChangeViewsListener) mContext;
+        progressBar.setVisibility(View.VISIBLE);
+        Picasso.with(mContext).load(pointOfInterest.getPhotos().get(Integer.valueOf(v.getTag().toString()))).fit().centerInside().into(expandedImageView, new Callback() {
+            @Override
+            public void onSuccess() {
+                if (progressBar != null) {
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onError() {
+
+            }
+        });
+        expandedImageView.setVisibility(View.VISIBLE);
+        context.setOnBackPressedListener(new ImageBack());
     }
 
     /**
@@ -259,6 +301,24 @@ public class PointOfInterestFragment extends Fragment {
             getActivity().onBackPressed();
         } else {
             Toast.makeText(mContext, "Não Removido", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void closeImage() {
+        expandedImageView.setVisibility(View.GONE);
+        expandedImageView.setDisplayMatrix(new Matrix());
+        expandedImageView.setSuppMatrix(new Matrix());
+        progressBar.setVisibility(View.GONE);
+        OnFragmentsChangeViewsListener context = (OnFragmentsChangeViewsListener) mContext;
+        context.removeOnBackPressedListener();
+    }
+
+
+    public class ImageBack implements MainActivity.OnBackPressedListener {
+
+        @Override
+        public void doBack() {
+            closeImage();
         }
     }
 }

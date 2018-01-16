@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
@@ -56,6 +57,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private FloatingActionButton fab;
     private ImageView userIcon;
     private TextView userName;
+    private OnBackPressedListener onBackPressedListener;
 
 
     @Override
@@ -108,7 +110,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     public void onBackPressed() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
+        if (onBackPressedListener != null) {
+            onBackPressedListener.doBack();
+        } else if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -193,6 +197,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return user;
     }
 
+    @Override
+    public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
+        this.onBackPressedListener = onBackPressedListener;
+
+    }
+
+    @Override
+    public void removeOnBackPressedListener() {
+        this.onBackPressedListener = null;
+    }
+
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -270,42 +285,41 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     protected void addUserInfo(FirebaseUser user) {
         userName.setText(user.getDisplayName());
-        Log.d("AQUI", "addUserInfo");
         new LoadImage().execute(user.getUid());
-//        loadImageBitmap(getApplicationContext(), user.getUid());
-/*
-        Bitmap bitmap = loadImageBitmap(getApplicationContext(), user.getUid());
-        userIcon.setImageBitmap(bitmap);*/
-
-//
-//        File file = new File(getFilesDir().getAbsolutePath()+ "/"+ user.getUid());
-//
-//
-//        Log.d(TAG, "addUserInfo: FILE "+file.getAbsolutePath() + "-" +file.exists());
-//        Toast.makeText(this, "FILE" +file.getAbsolutePath() + "-" +String.valueOf(file.exists()) , Toast.LENGTH_SHORT).show();
-//
-//
-////        File file = convert(bitmap, getApplicationContext(), super.user.getUid());
-//
-//        Picasso.with(this).load(file).fit().centerInside().into(userIcon, new Callback() {
-//            @Override
-//            public void onSuccess() {
-//              Bitmap imageBitmap = ((BitmapDrawable) userIcon.getDrawable()).getBitmap();
-//              RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), imageBitmap);
-//              imageDrawable.setCircular(true);
-//
-//
-//              imageDrawable.setCornerRadius(Math.max(imageBitmap.getWidth(), imageBitmap.getHeight()) / 2.0f);
-//                userIcon.setImageDrawable(imageDrawable);
-//            }
-
-//            @Override
-//            public void onError() {
-//              userIcon.setImageResource(R.mipmap.ic_launcher_round);
-//            }
-//       });
-
     }
+ /*
+       loadImageBitmap(getApplicationContext(), user.getUid());
+
+        Bitmap bitmap = loadImageBitmap(getApplicationContext(), user.getUid());
+        userIcon.setImageBitmap(bitmap);
+   File file = new File(getFilesDir().getAbsolutePath()+ "/"+ user.getUid());
+
+
+        Log.d(TAG, "addUserInfo: FILE "+file.getAbsolutePath() + "-" +file.exists());
+        Toast.makeText(this, "FILE" +file.getAbsolutePath() + "-" +String.valueOf(file.exists()) , Toast.LENGTH_SHORT).show();
+
+
+        File file = convert(bitmap, getApplicationContext(), super.user.getUid());
+
+        Picasso.with(this).load(file).fit().centerInside().into(userIcon, new Callback() {
+            @Override
+            public void onSuccess() {
+              Bitmap imageBitmap = ((BitmapDrawable) userIcon.getDrawable()).getBitmap();
+              RoundedBitmapDrawable imageDrawable = RoundedBitmapDrawableFactory.create(getResources(), imageBitmap);
+              imageDrawable.setCircular(true);
+
+
+              imageDrawable.setCornerRadius(Math.max(imageBitmap.getWidth(), imageBitmap.getHeight()) / 2.0f);
+                userIcon.setImageDrawable(imageDrawable);
+            }
+
+            @Override
+            public void onError() {
+              userIcon.setImageResource(R.mipmap.ic_launcher_round);
+            }
+       });
+*/
+
 
     private class LoadImage extends AsyncTask<String, Void, Bitmap> {
 
@@ -321,19 +335,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     fiStream = getApplicationContext().openFileInput(file);
                     bitmap = BitmapFactory.decodeStream(fiStream);
                     fiStream.close();
+                    if (bitmap == null) {
+                        throw new FileNotFoundException("FileNotFound");
+
+                    }
 
                 } catch (IOException e) {
                     run = true;
-
+                    Log.d(TAG, "loadImage: wait 5secs");
                     try {
                         Thread.currentThread();
                         Thread.sleep(5000);
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
                     }
-                    //sleep 10seg
-                    Log.d("saveImage", "Exception 3, Something went wrong!");
-                    e.printStackTrace();
                 }
             }
             return bitmap;
@@ -356,4 +371,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     }
+
+    public interface OnBackPressedListener {
+        void doBack();
+    }
+
+
 }

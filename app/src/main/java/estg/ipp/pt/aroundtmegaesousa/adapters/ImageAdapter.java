@@ -7,7 +7,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
+
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.activities.AddPointActivity;
 
 /**
  * Created by PC on 27/12/2017.
@@ -16,15 +21,18 @@ import estg.ipp.pt.aroundtmegaesousa.R;
 public class ImageAdapter extends PagerAdapter {
 
     private Context mContext;
-    private int[] mImageIds = new int[]{R.drawable.cinf, R.drawable.around_logo, R.drawable.poi};
+    private List<String> photoThumb;
+    private View.OnClickListener imageClickListener;
 
-    public ImageAdapter(Context cotext) {
-        mContext = cotext;
+    public ImageAdapter(Context context, List<String> photoThumb, View.OnClickListener imageClickListener) {
+        this.mContext = context;
+        this.photoThumb = photoThumb;
+        this.imageClickListener = imageClickListener;
     }
 
     @Override
     public int getCount() {
-        return mImageIds.length;
+        return photoThumb.size();
     }
 
     @Override
@@ -35,11 +43,13 @@ public class ImageAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        ImageView iv = new ImageView(mContext);
-        iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        iv.setImageResource(mImageIds[position]);
-        container.addView(iv, 0);
-        return iv;
+        ImageView imageView = new ImageView(mContext);
+        imageView.setTag(position);
+        Picasso.with(mContext).load(photoThumb.get(position)).fit().centerInside().into(imageView);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        container.addView(imageView, 0);
+        imageView.setOnClickListener(imageClickListener);
+        return imageView;
     }
 
     @Override

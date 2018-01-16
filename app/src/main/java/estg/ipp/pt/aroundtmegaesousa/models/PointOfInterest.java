@@ -13,6 +13,7 @@ import java.util.List;
 
 public class PointOfInterest implements Serializable {
 
+
     @Exclude
     private String id;
     private String name;

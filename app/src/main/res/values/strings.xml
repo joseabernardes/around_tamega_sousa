@@ -65,6 +65,8 @@
     <string name="message_notification_not_added_database">Falha ao adicionar o ponto à base de dados!</string>
     <string name="message_notification_not_added_upload">Falha no upload das imagens, ponto não adicionado!</string>
 
+    <string name="message_toast_restart_service">O serviço será recomeçado brevemente</string>
+
 
     <string name="apply">Aplicar</string>
     <string name="cancel">Cancelar</string>

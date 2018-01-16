@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="10dp"
+    android:text="ssssfasofjapsojcpsf"
+    android:textSize="20dp"
+    android:textColor="?android:attr/textColorAlertDialogListItem" />
+
+    <!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:paddingEnd="7dip"
+    android:paddingStart="12dip"
+    android:text="ssavkfs+fka+pfkv+sgdhs"
+
+        />-->
+

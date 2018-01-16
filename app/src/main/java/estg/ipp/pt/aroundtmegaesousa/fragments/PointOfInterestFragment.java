@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.AppCompatRatingBar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -72,7 +73,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     private RatingBar rt;
     private Rating firebaseRating;
     private Favorite firebaseFavorite;
-    private List<Option> options;
+    private ArrayAdapter<Option> adapter;
 
     private OnFragmentsChangeViewsListener context;
 
@@ -205,7 +206,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         fbh = new FirebaseHelper();
         fbh.checkFavorites(pointOfInterest.getId(), context.getLoggedUser().getUid(), PointOfInterestFragment.this);
 
-        options = new ArrayList<>();
+        final List<Option> options = new ArrayList<>();
 
         if (context.getLoggedUser().getUid().equals(pointOfInterest.getUser())) {
             options.add(new Option(0, "Editar"));
@@ -216,13 +217,13 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         }
 
 
-        ArrayAdapter<Option> adapter = new ArrayAdapter<>(mContext, android.R.layout.select_dialog_singlechoice);
+        adapter = new ArrayAdapter<>(mContext, R.layout.item_dialog_options);
         adapter.addAll(options);
-
         builder.setSingleChoiceItems(adapter, -1, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                switch (options.get(which).id) {
+
+                switch (adapter.getItem(which).id) {
                     case 0:
                         Toast.makeText(mContext, "editar", Toast.LENGTH_SHORT).show();
                         break;
@@ -245,6 +246,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                         fbh = new FirebaseHelper();
                         fbh.removeFavorite(pointOfInterest.getId(), firebaseFavorite.getIdFavorites(), PointOfInterestFragment.this);
                 }
+                dialog.dismiss();
             }
         });
 
@@ -432,11 +434,12 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     }
 
     public void existFavorite(Favorite favorite) {
+        Log.d("", "existFavorite: " + favorite);
         if (favorite != null) {
+            adapter.add(new Option(4, "Remover dos Favoritos"));
             this.firebaseFavorite = favorite;
-            options.add(new Option(4, "Remover dos Favoritos"));
         } else {
-            options.add(new Option(3, "Adcionar aos Favoritos"));
+            adapter.add(new Option(3, "Adcionar aos Favoritos"));
         }
     }
 

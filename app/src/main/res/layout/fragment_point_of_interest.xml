@@ -186,6 +186,7 @@
 
 
                     <Button
+                        android:id="@+id/vote"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
@@ -217,8 +218,8 @@
             android:id="@+id/image_loading_progress"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:visibility="gone"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"
+            android:visibility="gone" />
 
         <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/expanded_image"

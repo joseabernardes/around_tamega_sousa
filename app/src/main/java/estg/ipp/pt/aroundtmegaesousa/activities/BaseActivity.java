@@ -11,6 +11,8 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import estg.ipp.pt.aroundtmegaesousa.services.FirebaseIDService;
+
 /**
  * Created by José Bernardes on 09/01/2018.
  */

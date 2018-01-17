@@ -34,6 +34,10 @@ public class PrivateNotification {
     private Context context;
 
 
+
+
+
+
     /**
      * Constructor for progress notification
      *

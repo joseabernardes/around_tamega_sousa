@@ -21,7 +21,7 @@ public class PushNotificationService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        PrivateNotification privateNotification = new PrivateNotification(this,"PUSH NOTIFICATION","content", R.drawable.logo_around,PrivateNotification.getRandomID());
+        PrivateNotification privateNotification = new PrivateNotification(this,remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody(), R.drawable.logo_around,PrivateNotification.getRandomID());
         privateNotification.show();
 
     }

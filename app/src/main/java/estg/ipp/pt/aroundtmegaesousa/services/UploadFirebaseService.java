@@ -10,20 +10,15 @@ import android.widget.Toast;
 import com.google.firebase.FirebaseApp;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.activities.MainActivity;
-import estg.ipp.pt.aroundtmegaesousa.activities.RandomActivity;
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.FirebaseServiceCommunication;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
-import estg.ipp.pt.aroundtmegaesousa.utils.AddPointTask;
-import estg.ipp.pt.aroundtmegaesousa.utils.PrivateNotification;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
+import estg.ipp.pt.aroundtmegaesousa.utils.PrivateNotification;
 
 public class UploadFirebaseService extends Service implements FirebaseServiceCommunication {
     public static final String TAG = "UploadFirebaseService";

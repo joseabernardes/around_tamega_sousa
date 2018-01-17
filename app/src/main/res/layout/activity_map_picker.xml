@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="estg.ipp.pt.aroundtmegaesousa.fragments.MapFragment">
+    tools:context="estg.ipp.pt.aroundtmegaesousa.fragments.ListMapFragment">
 
 
     <include layout="@layout/toolbar" />

@@ -41,6 +41,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     private Context mContext;
     private RecyclerView recyclerView;
     private View filterBar;
+    private View filters;
     private FilterDialogFragment mFilterDialog;
     private Filters mFilters;
     private ListItemAdapter itemAdapter;
@@ -73,11 +74,8 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         if (getArguments() != null) {
             typeOfFragment = getArguments().getString(ARG_TYPE);
         }
-
-        if (savedInstanceState != null) {
-            mFilters = (Filters) savedInstanceState.getSerializable(FILTER);
-        }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -89,20 +87,13 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         buttonCancel = mContentView.findViewById(R.id.button_clear_filter);
         mFirestore = FirebaseFirestore.getInstance();
 
-
-//        mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
-//                .orderBy("date", Query.Direction.DESCENDING);
         mQuery = this.getLists();
-
-        /*ArrayList<PointOfInterest> contacts = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            contacts.add(new PointOfInterest("Parque das Nações do Douro " + i));
-        }*/
 
 
         itemAdapter = new ListItemAdapter(this, mQuery);
         recyclerView.setAdapter(itemAdapter);
         mFilters = Filters.getDefault();
+        filters = mContentView.findViewById(R.id.filters);
         filterBar = mContentView.findViewById(R.id.filter_bar);
         filterBar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,11 +112,14 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
 
         mFilterDialog = new FilterDialogFragment();
 
-        changeActionBarTitle();
+        changeLayoutByFragmentType();
+        if (getArguments() != null && getArguments().getSerializable(FILTER) != null) {
+            mFilters = (Filters) getArguments().getSerializable(FILTER);
+        }
         return mContentView;
     }
 
-    private void changeActionBarTitle() {
+    private void changeLayoutByFragmentType() {
         if (mContext != null) {
             OnFragmentsChangeViewsListener viewChanger = (OnFragmentsChangeViewsListener) mContext;
             String title;
@@ -135,15 +129,18 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
                     title = getString(R.string.title_fragment_list);
                     break;
                 case FAVORITES:
+                    filters.setVisibility(View.GONE);
                     viewChanger.showFloatingButton(false);
                     title = getString(R.string.title_fragment_list_favo);
                     break;
                 case MY_POINTS:
+                    filters.setVisibility(View.GONE);
                     viewChanger.showFloatingButton(true);
                     setOnScrolledRecyclerView(viewChanger);
                     title = getString(R.string.title_fragment_list_my_points);
                     break;
                 default:
+                    filters.setVisibility(View.GONE);
                     title = getString(R.string.title_fragment_list);
             }
             viewChanger.changeActionBarTitle(title);
@@ -227,7 +224,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     public void onStart() {
         super.onStart();
 
-        //onFilter(mFilters);
+        onFilter(mFilters);
 
         if (itemAdapter != null) {
             itemAdapter.startListening();
@@ -270,8 +267,10 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     }
 
     @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putSerializable(FILTER, mFilters);
-        super.onSaveInstanceState(outState);
+    public void onDestroyView() {
+        getArguments().putSerializable(FILTER, mFilters);
+        super.onDestroyView();
+
+
     }
 }

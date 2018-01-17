@@ -19,24 +19,18 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.android.PolyUtil;
-import com.google.maps.android.data.Geometry;
-import com.google.maps.android.data.geojson.GeoJsonFeature;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
-import estg.ipp.pt.aroundtmegaesousa.utils.MapUtils;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class ListMapFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -55,13 +49,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GeoJsonLayer tamega;
 
 
-    public MapFragment() {
+    public ListMapFragment() {
 
     }
 
 
-    public static MapFragment newInstance(String param1, String param2) {
-        MapFragment fragment = new MapFragment();
+    public static ListMapFragment newInstance(String param1, String param2) {
+        ListMapFragment fragment = new ListMapFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

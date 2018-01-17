@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.UUID;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
-import estg.ipp.pt.aroundtmegaesousa.activities.RandomActivity;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.FirebaseServiceCommunication;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.services.UploadFirebaseService;

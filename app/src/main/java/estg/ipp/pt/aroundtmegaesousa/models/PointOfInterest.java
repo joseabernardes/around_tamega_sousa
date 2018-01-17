@@ -8,7 +8,9 @@ import com.google.firebase.firestore.GeoPoint;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class PointOfInterest implements Serializable {
@@ -35,6 +37,7 @@ public class PointOfInterest implements Serializable {
     private int numRatings;
     private Date date;
     private String city;
+    private Map<String,Date> favorites;
     /*
     private List<Map<String, Object>> classifications; //array de objetos
     */
@@ -70,6 +73,7 @@ public class PointOfInterest implements Serializable {
         this.date = date;
         this.city = city;
         this.numRatings = numRatings;
+        this.favorites = new HashMap<>();
 
     }
 
@@ -92,6 +96,7 @@ public class PointOfInterest implements Serializable {
         this.user = user;
         this.city = city;
         this.numRatings = numRatings;
+        this.favorites = new HashMap<>();
 
     }
 
@@ -171,4 +176,11 @@ public class PointOfInterest implements Serializable {
         return avgRating;
     }
 
+    public Map<String, Date> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(Map<String, Date> favorites) {
+        this.favorites = favorites;
+    }
 }

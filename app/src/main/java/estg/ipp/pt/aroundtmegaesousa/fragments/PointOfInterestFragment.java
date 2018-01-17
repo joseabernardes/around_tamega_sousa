@@ -202,7 +202,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         context = (OnFragmentsChangeViewsListener) mContext;
 
         fbh = new FirebaseHelper();
-        fbh.checkFavorites(pointOfInterest.getId(), context.getLoggedUser().getUid(), PointOfInterestFragment.this);
+
 
         final List<Option> options = new ArrayList<>();
 
@@ -254,12 +254,11 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                         break;
                     case 3:
                         fbh = new FirebaseHelper();
-                        Favorite fav = new Favorite(context.getLoggedUser().getUid());
-                        fbh.addFavorite(fav, pointOfInterest.getId(), PointOfInterestFragment.this);
+                        fbh.addFavorite(pointOfInterest, context.getLoggedUser().getUid(), PointOfInterestFragment.this);
                         break;
                     case 4:
                         fbh = new FirebaseHelper();
-                        fbh.removeFavorite(pointOfInterest.getId(), firebaseFavorite.getIdFavorites(), PointOfInterestFragment.this);
+                        fbh.removeFavorite(context.getLoggedUser().getUid(), pointOfInterest, PointOfInterestFragment.this);
                 }
 
             }
@@ -301,6 +300,8 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
 
             }
         });
+        existFavorite(fbh.checkFavorites(pointOfInterest, context.getLoggedUser().getUid()));
+
         return mContentView;
     }
 
@@ -433,29 +434,29 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     }
 
     public void addFavoritesSucess() {
-        fbh.checkFavorites(pointOfInterest.getId(), context.getLoggedUser().getUid(), PointOfInterestFragment.this);
+        existFavorite(fbh.checkFavorites(pointOfInterest, context.getLoggedUser().getUid()));
         Toast.makeText(mContext, "Adcionado aos Favoritos", Toast.LENGTH_SHORT).show();
     }
 
     public void addFavoritesUnSucess() {
+        existFavorite(fbh.checkFavorites(pointOfInterest, context.getLoggedUser().getUid()));
         Toast.makeText(mContext, "Problema ao adicionar aos Favoritos", Toast.LENGTH_SHORT).show();
     }
 
     public void removeFavoritesSuccess() {
-        fbh.checkFavorites(pointOfInterest.getId(), context.getLoggedUser().getUid(), PointOfInterestFragment.this);
+        existFavorite(fbh.checkFavorites(pointOfInterest, context.getLoggedUser().getUid()));
         Toast.makeText(mContext, "Removido dos Favoritos", Toast.LENGTH_SHORT).show();
     }
 
     public void removeFavoritesUnSuccess() {
+        existFavorite(fbh.checkFavorites(pointOfInterest, context.getLoggedUser().getUid()));
         Toast.makeText(mContext, "Problema ao remover dos Favoritos", Toast.LENGTH_SHORT).show();
     }
 
-    public void existFavorite(Favorite favorite) {
-        Log.d("", "existFavorite: " + favorite);
-        if (favorite != null) {
+    public void existFavorite(boolean favorite) {
+        if (favorite) {
             adapter.remove(new Option(3, ""));
             adapter.add(new Option(4, "Remover dos Favoritos"));
-            this.firebaseFavorite = favorite;
         } else {
             adapter.remove(new Option(4, ""));
             adapter.add(new Option(3, "Adcionar aos Favoritos"));

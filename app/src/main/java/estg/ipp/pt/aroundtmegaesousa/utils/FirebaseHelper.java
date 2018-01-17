@@ -40,7 +40,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.Semaphore;
 
@@ -274,7 +277,6 @@ public class FirebaseHelper {
     }
 
 
-
     public void addRating(Rating rating, String idPoi, final PointOfInterestFragment context) {
         points.document(idPoi).collection("ratings").add(rating).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
@@ -322,10 +324,13 @@ public class FirebaseHelper {
         });
     }
 
-    public void addFavorite(Favorite fav, String idPOI, final PointOfInterestFragment context) {
-        points.document(idPOI).collection("favorites").add(fav).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+    public void addFavorite(PointOfInterest poi, String userID, final PointOfInterestFragment context) {
+        Map<String, Date> favorites = poi.getFavorites();
+        favorites.put(userID, poi.getDate());
+
+        points.document(poi.getId()).update("favorites", favorites).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentReference> task) {
+            public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     context.addFavoritesSucess();
                 } else {
@@ -335,27 +340,25 @@ public class FirebaseHelper {
         });
     }
 
-    public void checkFavorites(String idPoi, String user, final PointOfInterestFragment context) {
-        Query query = points.document(idPoi).collection("favorites").whereEqualTo("idUser", user);
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                Favorite favorite;
-                if (task.getResult().getDocuments().isEmpty()) {
-                    favorite = null;
-                } else {
-                    DocumentSnapshot documentSnapshot = task.getResult().getDocuments().get(0);
-                    favorite = documentSnapshot.toObject(Favorite.class);
-                    favorite.setIdFavorites(documentSnapshot.getId());
-                }
-                context.existFavorite(favorite);
+    public boolean checkFavorites(PointOfInterest pointOfInterest, String userID) {
+        boolean success = false;
+        for (Map.Entry<String, Date> entry : pointOfInterest.getFavorites().entrySet()) {
+            if (entry.getKey() == userID) {
+                success = true;
             }
-        });
+        }
+        return success;
     }
 
-    public void removeFavorite(String idPOI, String idFav, final PointOfInterestFragment context) {
-        DocumentReference favorites = points.document(idPOI).collection("favorites").document(idFav);
-        favorites.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+    public void removeFavorite(String userID, PointOfInterest poi, final PointOfInterestFragment context) {
+        Map<String, Date> favorites = poi.getFavorites();
+        for (Map.Entry<String, Date> entry : favorites.entrySet()) {
+            if (entry.getKey() == userID) {
+                favorites.remove(entry.getKey());
+            }
+        }
+
+        points.document(poi.getId()).update("favorites", favorites).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {

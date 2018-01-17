@@ -3,6 +3,7 @@ package estg.ipp.pt.aroundtmegaesousa.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,9 +17,16 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.List;
 
 import org.w3c.dom.Text;
 
@@ -98,9 +106,9 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
 
 
 
-        mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
-                .orderBy("date", Query.Direction.DESCENDING);
-
+//        mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
+//                .orderBy("date", Query.Direction.DESCENDING);
+        mQuery = this.getLists();
 
         /*ArrayList<PointOfInterest> contacts = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
@@ -181,8 +189,8 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         if (context instanceof OnFragmentsChangeViewsListener) {
             mContext = context;
         } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -256,6 +264,39 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         if (itemAdapter != null) {
             itemAdapter.stopListening();
         }
+    }
 
+    private Query getLists() {
+        Query mQuery = null;
+        OnFragmentsChangeViewsListener viewChanger = (OnFragmentsChangeViewsListener) mContext;
+        switch (typeOfFragment) {
+            case LIST:
+                mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
+                        .orderBy("date");
+                break;
+            case FAVORITES:
+//                Query query1 = mFirestore.collection("favorites").whereEqualTo("idUser", viewChanger.getLoggedUser().getUid());
+//                mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION);
+//                query1.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        List<DocumentSnapshot> list = task.getResult().getDocuments();
+//                        for (DocumentSnapshot favorite : list) {
+//                            Favorite fav = favorite.toObject(Favorite.class);
+//                            mQuery = mQuery.whereEqualTo(""fav.getIdPOI());
+//                        }
+//
+//
+//                    }
+//                })
+
+                break;
+            case MY_POINTS:
+                mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
+                        .whereEqualTo("user", viewChanger.getLoggedUser().getUid())
+                        .orderBy("date", Query.Direction.DESCENDING);
+                break;
+        }
+        return mQuery;
     }
 }

@@ -48,7 +48,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Firebase
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
         Log.d(TAG, "onAuthState");
         FirebaseUser user = firebaseAuth.getCurrentUser();
-        System.out.println(user.getDisplayName());
         if (user != null) {    //signed in
             onSignInInitialize(user);
             this.user = user;

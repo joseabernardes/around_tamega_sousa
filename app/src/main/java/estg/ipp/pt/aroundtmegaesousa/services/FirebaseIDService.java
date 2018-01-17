@@ -14,11 +14,14 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
 
 public class FirebaseIDService extends FirebaseInstanceIdService {
 
+    private static final String TAG = "FirebaseIDService";
+
     @Override
     public void onTokenRefresh() {
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         System.out.print("AQUI");
         System.out.print(refreshedToken);
+        Log.d(TAG, "onTokenRefresh: "  + refreshedToken);
 
     }
 

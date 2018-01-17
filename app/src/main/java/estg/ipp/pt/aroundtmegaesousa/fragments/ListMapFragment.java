@@ -19,6 +19,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+<<<<<<< HEAD:app/src/main/java/estg/ipp/pt/aroundtmegaesousa/fragments/ListMapFragment.java
+=======
+
+import com.google.maps.android.PolyUtil;
+import com.google.maps.android.data.Geometry;
+import com.google.maps.android.data.geojson.GeoJsonFeature;
+>>>>>>> 8dac584c04d536d460a335c19d05edd724f673ca:app/src/main/java/estg/ipp/pt/aroundtmegaesousa/fragments/MapFragment.java
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 
@@ -28,18 +35,20 @@ import java.io.IOException;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
+<<<<<<< HEAD:app/src/main/java/estg/ipp/pt/aroundtmegaesousa/fragments/ListMapFragment.java
+=======
+import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.utils.MapUtils;
+>>>>>>> 8dac584c04d536d460a335c19d05edd724f673ca:app/src/main/java/estg/ipp/pt/aroundtmegaesousa/fragments/MapFragment.java
 
 
 public class ListMapFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+//    private static final String ARG_PARAM2 = "param2";
 
 
-    private String mParam1;
-    private String mParam2;
-
-
+    private PointOfInterest pointOfInterest;
     private SupportMapFragment mMapFragment;
     private GoogleMap mGoogleMap;
     private Context mContext;
@@ -54,11 +63,15 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+<<<<<<< HEAD:app/src/main/java/estg/ipp/pt/aroundtmegaesousa/fragments/ListMapFragment.java
     public static ListMapFragment newInstance(String param1, String param2) {
         ListMapFragment fragment = new ListMapFragment();
+=======
+    public static MapFragment newInstance(PointOfInterest pointOfInterest) {
+        MapFragment fragment = new MapFragment();
+>>>>>>> 8dac584c04d536d460a335c19d05edd724f673ca:app/src/main/java/estg/ipp/pt/aroundtmegaesousa/fragments/MapFragment.java
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(ARG_PARAM1, pointOfInterest);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,8 +80,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            pointOfInterest = (PointOfInterest) getArguments().getSerializable(ARG_PARAM1);
         }
     }
 
@@ -77,20 +89,20 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback {
         View mContentView = inflater.inflate(R.layout.fragment_map_view, container, false);
         mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
-        filterBar = mContentView.findViewById(R.id.filter_bar);
-        filterBar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mFilterDialog.show(getChildFragmentManager(), FilterDialogFragment.TAG);
-            }
-        });
-        clearFilter = mContentView.findViewById(R.id.button_clear_filter);
+//        filterBar = mContentView.findViewById(R.id.filter_bar);
+//        filterBar.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mFilterDialog.show(getChildFragmentManager(), FilterDialogFragment.TAG);
+//            }
+//        });
+//        clearFilter = mContentView.findViewById(R.id.button_clear_filter);
 
-        mFilterDialog = new FilterDialogFragment();
+//        mFilterDialog = new FilterDialogFragment();
 
-        if (mContext != null) {
-            ((OnFragmentsChangeViewsListener) mContext).changeActionBarTitle(getString(R.string.title_fragment_map));
-        }
+//        if (mContext != null) {
+//            ((OnFragmentsChangeViewsListener) mContext).changeActionBarTitle(getString(R.string.title_fragment_map));
+//        }
         return mContentView;
     }
 
@@ -107,8 +119,9 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
+
         //desenhar pontos!
-        addMarker(new LatLng(41.047010, -8.287442), "Casa", "Casa do paulinho na casa");
+        addMarker(new LatLng(pointOfInterest.getLatitude(), pointOfInterest.getLongitude()), pointOfInterest.getName());
 
         try {
             tamega = new GeoJsonLayer(mGoogleMap, R.raw.tamegaesousa, mContext);
@@ -128,12 +141,11 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-    private void addMarker(LatLng latLng, String title, String content) {
+    private void addMarker(LatLng latLng, String title) {
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker);
         Marker marker = mGoogleMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .title(title)
-                .snippet(content)
                 .icon(icon));
     }
 

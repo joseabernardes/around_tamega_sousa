@@ -343,8 +343,9 @@ public class FirebaseHelper {
     public boolean checkFavorites(PointOfInterest pointOfInterest, String userID) {
         boolean success = false;
         for (Map.Entry<String, Date> entry : pointOfInterest.getFavorites().entrySet()) {
-            if (entry.getKey() == userID) {
+            if (entry.getKey().equals(userID)) {
                 success = true;
+                break;
             }
         }
         return success;
@@ -353,7 +354,7 @@ public class FirebaseHelper {
     public void removeFavorite(String userID, PointOfInterest poi, final PointOfInterestFragment context) {
         Map<String, Date> favorites = poi.getFavorites();
         for (Map.Entry<String, Date> entry : favorites.entrySet()) {
-            if (entry.getKey() == userID) {
+            if (entry.getKey().equals( userID)) {
                 favorites.remove(entry.getKey());
             }
         }

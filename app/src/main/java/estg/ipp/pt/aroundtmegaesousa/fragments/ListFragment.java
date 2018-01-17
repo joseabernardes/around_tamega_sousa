@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import java.util.Calendar;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ListItemAdapter;
@@ -225,7 +226,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     public void onStart() {
         super.onStart();
 
-        onFilter(mFilters);
+        //onFilter(mFilters);
 
         if (itemAdapter != null) {
             itemAdapter.startListening();
@@ -251,21 +252,12 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
                         .orderBy("date");
                 break;
             case FAVORITES:
-//                Query query1 = mFirestore.collection("favorites").whereEqualTo("idUser", viewChanger.getLoggedUser().getUid());
-//                mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION);
-//                query1.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        List<DocumentSnapshot> list = task.getResult().getDocuments();
-//                        for (DocumentSnapshot favorite : list) {
-//                            Favorite fav = favorite.toObject(Favorite.class);
-//                            mQuery = mQuery.whereEqualTo(""fav.getIdPOI());
-//                        }
-//
-//
-//                    }
-//                })
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.YEAR, -2000);
 
+                mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
+                        .whereGreaterThan("favorites." + viewChanger.getLoggedUser().getUid(),  cal.getTime())
+                        .orderBy("favorites."+ viewChanger.getLoggedUser().getUid());
                 break;
             case MY_POINTS:
                 mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)

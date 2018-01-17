@@ -26,6 +26,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Text;
@@ -103,7 +105,6 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         currentSortBy = mContentView.findViewById(R.id.text_current_sort_by);
         buttonCancel = mContentView.findViewById(R.id.button_clear_filter);
         mFirestore = FirebaseFirestore.getInstance();
-
 
 
 //        mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
@@ -249,7 +250,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     public void onStart() {
         super.onStart();
 
-        onFilter(mFilters);
+        //onFilter(mFilters);
 
         if (itemAdapter != null) {
             itemAdapter.startListening();
@@ -275,21 +276,12 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
                         .orderBy("date");
                 break;
             case FAVORITES:
-//                Query query1 = mFirestore.collection("favorites").whereEqualTo("idUser", viewChanger.getLoggedUser().getUid());
-//                mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION);
-//                query1.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        List<DocumentSnapshot> list = task.getResult().getDocuments();
-//                        for (DocumentSnapshot favorite : list) {
-//                            Favorite fav = favorite.toObject(Favorite.class);
-//                            mQuery = mQuery.whereEqualTo(""fav.getIdPOI());
-//                        }
-//
-//
-//                    }
-//                })
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.YEAR, -2000);
 
+                mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
+                        .whereGreaterThan("favorites." + viewChanger.getLoggedUser().getUid(),  cal.getTime())
+                        .orderBy("favorites."+ viewChanger.getLoggedUser().getUid());
                 break;
             case MY_POINTS:
                 mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)

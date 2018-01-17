@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 public class PointOfInterest implements Serializable {
@@ -27,6 +28,7 @@ public class PointOfInterest implements Serializable {
     private float avgRatting;
     private Date date;
     private String city;
+    private Map<String,Date> favorites;
     /*
     private List<Map<String, Object>> classifications; //array de objetos
     */
@@ -153,4 +155,11 @@ public class PointOfInterest implements Serializable {
         return avgRatting;
     }
 
+    public Map<String, Date> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(Map<String, Date> favorites) {
+        this.favorites = favorites;
+    }
 }

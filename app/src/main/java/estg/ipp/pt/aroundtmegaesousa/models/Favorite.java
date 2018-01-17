@@ -11,18 +11,28 @@ public class Favorite {
 
     @Exclude String idFavorites;
     String idUser;
+    String idPOI;
 
     public Favorite() {
 
     }
 
-    public Favorite(String user) {
+    public Favorite(String user,String idPOI) {
         this.idUser = user;
+        this.idPOI = idPOI;
 
     }
 
     public String getIdFavorites() {
         return idFavorites;
+    }
+
+    public String getIdPOI() {
+        return idPOI;
+    }
+
+    public void setIdPOI(String idPOI) {
+        this.idPOI = idPOI;
     }
 
     public void setIdFavorites(String idFavorites) {

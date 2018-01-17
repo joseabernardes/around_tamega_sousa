@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,6 +37,10 @@ public abstract class BaseActivity extends AppCompatActivity implements Firebase
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFirebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if (user != null) {    //signed in
+            this.user = user;
+        }
 
     }
 
@@ -43,6 +48,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Firebase
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
         Log.d(TAG, "onAuthState");
         FirebaseUser user = firebaseAuth.getCurrentUser();
+        System.out.println(user.getDisplayName());
         if (user != null) {    //signed in
             onSignInInitialize(user);
             this.user = user;

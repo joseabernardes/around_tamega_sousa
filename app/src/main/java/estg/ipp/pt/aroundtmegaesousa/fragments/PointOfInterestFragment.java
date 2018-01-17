@@ -73,7 +73,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     private Rating firebaseRating;
     private Favorite firebaseFavorite;
     private ArrayAdapter<Option> adapter;
-
+    private Button vote,openMap;
     private OnFragmentsChangeViewsListener context;
 
     private OnFragmentInteractionListener mListener;
@@ -122,7 +122,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         date = mContentView.findViewById(R.id.date);
 
 
-        Button vote = mContentView.findViewById(R.id.vote);
+        vote = mContentView.findViewById(R.id.vote);
         vote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,6 +183,22 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
 
             }
         });
+
+        openMap = mContentView.findViewById(R.id.openMap);
+
+        openMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = ItemMapFragment.newInstance(pointOfInterest);
+                if (mContext instanceof OnFragmentsChangeViewsListener) {
+                    OnFragmentsChangeViewsListener mListener = (OnFragmentsChangeViewsListener) mContext;
+                    mListener.replaceFragment(fragment);
+                    mListener.changeActionBarTitle(pointOfInterest.getName());
+                    mListener.showFloatingButton(false);
+                }
+            }
+        });
+
 
 
         title.setText(pointOfInterest.getName());

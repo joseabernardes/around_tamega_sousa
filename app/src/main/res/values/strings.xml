@@ -9,7 +9,7 @@
     <string name="facebook_application_id" translatable="false">1462407480534175</string>
     <string name="facebook_app_id">1462407480534175</string>
     <string name="add_point">Adicionar Ponto</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Definições</string>
     <string name="mypoints">Adicionados</string>
     <string name="favourites">Favoritos</string>
     <string name="nav_interest_points">Pontos de Interesse</string>
@@ -24,6 +24,7 @@
     <string name="close">Check</string>
 
     <string name="options">Opções</string>
+
 
     <!-- Sim e Nao-->
     <string name="sim">Sim</string>

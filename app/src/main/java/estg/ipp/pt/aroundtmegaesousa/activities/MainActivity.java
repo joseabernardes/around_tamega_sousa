@@ -173,7 +173,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
                 break;
             case R.id.map:
-                fragment = MapFragment.newInstance("aa", "bb");
+                fragment = MapFragment.newInstance(new PointOfInterest());
                 fab.hide();
                 break;
             case R.id.settings:

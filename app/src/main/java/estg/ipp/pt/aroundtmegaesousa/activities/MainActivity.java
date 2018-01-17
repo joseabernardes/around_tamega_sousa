@@ -85,7 +85,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setSupportActionBar(toolbar);
         if (findViewById(R.id.container) != null) { //phone
             Log.d(TAG, "onCreate: Phone Layout");
-            Fragment fragment = ListFragment.newInstance(ListFragment.LIST, "bb");
+            Fragment fragment = ListFragment.newInstance(ListFragment.LIST);
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.container, fragment)
@@ -161,15 +161,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         switch (id) {
             case R.id.mypoints:
-                fragment = ListFragment.newInstance(ListFragment.MY_POINTS, "bb");
+                fragment = ListFragment.newInstance(ListFragment.MY_POINTS);
 
                 break;
             case R.id.favorites:
-                fragment = ListFragment.newInstance(ListFragment.FAVORITES, "bb");
+                fragment = ListFragment.newInstance(ListFragment.FAVORITES);
 
                 break;
             case R.id.interest_points:
-                fragment = ListFragment.newInstance(ListFragment.LIST, "bb");
+                fragment = ListFragment.newInstance(ListFragment.LIST);
 
                 break;
             case R.id.map:

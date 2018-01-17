@@ -1,7 +1,6 @@
 package estg.ipp.pt.aroundtmegaesousa.fragments;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -11,24 +10,13 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.List;
-
-import org.w3c.dom.Text;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ListItemAdapter;
@@ -41,22 +29,16 @@ import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 public class ListFragment extends Fragment implements ListItemAdapter.OnItemSelectedListener, FilterDialogFragment.FilterListener {
 
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private static final String ARG_TYPE = "type";
-
-
     public static final String FAVORITES = "favorites";
     public static final String MY_POINTS = "my_points";
     public static final String LIST = "list";
+    public static final String FILTER = "filter";
 
     private String typeOfFragment;
-    private String mParam1;
-    private String mParam2;
     private Context mContext;
     private RecyclerView recyclerView;
     private View filterBar;
-    private View clearFilter;
     private FilterDialogFragment mFilterDialog;
     private Filters mFilters;
     private ListItemAdapter itemAdapter;
@@ -75,11 +57,10 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     }
 
 
-    public static ListFragment newInstance(String typeOfFragment, String param2) {
+    public static ListFragment newInstance(String typeOfFragment) {
         ListFragment fragment = new ListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TYPE, typeOfFragment);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -89,7 +70,10 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             typeOfFragment = getArguments().getString(ARG_TYPE);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+
+        if (savedInstanceState != null) {
+            mFilters = (Filters) savedInstanceState.getSerializable(FILTER);
         }
     }
 
@@ -98,12 +82,10 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         View mContentView = inflater.inflate(R.layout.fragment_list, container, false);
         recyclerView = mContentView.findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
-        clearFilter = mContentView.findViewById(R.id.button_clear_filter);
         currentSearch = mContentView.findViewById(R.id.text_current_search);
         currentSortBy = mContentView.findViewById(R.id.text_current_sort_by);
         buttonCancel = mContentView.findViewById(R.id.button_clear_filter);
         mFirestore = FirebaseFirestore.getInstance();
-
 
 
 //        mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
@@ -233,12 +215,6 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         this.mFilters = filters;
     }
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
-
     @Override
     public void onDetach() {
         super.onDetach();
@@ -298,5 +274,11 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
                 break;
         }
         return mQuery;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putSerializable(FILTER, mFilters);
+        super.onSaveInstanceState(outState);
     }
 }

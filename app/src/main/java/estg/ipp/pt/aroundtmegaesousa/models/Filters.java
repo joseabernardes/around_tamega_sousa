@@ -6,18 +6,21 @@ import android.text.TextUtils;
 
 import com.google.firebase.firestore.Query;
 
+import java.io.Serializable;
+
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
 
 
-public class Filters {
+public class Filters implements Serializable {
 
     private int typeOfLocation = -1;
     private String city = null;
     private String sortBy = null;
-    private Query.Direction sortDirection = null;
+    private transient Query.Direction sortDirection = null;
 
     public Filters() {
+        sortDirection = Query.Direction.DESCENDING;
     }
 
     public static Filters getDefault() {

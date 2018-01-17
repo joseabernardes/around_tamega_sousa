@@ -1,14 +1,7 @@
 package estg.ipp.pt.aroundtmegaesousa.adapters;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.ColorFilter;
-import android.provider.ContactsContract;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +15,7 @@ import com.google.firebase.firestore.Query;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
-
 import estg.ipp.pt.aroundtmegaesousa.R;
-import estg.ipp.pt.aroundtmegaesousa.activities.MainActivity;
-import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
-import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
 /**

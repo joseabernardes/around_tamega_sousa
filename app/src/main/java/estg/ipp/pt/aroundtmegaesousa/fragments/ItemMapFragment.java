@@ -31,7 +31,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
-import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
 
@@ -103,7 +103,7 @@ public class ItemMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentsChangeViewsListener) {
+        if (context instanceof OnFragmentsCommunicationListener) {
             mContext = context;
         } else {
             throw new RuntimeException(context.toString()

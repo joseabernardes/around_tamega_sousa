@@ -2,7 +2,6 @@ package estg.ipp.pt.aroundtmegaesousa.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +21,7 @@ import java.util.Calendar;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ListItemAdapter;
-import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
 import estg.ipp.pt.aroundtmegaesousa.models.Filters;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
@@ -39,6 +38,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
 
     private String typeOfFragment;
     private Context mContext;
+    private OnFragmentsCommunicationListener communicationListener;
     private RecyclerView recyclerView;
     private View filterBar;
     private View filters;
@@ -121,35 +121,34 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
 
     private void changeLayoutByFragmentType() {
         if (mContext != null) {
-            OnFragmentsChangeViewsListener viewChanger = (OnFragmentsChangeViewsListener) mContext;
             String title;
             switch (typeOfFragment) {
                 case LIST:
-                    viewChanger.showFloatingButton(false);
+                    communicationListener.showFloatingButton(false);
                     title = getString(R.string.title_fragment_list);
                     break;
                 case FAVORITES:
                     filters.setVisibility(View.GONE);
-                    viewChanger.showFloatingButton(false);
+                    communicationListener.showFloatingButton(false);
                     title = getString(R.string.title_fragment_list_favo);
                     break;
                 case MY_POINTS:
                     filters.setVisibility(View.GONE);
-                    viewChanger.showFloatingButton(true);
-                    setOnScrolledRecyclerView(viewChanger);
+                    communicationListener.showFloatingButton(true);
+                    setOnScrolledRecyclerView(communicationListener);
                     title = getString(R.string.title_fragment_list_my_points);
                     break;
                 default:
                     filters.setVisibility(View.GONE);
                     title = getString(R.string.title_fragment_list);
             }
-            viewChanger.changeActionBarTitle(title);
+            communicationListener.changeActionBarTitle(title);
         }
 
 
     }
 
-    private void setOnScrolledRecyclerView(final OnFragmentsChangeViewsListener viewChanger) {
+    private void setOnScrolledRecyclerView(final OnFragmentsCommunicationListener viewChanger) {
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -167,26 +166,21 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        if (context instanceof OnFragmentsChangeViewsListener) {
+        if (context instanceof OnFragmentsCommunicationListener) {
             mContext = context;
+            communicationListener = (OnFragmentsCommunicationListener) context;
         } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+            throw new RuntimeException(context.toString() + " must implement OnFragmentsCommunicationListener");
         }
     }
 
 
     @Override
     public void onItemSelected(PointOfInterest pointOfInterest) {
-
         Fragment fragment = PointOfInterestFragment.newInstance(pointOfInterest);
-        if (mContext instanceof OnFragmentsChangeViewsListener) {
-            OnFragmentsChangeViewsListener mListener = (OnFragmentsChangeViewsListener) mContext;
-            mListener.replaceFragment(fragment);
-            mListener.changeActionBarTitle(pointOfInterest.getName());
-            mListener.showFloatingButton(false);
-        }
-
+        communicationListener.replaceFragment(fragment);
+        communicationListener.changeActionBarTitle(pointOfInterest.getName());
+        communicationListener.showFloatingButton(false);
     }
 
     @Override
@@ -223,9 +217,9 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     @Override
     public void onStart() {
         super.onStart();
-
-        onFilter(mFilters);
-
+        if (typeOfFragment.equals(LIST)) {//apenas existe barra de filtros na lista geral
+            onFilter(mFilters);
+        }
         if (itemAdapter != null) {
             itemAdapter.startListening();
         }
@@ -243,23 +237,22 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
 
     private Query getLists() {
         Query mQuery = null;
-        OnFragmentsChangeViewsListener viewChanger = (OnFragmentsChangeViewsListener) mContext;
         switch (typeOfFragment) {
             case LIST:
                 mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
-                        .orderBy("date");
+                        .orderBy(PointOfInterest.FIELD_DATE);
                 break;
             case FAVORITES:
                 Calendar cal = Calendar.getInstance();
                 cal.add(Calendar.YEAR, -2000);
 
                 mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
-                        .whereGreaterThan("favorites." + viewChanger.getLoggedUser().getUid(), cal.getTime())
-                        .orderBy("favorites." + viewChanger.getLoggedUser().getUid());
+                        .whereGreaterThan("favorites." + communicationListener.getLoggedUser().getUid(), cal.getTime())
+                        .orderBy("favorites." + communicationListener.getLoggedUser().getUid());
                 break;
             case MY_POINTS:
                 mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
-                        .whereEqualTo("user", viewChanger.getLoggedUser().getUid())
+                        .whereEqualTo("user", communicationListener.getLoggedUser().getUid())
                         .orderBy("date", Query.Direction.DESCENDING);
                 break;
         }

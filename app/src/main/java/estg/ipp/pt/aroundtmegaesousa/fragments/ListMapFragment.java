@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,34 +20,39 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.maps.android.data.geojson.GeoJsonLayer;
 import com.google.maps.android.data.geojson.GeoJsonPolygonStyle;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
-import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
+import estg.ipp.pt.aroundtmegaesousa.adapters.MapAdapter;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
+import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
 
-public class ListMapFragment extends Fragment implements OnMapReadyCallback {
+public class ListMapFragment extends Fragment implements OnMapReadyCallback, MapAdapter.onItemsChangeListener {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-
-    private String mParam1;
-    private String mParam2;
-
-
+    private static final String TAG = "ListMapFragment";
     private SupportMapFragment mMapFragment;
     private GoogleMap mGoogleMap;
     private Context mContext;
+    private OnFragmentsCommunicationListener communicationListener;
     private View filterBar;
     private View clearFilter;
     private FilterDialogFragment mFilterDialog;
+    private FirebaseFirestore mFirestore;
     private GeoJsonLayer tamega;
+    private MapAdapter mapAdapter;
+    private Query query;
+    List<Marker> markers;
 
 
     public ListMapFragment() {
@@ -57,8 +63,8 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback {
     public static ListMapFragment newInstance(String param1, String param2) {
         ListMapFragment fragment = new ListMapFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+/*        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);*/
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,8 +73,8 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+/*            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);*/
         }
     }
 
@@ -87,16 +93,19 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback {
         clearFilter = mContentView.findViewById(R.id.button_clear_filter);
 
         mFilterDialog = new FilterDialogFragment();
-
-        if (mContext != null) {
-            ((OnFragmentsChangeViewsListener) mContext).changeActionBarTitle(getString(R.string.title_fragment_map));
+        markers = new ArrayList<>();
+        if (communicationListener != null) {
+            communicationListener.changeActionBarTitle(getString(R.string.title_fragment_map));
         }
+        mFirestore = FirebaseFirestore.getInstance();
         return mContentView;
     }
 
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        Log.d(TAG, "onMapReady: ");
         mGoogleMap = googleMap;
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -113,18 +122,19 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback {
         try {
             tamega = new GeoJsonLayer(mGoogleMap, R.raw.tamegaesousa, mContext);
             GeoJsonPolygonStyle style = tamega.getDefaultPolygonStyle();
-           /* style.setFillColor(ContextCompat.getColor(mContext, R.color.colorAccent));*/
             style.setStrokeColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark));
             style.setStrokeWidth(6f);
             tamega.addLayerToMap();
-       /*     MapUtils.containsLocation(tamega, new LatLng(41.047010, -8.287442));*/
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
+        query = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
+                .orderBy(PointOfInterest.FIELD_DATE);
+        mapAdapter = new MapAdapter(query, this);
+        mapAdapter.startListening();
     }
 
 
@@ -146,12 +156,11 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        //context instanceof OnFragmentInteractionListener &&
-        if (context instanceof OnFragmentsChangeViewsListener) {
+        if (context instanceof OnFragmentsCommunicationListener) {
             mContext = context;
+            communicationListener = (OnFragmentsCommunicationListener) context;
         } else {
-          /*  throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");*/
+            throw new RuntimeException(context.toString() + " must implement OnFragmentsCommunicationListener");
         }
     }
 
@@ -162,8 +171,30 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mapAdapter != null) {
+            mapAdapter.stopListening();
+        }
+    }
+
+
+    @Override
+    public void addItemToMap(List<PointOfInterest> pointOfInterests) {
+        removeAllMarkers();
+        for (PointOfInterest pointOfInterest : pointOfInterests) {
+            addMarker(pointOfInterest.getLocation(), pointOfInterest.getName(), pointOfInterest.getCity());
+        }
+
+
+    }
+
+    @Override
+    public void removeAllMarkers() {
+        for (Marker marker : markers) {
+            marker.remove();
+
+        }
     }
 }

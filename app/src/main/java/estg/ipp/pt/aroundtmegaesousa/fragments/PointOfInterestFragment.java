@@ -37,7 +37,7 @@ import java.util.List;
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.activities.MainActivity;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
-import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
 import estg.ipp.pt.aroundtmegaesousa.models.City;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.models.Rating;
@@ -71,7 +71,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     private Rating firebaseRating;
     private ArrayAdapter<Option> adapter;
     private Button vote,openMap;
-    private OnFragmentsChangeViewsListener context;
+    private OnFragmentsCommunicationListener context;
 
     private OnFragmentInteractionListener mListener;
 
@@ -133,7 +133,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                 final TextView tv = view.findViewById(R.id.rating_dialog_text_view);
 
 
-                context = (OnFragmentsChangeViewsListener) mContext;
+                context = (OnFragmentsCommunicationListener) mContext;
                 fbh = new FirebaseHelper();
                 fbh.checkRating(pointOfInterest.getId(), context.getLoggedUser().getUid(), PointOfInterestFragment.this);
 
@@ -187,8 +187,8 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
             @Override
             public void onClick(View v) {
                 Fragment fragment = ItemMapFragment.newInstance(pointOfInterest);
-                if (mContext instanceof OnFragmentsChangeViewsListener) {
-                    OnFragmentsChangeViewsListener mListener = (OnFragmentsChangeViewsListener) mContext;
+                if (mContext instanceof OnFragmentsCommunicationListener) {
+                    OnFragmentsCommunicationListener mListener = (OnFragmentsCommunicationListener) mContext;
                     mListener.replaceFragment(fragment);
                     mListener.changeActionBarTitle(pointOfInterest.getName());
                     mListener.showFloatingButton(false);
@@ -212,7 +212,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
             localType.setText(typeOfLocation.getType());
         }
         final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        context = (OnFragmentsChangeViewsListener) mContext;
+        context = (OnFragmentsCommunicationListener) mContext;
 
         fbh = new FirebaseHelper();
 
@@ -339,7 +339,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
      */
     @Override
     public void onClick(View v) {
-        OnFragmentsChangeViewsListener context = (OnFragmentsChangeViewsListener) mContext;
+        OnFragmentsCommunicationListener context = (OnFragmentsCommunicationListener) mContext;
         progressBar.setVisibility(View.VISIBLE);
         Picasso.with(mContext).load(pointOfInterest.getPhotos().get(Integer.valueOf(v.getTag().toString()))).fit().centerInside().into(expandedImageView, new Callback() {
             @Override
@@ -410,7 +410,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         expandedImageView.setDisplayMatrix(new Matrix());
         expandedImageView.setSuppMatrix(new Matrix());
         progressBar.setVisibility(View.GONE);
-        OnFragmentsChangeViewsListener context = (OnFragmentsChangeViewsListener) mContext;
+        OnFragmentsCommunicationListener context = (OnFragmentsCommunicationListener) mContext;
         context.removeOnBackPressedListener();
     }
 

@@ -35,12 +35,12 @@ import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.fragments.ListFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.ListMapFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
-import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener, OnFragmentsChangeViewsListener, FirebaseHelper.FirebaseGetPointOfInterest {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener, OnFragmentsCommunicationListener, FirebaseHelper.FirebaseGetPointOfInterest {
 
     private String TAG = "MainActivity";
     private Toolbar toolbar;

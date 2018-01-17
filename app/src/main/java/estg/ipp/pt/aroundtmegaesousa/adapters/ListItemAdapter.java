@@ -103,8 +103,8 @@ public class ListItemAdapter extends PointOfInterestAdapter {
                     }
                 });
             }
-            ratingBar.setRating(pointOfInterest.getAvgRatting());
-            ratingText.setText(String.valueOf(pointOfInterest.getAvgRatting()));
+            ratingBar.setRating(pointOfInterest.getAvgRating());
+            ratingText.setText(String.valueOf(pointOfInterest.getAvgRating()));
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

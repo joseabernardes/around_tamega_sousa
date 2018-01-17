@@ -6,23 +6,31 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 
+import org.w3c.dom.Text;
+
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ListItemAdapter;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsChangeViewsListener;
+import estg.ipp.pt.aroundtmegaesousa.models.Filters;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
 
-public class ListFragment extends Fragment implements ListItemAdapter.OnItemSelectedListener {
+public class ListFragment extends Fragment implements ListItemAdapter.OnItemSelectedListener, FilterDialogFragment.FilterListener {
 
 
     private static final String ARG_PARAM1 = "param1";
@@ -42,7 +50,13 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     private View filterBar;
     private View clearFilter;
     private FilterDialogFragment mFilterDialog;
+    private Filters mFilters;
     private ListItemAdapter itemAdapter;
+
+    private TextView currentSearch;
+    private TextView currentSortBy;
+    private ImageView buttonCancel;
+
 
     private FirebaseFirestore mFirestore;
     private Query mQuery;
@@ -77,15 +91,18 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         recyclerView = mContentView.findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         clearFilter = mContentView.findViewById(R.id.button_clear_filter);
-
-
+        currentSearch = mContentView.findViewById(R.id.text_current_search);
+        currentSortBy = mContentView.findViewById(R.id.text_current_sort_by);
+        buttonCancel = mContentView.findViewById(R.id.button_clear_filter);
         mFirestore = FirebaseFirestore.getInstance();
+
+
 
         mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
                 .orderBy("date", Query.Direction.DESCENDING);
 
 
-/*        ArrayList<PointOfInterest> contacts = new ArrayList<>();
+        /*ArrayList<PointOfInterest> contacts = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             contacts.add(new PointOfInterest("Parque das Nações do Douro " + i));
         }*/
@@ -93,12 +110,19 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
 
         itemAdapter = new ListItemAdapter(this, mQuery);
         recyclerView.setAdapter(itemAdapter);
-
+        mFilters = Filters.getDefault();
         filterBar = mContentView.findViewById(R.id.filter_bar);
         filterBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mFilterDialog.show(getChildFragmentManager(), FilterDialogFragment.TAG);
+            }
+        });
+        buttonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFilterDialog.resetFilters();
+                onFilter(Filters.getDefault());
             }
         });
 
@@ -181,6 +205,26 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         Toast.makeText(mContext, "Raia", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onFilter(Filters filters) {
+        // Construct query basic query
+        Query query = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION);
+
+        if (filters.hasTypeOfLocation()) {
+            query = query.whereEqualTo(PointOfInterest.FIELD_TYPE_OF_LOCATION, filters.getTypeOfLocation());
+        }
+        if (filters.hasCity()) {
+            query = query.whereEqualTo(PointOfInterest.FIELD_CITY, filters.getCity());
+        }
+        if (filters.hasSortBy()) {
+            query = query.orderBy(filters.getSortBy(), filters.getSortDirection());
+        }
+        itemAdapter.setQuery(query);
+        currentSearch.setText(Html.fromHtml(filters.getSearchDescription(mContext)));
+        currentSortBy.setText(filters.getOrderDescription(mContext));
+        this.mFilters = filters;
+    }
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -196,6 +240,9 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     @Override
     public void onStart() {
         super.onStart();
+
+        onFilter(mFilters);
+
         if (itemAdapter != null) {
             itemAdapter.startListening();
         }

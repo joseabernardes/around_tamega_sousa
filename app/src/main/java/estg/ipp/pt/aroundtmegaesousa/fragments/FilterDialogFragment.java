@@ -1,19 +1,27 @@
 package estg.ipp.pt.aroundtmegaesousa.fragments;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
 import com.google.firebase.firestore.Query;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.models.City;
 import estg.ipp.pt.aroundtmegaesousa.models.Filters;
+import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.models.TypeOfLocation;
+import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
 
 /**
  * Dialog Fragment containing filter form.
@@ -29,12 +37,9 @@ public class FilterDialogFragment extends DialogFragment {
     }
 
     private View mRootView;
-
-
-    private Spinner mCategorySpinner;
+    private Spinner mTypeOfLocationSpinner;
     private Spinner mCitySpinner;
     private Spinner mSortSpinner;
-    private Spinner mPriceSpinner;
     private Button applyButton;
     private Button cancelButton;
 
@@ -44,10 +49,9 @@ public class FilterDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.dialog_filters, container, false);
-        mCategorySpinner = mRootView.findViewById(R.id.spinner_category);
+        mTypeOfLocationSpinner = mRootView.findViewById(R.id.spinner_tof);
         mCitySpinner = mRootView.findViewById(R.id.spinner_city);
         mSortSpinner = mRootView.findViewById(R.id.spinner_sort);
-        mPriceSpinner = mRootView.findViewById(R.id.spinner_price);
         applyButton = mRootView.findViewById(R.id.button_search);
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,16 +67,21 @@ public class FilterDialogFragment extends DialogFragment {
             }
         });
 
-        return mRootView;
-    }
+        ArrayAdapter<TypeOfLocation> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner);
+        adapter.add(new TypeOfLocation(-1, getString(R.string.value_any_local))); //adicionar á primeira posição
+        adapter.addAll(Enums.getTypeOfLocations());
+        mTypeOfLocationSpinner.setAdapter(adapter);
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+        ArrayAdapter<City> cityAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner);
+        cityAdapter.add(new City(null, getString(R.string.value_any_city))); //adicionar á primeira posição
+        cityAdapter.addAll(Enums.getCities());
+        mCitySpinner.setAdapter(cityAdapter);
 
-        if (context instanceof FilterListener) {
-            mFilterListener = (FilterListener) context;
+        if (getParentFragment() instanceof FilterListener) {
+            mFilterListener = (FilterListener) getParentFragment();
         }
+
+        return mRootView;
     }
 
     @Override
@@ -95,63 +104,35 @@ public class FilterDialogFragment extends DialogFragment {
     }
 
     @Nullable
-    private String getSelectedCategory() {
-        String selected = (String) mCategorySpinner.getSelectedItem();
-        if (getString(R.string.value_any_local).equals(selected)) {
-            return null;
-        } else {
-            return selected;
-        }
-    }
-
-    @Nullable
-    private String getSelectedCity() {
-        String selected = (String) mCitySpinner.getSelectedItem();
-        if (getString(R.string.value_any_city).equals(selected)) {
-            return null;
-        } else {
-            return selected;
-        }
-    }
-
-    private int getSelectedPrice() {
-        String selected = (String) mPriceSpinner.getSelectedItem();
-        if (selected.equals(getString(R.string.star_1))) {
-            return 1;
-        } else if (selected.equals(getString(R.string.star_2))) {
-            return 2;
-        } else if (selected.equals(getString(R.string.star_3))) {
-            return 3;
-        } else if (selected.equals(getString(R.string.star_4))) {
-            return 4;
-        } else if (selected.equals(getString(R.string.star_5))) {
-            return 5;
+    private int getSelectedTypeOfLocation() {
+        TypeOfLocation selected = (TypeOfLocation) mTypeOfLocationSpinner.getSelectedItem();
+        if (selected != null) {
+            return selected.getId();
         } else {
             return -1;
         }
     }
 
     @Nullable
-    private String getSelectedSortBy() {
-        String selected = (String) mSortSpinner.getSelectedItem();
-        if (getString(R.string.sort_by_rating).equals(selected)) {
-            //return Restaurant.FIELD_AVG_RATING;
-        }
-        if (getString(R.string.sort_by_date).equals(selected)) {
-            //return Restaurant.FIELD_PRICE;
-        }
+    private String getSelectedCity() {
 
-        return null;
+        City selected = (City) mCitySpinner.getSelectedItem();
+        if (selected != null && selected.getId() != null) {
+            return selected.getId();
+        }
+        return null;  //todos os concelhos
     }
 
+
     @Nullable
-    private Query.Direction getSortDirection() {
+    private String getSelectedSortBy() {
+
         String selected = (String) mSortSpinner.getSelectedItem();
         if (getString(R.string.sort_by_rating).equals(selected)) {
-            return Query.Direction.DESCENDING;
+            return PointOfInterest.FIELD_AVG_RATING;
         }
         if (getString(R.string.sort_by_date).equals(selected)) {
-            return Query.Direction.ASCENDING;
+            return PointOfInterest.FIELD_DATE;
         }
 
         return null;
@@ -159,9 +140,8 @@ public class FilterDialogFragment extends DialogFragment {
 
     public void resetFilters() {
         if (mRootView != null) {
-            mCategorySpinner.setSelection(0);
+            mTypeOfLocationSpinner.setSelection(0);
             mCitySpinner.setSelection(0);
-            mPriceSpinner.setSelection(0);
             mSortSpinner.setSelection(0);
         }
     }
@@ -170,13 +150,13 @@ public class FilterDialogFragment extends DialogFragment {
         Filters filters = new Filters();
 
         if (mRootView != null) {
-            filters.setCategory(getSelectedCategory());
+            filters.setTypeOfLocation(getSelectedTypeOfLocation());
             filters.setCity(getSelectedCity());
-            filters.setPrice(getSelectedPrice());
             filters.setSortBy(getSelectedSortBy());
-            filters.setSortDirection(getSortDirection());
+            filters.setSortDirection(Query.Direction.DESCENDING);
         }
 
         return filters;
     }
+
 }

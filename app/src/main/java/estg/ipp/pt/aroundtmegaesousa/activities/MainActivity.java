@@ -109,6 +109,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         OPEN POI FRAGMENT
          */
         if (getIntent().hasExtra(PointOfInterestFragment.DOCUMENT_ID)) {
+            Toast.makeText(this, getString(R.string.message_toast_open_poi), Toast.LENGTH_SHORT).show();
             String documentID = getIntent().getStringExtra(PointOfInterestFragment.DOCUMENT_ID);
             firebaseHelper = new FirebaseHelper();
             firebaseHelper.getPointOfInterestByDocumentID(documentID, this);
@@ -310,6 +311,4 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public interface OnBackPressedListener {
         void doBack();
     }
-
-
 }

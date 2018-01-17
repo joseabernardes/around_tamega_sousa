@@ -73,6 +73,7 @@
     <string name="message_notification_not_added_upload">Falha no upload das imagens, ponto não adicionado!</string>
 
     <string name="message_toast_restart_service">O serviço será recomeçado brevemente</string>
+    <string name="message_toast_open_poi"> A abrir Ponto de Interesse</string>
 
 
     <string name="apply">Aplicar</string>
@@ -112,6 +113,8 @@
 
     </string-array>
 
+    <string name="filter_in">em</string>
+
     <string-array name="cities">
         <item>@string/value_any_city</item>
 
@@ -129,16 +132,6 @@
         <item>Resende</item>
     </string-array>
 
-    <string-array name="ratings">
-        <item>@string/value_any_rating</item>
-
-        <item>@string/star_1</item>
-        <item>@string/star_2</item>
-        <item>@string/star_3</item>
-        <item>@string/star_4</item>
-        <item>@string/star_5</item>
-    </string-array>
-
 
     <string-array name="sort_by">
         <item>@string/sort_by_rating</item>
@@ -147,13 +140,6 @@
 
     <string name="value_any_local">Todos os Tipos de Local</string>
     <string name="value_any_city">Todos os Concelhos</string>
-    <string name="value_any_rating">Todos os Ratings</string>
-
-    <string name="star_1"> * </string>
-    <string name="star_2"> * * </string>
-    <string name="star_3"> * * * </string>
-    <string name="star_4"> * * * * </string>
-    <string name="star_5"> * * * * * </string>
 
     <!--    <string name="label_category">Tipo de Local</string>
         <string name="label_city">Concelho</string>

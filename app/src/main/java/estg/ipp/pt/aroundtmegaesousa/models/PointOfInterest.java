@@ -14,6 +14,13 @@ import java.util.List;
 public class PointOfInterest implements Serializable {
 
 
+    public static final String FIELD_CITY = "city";
+    public static final String FIELD_TYPE_OF_LOCATION = "typeOfLocation";
+    public static final String FIELD_DATE= "date";
+    public static final String FIELD_AVG_RATING = "avgRating";
+
+
+
     @Exclude
     private String id;
     private String name;
@@ -24,7 +31,8 @@ public class PointOfInterest implements Serializable {
     private List<String> photos;
     private List<String> photosThumbs;
     private String user;
-    private float avgRatting;
+    private float avgRating;
+    private int numRatings;
     private Date date;
     private String city;
     /*
@@ -48,8 +56,9 @@ public class PointOfInterest implements Serializable {
      * @param photos
      * @param user
      * @param date
+     * @param numRatings
      */
-    public PointOfInterest(String name, String description, LatLng location, String city, int typeOfLocation, List<String> photos, List<String> photosThumbs, String user, Date date) {
+    public PointOfInterest(String name, String description, LatLng location, String city, int typeOfLocation, List<String> photos, List<String> photosThumbs, String user, Date date, int numRatings) {
         this.name = name;
         this.description = description;
         this.latitude = location.latitude;
@@ -60,6 +69,7 @@ public class PointOfInterest implements Serializable {
         this.user = user;
         this.date = date;
         this.city = city;
+        this.numRatings = numRatings;
 
     }
 
@@ -71,18 +81,26 @@ public class PointOfInterest implements Serializable {
      * @param location
      * @param typeOfLocation
      * @param user
+     * @param numRatings
      */
-    public PointOfInterest(String name, String description, LatLng location, String city, int typeOfLocation, String user) {
+    public PointOfInterest(String name, String description, LatLng location, String city, int typeOfLocation, String user, int numRatings) {
         this.name = name;
         this.description = description;
         this.latitude = location.latitude;
         this.longitude = location.longitude;
         this.typeOfLocation = typeOfLocation;
-        this.photos = photos;
         this.user = user;
-        this.date = date;
         this.city = city;
+        this.numRatings = numRatings;
 
+    }
+
+    public int getNumRatings() {
+        return numRatings;
+    }
+
+    public void setNumRatings(int numRatings) {
+        this.numRatings = numRatings;
     }
 
     public String getId() {
@@ -149,8 +167,8 @@ public class PointOfInterest implements Serializable {
         return user;
     }
 
-    public float getAvgRatting() {
-        return avgRatting;
+    public float getAvgRating() {
+        return avgRating;
     }
 
 }

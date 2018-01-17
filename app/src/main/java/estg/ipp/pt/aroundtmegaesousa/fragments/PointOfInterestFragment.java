@@ -186,9 +186,9 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
 
 
         title.setText(pointOfInterest.getName());
-        description.setText(pointOfInterest.getDescription());
-        ratingBar.setRating(pointOfInterest.getAvgRatting());
-        ratingText.setText(String.valueOf(pointOfInterest.getAvgRatting()));
+        description.setText(pointOfInterest.getDescription() + " \nID: " +  pointOfInterest.getId());
+        ratingBar.setRating(pointOfInterest.getAvgRating());
+        ratingText.setText(String.valueOf(pointOfInterest.getAvgRating()));
         date.setText(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(pointOfInterest.getDate()));
         City city = Enums.getCityByID(pointOfInterest.getCity());
         if (city != null) {

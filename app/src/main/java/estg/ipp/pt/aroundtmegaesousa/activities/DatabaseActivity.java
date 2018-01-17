@@ -26,7 +26,7 @@ public class DatabaseActivity extends AppCompatActivity {
         ContentValues values = new ContentValues();
         values.put("title", poi.getName());
         values.put("description", poi.getDescription());
-        values.put("rating", poi.getAvgRatting());
+        values.put("rating", poi.getAvgRating());
         values.put("typeofLocal", poi.getTypeOfLocation());
 /*        values.put("latitude", poi.getLocation().getLatitude());
         values.put("longitude", poi.getLocation().getLongitude());*/

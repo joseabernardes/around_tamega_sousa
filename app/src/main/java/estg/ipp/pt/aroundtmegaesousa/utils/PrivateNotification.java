@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -113,9 +114,10 @@ public class PrivateNotification {
      * Cancel the notification
      */
     public void cancel() {
-        Log.d("CANCEL", "cancel: " + String.valueOf(id));
         mNotifyManager.cancel(id);
     }
+
+
 
     /**
      * Sets a pending intent to be trigged on notification click
@@ -139,7 +141,7 @@ public class PrivateNotification {
 
 
     public static int getRandomID() {
-        return (int) ((new Date().getTime() / 1000L) % Integer.MAX_VALUE);
+        return (int) ((System.nanoTime() / 1000L) % Integer.MAX_VALUE);
     }
 
     public static void cancelByID(Context context, int id) {

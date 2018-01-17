@@ -6,49 +6,46 @@ import android.text.TextUtils;
 
 import com.google.firebase.firestore.Query;
 
-/**
- * Object for passing filters around.
- */
+import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
+
+
 public class Filters {
 
-    private String category = null;
+    private int typeOfLocation = -1;
     private String city = null;
-    private int price = -1;
     private String sortBy = null;
     private Query.Direction sortDirection = null;
 
-    public Filters() {}
+    public Filters() {
+    }
 
     public static Filters getDefault() {
         Filters filters = new Filters();
-       /* filters.setSortBy(Restaurant.FIELD_AVG_RATING);*/
+        filters.setSortBy(PointOfInterest.FIELD_DATE);
         filters.setSortDirection(Query.Direction.DESCENDING);
-
         return filters;
     }
 
-    public boolean hasCategory() {
-        return !(TextUtils.isEmpty(category));
+    public boolean hasTypeOfLocation() {
+        return typeOfLocation != -1;
     }
 
     public boolean hasCity() {
         return !(TextUtils.isEmpty(city));
     }
 
-    public boolean hasPrice() {
-        return (price > 0);
-    }
 
     public boolean hasSortBy() {
         return !(TextUtils.isEmpty(sortBy));
     }
 
-    public String getCategory() {
-        return category;
+    public int getTypeOfLocation() {
+        return typeOfLocation;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setTypeOfLocation(int typeOfLocation) {
+        this.typeOfLocation = typeOfLocation;
     }
 
     public String getCity() {
@@ -59,13 +56,6 @@ public class Filters {
         this.city = city;
     }
 
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
 
     public String getSortBy() {
         return sortBy;
@@ -86,45 +76,36 @@ public class Filters {
     public String getSearchDescription(Context context) {
         StringBuilder desc = new StringBuilder();
 
-        if (category == null && city == null) {
+        if (typeOfLocation == -1 && city == null) {
             desc.append("<b>");
-          /*  desc.append(context.getString(R.string.all_restaurants));*/
+            desc.append(context.getString(R.string.all_points));
             desc.append("</b>");
         }
 
-        if (category != null) {
+        if (typeOfLocation != -1) {
             desc.append("<b>");
-            desc.append(category);
+            desc.append(Enums.getTypeOfLocationByID(typeOfLocation));
             desc.append("</b>");
         }
 
-        if (category != null && city != null) {
-            desc.append(" in ");
+        if (typeOfLocation != -1 && city != null) {
+            desc.append(" " + context.getString(R.string.filter_in) + " ");
         }
 
         if (city != null) {
             desc.append("<b>");
-            desc.append(city);
-            desc.append("</b>");
-        }
-
-        if (price > 0) {
-            desc.append(" for ");
-            desc.append("<b>");
-         /*   desc.append(RestaurantUtil.getPriceString(price));*/
+            desc.append(Enums.getCityByID(city));
             desc.append("</b>");
         }
 
         return desc.toString();
     }
-/*
+
     public String getOrderDescription(Context context) {
-      *//*  if (Restaurant.FIELD_PRICE.equals(sortBy)) {
-            return context.getString(R.string.sorted_by_price);
-        } else if (Restaurant.FIELD_POPULARITY.equals(sortBy)) {
-            return context.getString(R.string.sorted_by_popularity);
-        } else {
+        if (PointOfInterest.FIELD_AVG_RATING.equals(sortBy)) {
             return context.getString(R.string.sorted_by_rating);
-        }*//*
-    }*/
+        } else {
+            return context.getString(R.string.sorted_by_date);
+        }
+    }
 }

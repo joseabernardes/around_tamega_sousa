@@ -308,7 +308,6 @@ public class FirebaseHelper {
 
     }
 
-
     public void editRating(String idPoi, String ratingID, float rate, final PointOfInterestFragment context) {
         DocumentReference rating = points.document(idPoi).collection("ratings").document(ratingID);
         rating.update("rating", rate).addOnCompleteListener(new OnCompleteListener<Void>() {

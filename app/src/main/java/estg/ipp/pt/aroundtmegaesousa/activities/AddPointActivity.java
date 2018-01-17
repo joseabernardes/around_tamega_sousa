@@ -182,12 +182,12 @@ public class AddPointActivity extends BaseActivity {
         if (coordinates != null && !name.isEmpty() && !description.isEmpty() && city != null && !tempList.isEmpty()) {
 
 
-            if(getIntent().getAction().equals(AddPointActivity.EDIT_POI_ACTION)){
+/*            if(getIntent().getAction().equals(AddPointActivity.EDIT_POI_ACTION)){
 
-            }
+            }*/
 
             int typeID = ((TypeOfLocation) typeOfLocation.getSelectedItem()).getId();
-            PointOfInterest pointOfInterest = new PointOfInterest(name, description, coordinates, city.getId(), typeID, user.getUid());
+            PointOfInterest pointOfInterest = new PointOfInterest(name, description, coordinates, city.getId(), typeID, user.getUid(),0);
             Intent intent = new Intent(this, UploadFirebaseService.class);
             intent.setAction(UploadFirebaseService.START_UPLOAD_ACTION);
             intent.putExtra(UploadFirebaseService.POI_PARAM, pointOfInterest);

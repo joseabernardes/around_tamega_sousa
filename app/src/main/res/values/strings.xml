@@ -135,8 +135,9 @@
 
 
     <string-array name="sort_by">
-        <item>@string/sort_by_rating</item>
         <item>@string/sort_by_date</item>
+        <item>@string/sort_by_rating</item>
+
     </string-array>
 
     <string name="value_any_local">Todos os Tipos de Local</string>

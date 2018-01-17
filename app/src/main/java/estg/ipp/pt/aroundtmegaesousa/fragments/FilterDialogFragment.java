@@ -67,12 +67,12 @@ public class FilterDialogFragment extends DialogFragment {
             }
         });
 
-        ArrayAdapter<TypeOfLocation> adapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner);
+        ArrayAdapter<TypeOfLocation> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         adapter.add(new TypeOfLocation(-1, getString(R.string.value_any_local))); //adicionar á primeira posição
         adapter.addAll(Enums.getTypeOfLocations());
         mTypeOfLocationSpinner.setAdapter(adapter);
 
-        ArrayAdapter<City> cityAdapter = new ArrayAdapter<>(getContext(), R.layout.item_spinner);
+        ArrayAdapter<City> cityAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
         cityAdapter.add(new City(null, getString(R.string.value_any_city))); //adicionar á primeira posição
         cityAdapter.addAll(Enums.getCities());
         mCitySpinner.setAdapter(cityAdapter);

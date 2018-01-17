@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+
 import java.util.Calendar;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
@@ -256,8 +257,8 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
                 cal.add(Calendar.YEAR, -2000);
 
                 mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
-                        .whereGreaterThan("favorites." + viewChanger.getLoggedUser().getUid(),  cal.getTime())
-                        .orderBy("favorites."+ viewChanger.getLoggedUser().getUid());
+                        .whereGreaterThan("favorites." + viewChanger.getLoggedUser().getUid(), cal.getTime())
+                        .orderBy("favorites." + viewChanger.getLoggedUser().getUid());
                 break;
             case MY_POINTS:
                 mQuery = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)

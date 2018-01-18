@@ -1,10 +1,12 @@
 package estg.ipp.pt.aroundtmegaesousa.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.AppCompatRatingBar;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,6 +41,8 @@ import estg.ipp.pt.aroundtmegaesousa.adapters.MapAdapter;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
 import estg.ipp.pt.aroundtmegaesousa.models.Filters;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.models.TypeOfLocation;
+import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
 
@@ -142,9 +146,20 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
                 return true;
             }
         });
+        mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick(Marker marker) {
+                PointOfInterest pointOfInterest = (PointOfInterest) marker.getTag();
+                Fragment fragment = PointOfInterestFragment.newInstance(pointOfInterest);
+                communicationListener.replaceFragment(fragment);
+                communicationListener.changeActionBarTitle(pointOfInterest.getName());
+                communicationListener.showFloatingButton(false);
+            }
+        });
 
-        //desenhar pontos!
-        addMarker(new LatLng(41.047010, -8.287442), "Casa", "Casa do paulinho na casa");
+        CustomInfoWindowAdapter adapter = new CustomInfoWindowAdapter((Activity) mContext);
+        mGoogleMap.setInfoWindowAdapter(adapter);
+
 
         try {
             tamega = new GeoJsonLayer(mGoogleMap, R.raw.tamegaesousa, mContext);
@@ -166,13 +181,15 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     }
 
 
-    private void addMarker(LatLng latLng, String title, String content) {
+    private void addMarker(PointOfInterest pointOfInterest) {
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker);
-        markers.add(mGoogleMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .title(title)
-                .snippet(content)
-                .icon(icon)));
+        Marker marker = mGoogleMap.addMarker(new MarkerOptions()
+                .position(pointOfInterest.getLocation())
+                .title(pointOfInterest.getName())
+                .icon(icon));
+
+        marker.setTag(pointOfInterest);
+        markers.add(marker);
     }
 
     private void zoomToLocation(LatLng latLng, float zoom) {
@@ -212,7 +229,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     public void addItemToMap(List<PointOfInterest> pointOfInterests) {
         removeAllMarkers();
         for (PointOfInterest pointOfInterest : pointOfInterests) {
-            addMarker(pointOfInterest.getLocation(), pointOfInterest.getName(), pointOfInterest.getCity());
+            addMarker(pointOfInterest);
         }
     }
 
@@ -248,5 +265,34 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     public void onDestroyView() {
         getArguments().putSerializable(FILTER, mFilters);
         super.onDestroyView();
+    }
+
+
+    public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+
+        private Activity context;
+
+        public CustomInfoWindowAdapter(Activity context) {
+            this.context = context;
+        }
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            return null;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            View view = context.getLayoutInflater().inflate(R.layout.layout_map_info_window, null);
+            TextView title = view.findViewById(R.id.title);
+            TextView type = view.findViewById(R.id.type);
+            AppCompatRatingBar ratingBar = view.findViewById(R.id.rating_bar_map);
+            PointOfInterest pointOfInterest = (PointOfInterest) marker.getTag();
+            title.setText(pointOfInterest.getName());
+            TypeOfLocation typeOfLocation = Enums.getTypeOfLocationByID(pointOfInterest.getTypeOfLocation());
+            type.setText(typeOfLocation.getType());
+            ratingBar.setRating(pointOfInterest.getAvgRating());
+            return view;
+        }
     }
 }

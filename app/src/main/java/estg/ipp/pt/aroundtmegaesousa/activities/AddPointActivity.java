@@ -57,7 +57,7 @@ public class AddPointActivity extends BaseActivity {
     private static final String PHOTOS_KEY = "photos_list";
     private static final String THUMBS_KEY = "img_";
     private List<ImageView> imageViewList;
-    private boolean imageOpen;
+    private int imageOpen;
     private PhotoView expandedImageView;
     private Menu menu;
     private Toolbar toolbar;
@@ -107,8 +107,9 @@ public class AddPointActivity extends BaseActivity {
             city = (City) savedInstanceState.getSerializable(MapPickerActivity.CITY_PARAM);
             photos = (ArrayList<File>) savedInstanceState.getSerializable(PHOTOS_KEY);
             for (int i = 0; i < 5; i++) {
-                if(photos.get(i)!=null){
-                    addPhotoToList(photos.get(i),i);
+                if (photos.get(i) != null) {
+                    addPhotoToList(photos.get(i), i);
+
                 }
 
 
@@ -138,7 +139,7 @@ public class AddPointActivity extends BaseActivity {
          * gallery
          */
         expandedImageView = findViewById(R.id.expanded_image);
-        imageOpen = false;
+        imageOpen = -1;
 
 
         for (int i = 0; i < 5; i++) {
@@ -195,7 +196,7 @@ public class AddPointActivity extends BaseActivity {
             }*/
 
             int typeID = ((TypeOfLocation) typeOfLocation.getSelectedItem()).getId();
-            PointOfInterest pointOfInterest = new PointOfInterest(name, description, coordinates, city.getId(), typeID, user.getUid(),0);
+            PointOfInterest pointOfInterest = new PointOfInterest(name, description, coordinates, city.getId(), typeID, user.getUid(), 0);
             Intent intent = new Intent(this, UploadFirebaseService.class);
             intent.setAction(UploadFirebaseService.START_UPLOAD_ACTION);
             intent.putExtra(UploadFirebaseService.POI_PARAM, pointOfInterest);
@@ -227,7 +228,12 @@ public class AddPointActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_check:
-                dialog.show();
+                if (imageOpen != -1) {
+                    removeImage();
+                } else {
+                    dialog.show();
+                }
+
 
                 return true;
             default:
@@ -238,20 +244,36 @@ public class AddPointActivity extends BaseActivity {
     }
 
 
+    private void removeImage() {
+        if (imageOpen != -1) {
+            ImageView imageView = imageViewList.get(imageOpen);
+            imageView.setImageResource(R.drawable.ic_add_photo);
+            imageView.setPadding(60, 60, 60, 60);
+            photos.set(imageOpen,null);
+            closeImage();
+
+        }
+
+
+    }
+
+
     private void onClickImage(final ImageView imageView) {
         int tag = (Integer) imageView.getTag();
         File image = photos.get(tag);
-        if (image != null) { //se não tiver imagem
+
+        if (image != null) { //se tiver imagem
             if (image.exists()) {
                 Picasso.with(AddPointActivity.this).load(image).fit().centerInside().into(expandedImageView);
 /*                Bitmap myBitmap = BitmapFactory.decodeFile(image.getAbsolutePath());
                 imageView.setImageBitmap(myBitmap);*/
                 expandedImageView.setVisibility(View.VISIBLE);
-                updateMenuItem("Eliminar", R.drawable.ic_close);
-                toolbar.setTitle("Imagem " + image.getName());
-                imageOpen = true;
+                updateMenuItem(getString(R.string.delete), R.drawable.ic_close);
+                toolbar.setTitle(getString(R.string.text_image) + " " + String.valueOf(tag));
+                imageOpen = tag;
+
             } else {
-                Toast.makeText(this, "O ficheiro não existe", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.text_file_not_found), Toast.LENGTH_SHORT).show();
             }
 
         } else {
@@ -285,7 +307,6 @@ public class AddPointActivity extends BaseActivity {
 
             @Override
             public void onCanceled(EasyImage.ImageSource source, int type) {
-                //Cancel handling, you might wanna remove taken photo if it was canceled
                 if (source == EasyImage.ImageSource.CAMERA) {
                     File photoFile = EasyImage.lastlyTakenButCanceledPhoto(AddPointActivity.this);
                     if (photoFile != null) photoFile.delete();
@@ -313,6 +334,7 @@ public class AddPointActivity extends BaseActivity {
         if(imageFile!=null && imageFile.exists()){
             Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getPath());
             Bitmap thumb = ThumbnailUtils.extractThumbnail(bitmap, 400, 400);
+
             imageView.setImageBitmap(thumb);
 /*            Picasso.with(AddPointActivity.this).load(imageFile).resize(400,400).centerCrop().into(imageView);*/
             photos.set(tag, imageFile);
@@ -325,7 +347,7 @@ public class AddPointActivity extends BaseActivity {
         expandedImageView.setVisibility(View.GONE);
         expandedImageView.setDisplayMatrix(new Matrix());
         expandedImageView.setSuppMatrix(new Matrix());
-        imageOpen = false;
+        imageOpen = -1;
     }
 
     private void updateMenuItem(String title, int icon) {
@@ -362,7 +384,7 @@ public class AddPointActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (imageOpen) {
+        if (imageOpen != -1) {
             closeImage();
         } else {
             super.onBackPressed();
@@ -411,6 +433,4 @@ public class AddPointActivity extends BaseActivity {
 
         }
     }
-
-
 }

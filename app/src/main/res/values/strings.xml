@@ -44,7 +44,7 @@
 
     <!-- Menu do poi-->
     <string name="edit_poi">Editar</string>
-    <string name="delete_poi">Eliminar</string>
+    <string name="delete">Eliminar</string>
     <string name="google_maps">Ir para o Google Maps</string>
     <string name="add_favorites">Adicionar aos Favoritos</string>
     <string name="remove_favorites">Remover dos Favoritos</string>
@@ -75,6 +75,11 @@
 
     <string name="message_toast_restart_service">O serviço será recomeçado brevemente</string>
     <string name="message_toast_open_poi"> A abrir Ponto de Interesse</string>
+
+
+    <string name="text_image">Imagem</string>
+    <string name="text_file_not_found">O ficheiro não existe</string>
+
 
 
     <string name="apply">Aplicar</string>

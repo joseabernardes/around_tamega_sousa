@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="150dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/default_point" />
+            app:srcCompat="@drawable/default_point" />
 
         <ProgressBar
             android:id="@+id/image_loading_progress"

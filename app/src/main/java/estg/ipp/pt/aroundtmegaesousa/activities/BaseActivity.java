@@ -5,15 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.messaging.FirebaseMessaging;
-
-import estg.ipp.pt.aroundtmegaesousa.services.FirebaseIDService;
-import estg.ipp.pt.aroundtmegaesousa.services.PushNotificationService;
 
 /**
  * Created by José Bernardes on 09/01/2018.

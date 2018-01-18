@@ -1,6 +1,7 @@
 package estg.ipp.pt.aroundtmegaesousa.utils;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -34,10 +35,6 @@ public class PrivateNotification {
     private Context context;
 
 
-
-
-
-
     /**
      * Constructor for progress notification
      *
@@ -50,6 +47,10 @@ public class PrivateNotification {
     public PrivateNotification(Context context, String title, int icon, int id) {
         this.context = context;
         this.mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(DEFAULT_CHANNEL, context.getString(R.string.app_name), NotificationManager.IMPORTANCE_LOW);
+            mNotifyManager.createNotificationChannel(notificationChannel);
+        }
         this.mBuilder = new NotificationCompat.Builder(context, DEFAULT_CHANNEL);
         mBuilder.setContentTitle(title)
                 .setSmallIcon(icon)
@@ -72,7 +73,10 @@ public class PrivateNotification {
         this.context = context;
         this.mNotifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         this.mBuilder = new NotificationCompat.Builder(context, DEFAULT_CHANNEL);
-
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(DEFAULT_CHANNEL, context.getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT);
+            mNotifyManager.createNotificationChannel(notificationChannel);
+        }
         mBuilder.setContentTitle(title)
                 .setContentText(content)
                 .setSmallIcon(icon)
@@ -120,7 +124,6 @@ public class PrivateNotification {
     public void cancel() {
         mNotifyManager.cancel(id);
     }
-
 
 
     /**

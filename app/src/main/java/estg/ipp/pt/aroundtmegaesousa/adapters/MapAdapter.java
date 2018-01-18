@@ -1,7 +1,6 @@
 package estg.ipp.pt.aroundtmegaesousa.adapters;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.EventListener;
@@ -35,7 +34,7 @@ public class MapAdapter implements EventListener<QuerySnapshot> {
         this.pointOfInterestList = new ArrayList<>();
     }
 
-    protected PointOfInterest getPointOfInterest(int index) {
+    public PointOfInterest getPointOfInterest(int index) {
         return pointOfInterestList.get(index);
     }
 

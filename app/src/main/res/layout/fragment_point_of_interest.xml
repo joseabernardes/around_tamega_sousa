@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -30,13 +31,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="200dp"></android.support.v4.view.ViewPager>
 
-                    <!--     <ImageView
-                             android:id="@+id/slider"
-                             android:layout_width="match_parent"
-                             android:layout_height="200dp"
-                             android:scaleType="centerCrop"
-                             android:src="@drawable/cinf" />-->
-
 
                     <LinearLayout
                         android:id="@+id/slider_dots"
@@ -50,12 +44,6 @@
 
                 </RelativeLayout>
 
-
-                <!--            <ImageView
-                                android:layout_width="match_parent"
-                                android:layout_height="200dp"
-                                android:scaleType="centerCrop"
-                                android:src="@drawable/cinf" />-->
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -188,23 +176,23 @@
                     <Button
                         android:id="@+id/vote"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:layout_margin="8dp"
                         android:layout_weight="1"
-                        android:backgroundTint="?colorPrimary"
-                        android:drawableLeft="@drawable/ic_star"
+                        style="@style/ButtonPrimary"
+                        android:drawableLeft="@mipmap/ic__star"
                         android:text="Votar"
                         android:textColor="@color/white" />
-
-
+<!--
+                    android:drawableLeft="@drawable/ic_star"-->
                     <Button
                         android:id="@+id/openMap"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:layout_margin="8dp"
                         android:layout_weight="1"
-                        android:backgroundTint="?colorPrimaryDark"
-                        android:drawableLeft="@drawable/ic_map"
+                        style="@style/ButtonPrimary"
+                        android:drawableLeft="@mipmap/ic__map"
                         android:drawableTint="@color/white"
                         android:text="Ver Mapa"
                         android:textColor="@color/white" />

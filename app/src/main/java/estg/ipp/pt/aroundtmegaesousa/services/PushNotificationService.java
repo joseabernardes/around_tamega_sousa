@@ -52,7 +52,7 @@ public class PushNotificationService extends FirebaseMessagingService {
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.putExtra(PointOfInterestFragment.DOCUMENT_ID, poiID);
                     PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-                    PrivateNotification privateNotification = new PrivateNotification(this, "Ponto de Interesse adicionado", poiName + " - " + Enums.getCityByID(city), R.drawable.ic_add, PrivateNotification.getRandomID());
+                    PrivateNotification privateNotification = new PrivateNotification(this, "Ponto de Interesse adicionado", poiName + " - " + Enums.getCityByID(city), R.mipmap.ic_launcher, PrivateNotification.getRandomID());
                     privateNotification.setAction(pi);
                     privateNotification.show();
                 }

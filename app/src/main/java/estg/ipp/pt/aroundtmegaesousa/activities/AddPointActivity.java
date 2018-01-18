@@ -129,7 +129,7 @@ public class AddPointActivity extends BaseActivity {
         //check permissions
 
         EasyImage.configuration(this)
-                .setImagesFolderName("Fotografias")
+                .setImagesFolderName("photos")
         ;
 
 

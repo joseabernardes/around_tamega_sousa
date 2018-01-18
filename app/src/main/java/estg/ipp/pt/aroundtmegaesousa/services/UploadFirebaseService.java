@@ -70,7 +70,7 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
     @Override
     public void createProgressNotification() {
         Log.d(TAG, "createProgressNotification:");
-        progressNotification = new PrivateNotification(this, getString(R.string.title_notification_add_point), R.drawable.ic_cloud_upload, PrivateNotification.getRandomID());
+        progressNotification = new PrivateNotification(this, getString(R.string.title_notification_add_point), R.mipmap.ic__cloud_upload, PrivateNotification.getRandomID());
         progressNotification.show();
     }
 
@@ -87,7 +87,7 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(PointOfInterestFragment.DOCUMENT_ID, documentID);
             PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            resultNotification = new PrivateNotification(this, getString(R.string.title_notification_add_point), getString(R.string.message_notification_added), R.drawable.ic_check, PrivateNotification.getRandomID());
+            resultNotification = new PrivateNotification(this, getString(R.string.title_notification_add_point), getString(R.string.message_notification_added), R.mipmap.ic__check, PrivateNotification.getRandomID());
             resultNotification.setAction(pi);
         } else {
             String message = getString(R.string.message_notification_not_added);
@@ -96,7 +96,7 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
             } else if (resultCode == FirebaseHelper.RESULT_FAIL_UPLOAD_IMAGES) {
                 message = getString(R.string.message_notification_not_added_upload);
             }
-            resultNotification = new PrivateNotification(this, getString(R.string.title_notification_add_point), message, R.drawable.ic_close, PrivateNotification.getRandomID());
+            resultNotification = new PrivateNotification(this, getString(R.string.title_notification_add_point), message, R.mipmap.ic__error, PrivateNotification.getRandomID());
 
         }
 

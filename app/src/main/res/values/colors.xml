@@ -44,4 +44,5 @@
     <color name="greyBetween">#aa000000</color>
     <color name="greySecondary">#8B000000</color>
     <color name="greyDisabled">#61000000</color>
+    <color name="greyTransparent">#7e000000</color>
 </resources>

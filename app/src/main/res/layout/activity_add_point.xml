@@ -36,17 +36,27 @@
                     android:textColor="?colorPrimary"
                     android:textSize="18dp" />
 
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nome" />
+
+
+                <EditText
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Descrição" />
+
+   <!--
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="8dp"
                     android:theme="@style/TextLabel">
 
-                    <EditText
-                        android:id="@+id/name"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Nome" />
+
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -56,13 +66,9 @@
                     android:paddingBottom="8dp"
                     android:theme="@style/TextLabel">
 
-                    <EditText
-                        android:id="@+id/description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Descrição" />
 
-                </android.support.design.widget.TextInputLayout>
+
+                </android.support.design.widget.TextInputLayout>-->
 
 
                 <Spinner
@@ -177,14 +183,13 @@
                         android:enabled="false"
                         android:hint="Selecione a localização no mapa"
                         android:textSize="14sp" />
-
                     <Button
                         android:id="@+id/map_button"
                         style="@style/ButtonPrimary"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:layout_weight="1"
-                        android:drawableLeft="@drawable/ic_gps"
+                        android:drawableStart="@mipmap/ic__gps"
                         android:text="Mapa"
                         android:textColor="@color/white" />
 
@@ -192,12 +197,11 @@
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>
-
         <com.github.chrisbanes.photoview.PhotoView
             android:id="@+id/expanded_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#7e000000"
+            android:background="@color/greyTransparent"
             android:visibility="invisible" />
     </FrameLayout>
 </LinearLayout>

@@ -1,6 +1,9 @@
 package estg.ipp.pt.aroundtmegaesousa.services;
 
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -13,6 +16,9 @@ import com.google.firebase.messaging.RemoteMessage;
 import java.util.Map;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.activities.MainActivity;
+import estg.ipp.pt.aroundtmegaesousa.activities.SettingsActivity;
+import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
 import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
 import estg.ipp.pt.aroundtmegaesousa.utils.PrivateNotification;
 
@@ -39,13 +45,20 @@ public class PushNotificationService extends FirebaseMessagingService {
             String poiName = payload.get(POI_NAME);
             String city = payload.get(CITY);
             String userID = payload.get(USER_ID);
-        /*    if(poiID!=null &&)*/
-          /*  FirebaseAuth.getInstance().getCurrentUser().getUid()*/
-            PrivateNotification privateNotification = new PrivateNotification(this, "Ponto de Interesse adicionado", poiName + " - " + Enums.getCityByID(city), R.drawable.logo_around, PrivateNotification.getRandomID());
-            privateNotification.show();
+
+            if (poiID != null && poiName != null && city != null && userID != null) {
+                String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                if (user != null && poiID != user) {
+                    Intent intent = new Intent(this, MainActivity.class);
+                    intent.putExtra(PointOfInterestFragment.DOCUMENT_ID, poiID);
+                    PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+                    PrivateNotification privateNotification = new PrivateNotification(this, "Ponto de Interesse adicionado", poiName + " - " + Enums.getCityByID(city), R.drawable.logo_around, PrivateNotification.getRandomID());
+                    privateNotification.setAction(pi);
+                    privateNotification.show();
+                }
+            }
+
         }
-
-
     }
 
 

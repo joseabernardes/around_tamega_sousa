@@ -11,15 +11,28 @@
     <include layout="@layout/toolbar" />
 
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Push Notifications"
+        android:textStyle="bold" />
+
+    <Switch
+        android:id="@+id/id_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Ativar/Desativar"
+        android:textColor="@color/greySecondary" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="Notificação"
-        android:textStyle="bold"
         android:textSize="15sp"
-        />
+        android:textStyle="bold" />
 
 
     <LinearLayout
@@ -40,8 +53,7 @@
             android:id="@+id/settings_sound"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
     </LinearLayout>
 
     <View
@@ -68,8 +80,7 @@
             android:id="@+id/settings_vibration"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
     </LinearLayout>
 
     <TextView
@@ -77,13 +88,15 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:text="Tema"
-        android:textStyle="bold"
-        android:textSize="15sp"/>
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
     <Spinner
         android:id="@+id/settings_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:entries="@array/cores">
-    </Spinner>
+        android:entries="@array/cores"
+        android:padding="8dp"></Spinner>
+
+
 </LinearLayout>

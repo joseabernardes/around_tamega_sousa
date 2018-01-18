@@ -109,6 +109,7 @@ public class AddPointActivity extends BaseActivity {
             for (int i = 0; i < 5; i++) {
                 if (photos.get(i) != null) {
                     addPhotoToList(photos.get(i), i);
+
                 }
 
 
@@ -248,7 +249,7 @@ public class AddPointActivity extends BaseActivity {
             ImageView imageView = imageViewList.get(imageOpen);
             imageView.setImageResource(R.drawable.ic_add_photo);
             imageView.setPadding(60, 60, 60, 60);
-            photos.set(imageOpen,null);
+            photos.set(imageOpen, null);
             closeImage();
 
         }
@@ -260,6 +261,7 @@ public class AddPointActivity extends BaseActivity {
     private void onClickImage(final ImageView imageView) {
         int tag = (Integer) imageView.getTag();
         File image = photos.get(tag);
+
         if (image != null) { //se tiver imagem
             if (image.exists()) {
                 Picasso.with(AddPointActivity.this).load(image).fit().centerInside().into(expandedImageView);
@@ -295,7 +297,7 @@ public class AddPointActivity extends BaseActivity {
             @Override
             public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
                 //Some error handling
-                Toast.makeText(AddPointActivity.this, "Erro a carregar a imagem", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddPointActivity.this, getString(R.string.error_image), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -332,8 +334,7 @@ public class AddPointActivity extends BaseActivity {
         if (imageFile != null && imageFile.exists()) {
             Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getPath());
             Bitmap thumb = ThumbnailUtils.extractThumbnail(bitmap, 400, 400);
-            System.out.println("GRANDE: " + String.valueOf(bitmap.getByteCount()));
-            System.out.println("PEQUENA: " + String.valueOf(thumb.getByteCount()));
+
             imageView.setImageBitmap(thumb);
 /*            Picasso.with(AddPointActivity.this).load(imageFile).resize(400,400).centerCrop().into(imageView);*/
             photos.set(tag, imageFile);

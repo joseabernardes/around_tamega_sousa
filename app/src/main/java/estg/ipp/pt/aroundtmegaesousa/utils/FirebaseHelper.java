@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -309,7 +310,6 @@ public class FirebaseHelper {
     public void addFavorite(PointOfInterest poi, String userID, final PointOfInterestFragment context) {
         Map<String, Date> favorites = poi.getFavorites();
         favorites.put(userID, poi.getDate());
-
         points.document(poi.getId()).update("favorites", favorites).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -323,24 +323,27 @@ public class FirebaseHelper {
     }
 
     public boolean checkFavorites(PointOfInterest pointOfInterest, String userID) {
-        boolean success = false;
-        for (Map.Entry<String, Date> entry : pointOfInterest.getFavorites().entrySet()) {
+        Map<String, Date> favorites = pointOfInterest.getFavorites();
+        Iterator<Map.Entry<String, Date>> it = favorites.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Date> entry = it.next();
             if (entry.getKey().equals(userID)) {
-                success = true;
-                break;
+                return true;
             }
         }
-        return success;
+        return false;
     }
 
     public void removeFavorite(String userID, PointOfInterest poi, final PointOfInterestFragment context) {
         Map<String, Date> favorites = poi.getFavorites();
-        for (Map.Entry<String, Date> entry : favorites.entrySet()) {
-            if (entry.getKey().equals( userID)) {
-                favorites.remove(entry.getKey());
+        Iterator<Map.Entry<String, Date>> it = favorites.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Date> entry = it.next();
+            if (entry.getKey().equals(userID)) {
+                it.remove();
+                break;
             }
         }
-
         points.document(poi.getId()).update("favorites", favorites).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -351,6 +354,7 @@ public class FirebaseHelper {
                 }
             }
         });
+
     }
 
 

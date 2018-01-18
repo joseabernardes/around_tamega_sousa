@@ -83,7 +83,9 @@ public class SettingsActivity extends BaseActivity {
 
         boolean push = m.getBoolean("push", true);
         aSwitch.setChecked(push);
-
+        if (push) {
+            FirebaseMessaging.getInstance().subscribeToTopic(PushNotificationService.TOPIC);
+        }
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

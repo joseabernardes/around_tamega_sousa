@@ -47,12 +47,12 @@ public class PushNotificationService extends FirebaseMessagingService {
             String userID = payload.get(USER_ID);
 
             if (poiID != null && poiName != null && city != null && userID != null) {
-                String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                if (user != null && userID != user) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null && userID != user.getUid()) {
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.putExtra(PointOfInterestFragment.DOCUMENT_ID, poiID);
                     PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-                    PrivateNotification privateNotification = new PrivateNotification(this, "Ponto de Interesse adicionado", poiName + " - " + Enums.getCityByID(city), R.drawable.logo_around, PrivateNotification.getRandomID());
+                    PrivateNotification privateNotification = new PrivateNotification(this, "Ponto de Interesse adicionado", poiName + " - " + Enums.getCityByID(city), R.drawable.ic_add, PrivateNotification.getRandomID());
                     privateNotification.setAction(pi);
                     privateNotification.show();
                 }
@@ -60,7 +60,6 @@ public class PushNotificationService extends FirebaseMessagingService {
 
         }
     }
-
 
 
 }

@@ -55,7 +55,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Firebase
         if (user != null) {    //signed in
             onSignInInitialize(user);
             this.user = user;
-            FirebaseMessaging.getInstance().subscribeToTopic(PushNotificationService.TOPIC);
         } else { //nao tem login
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

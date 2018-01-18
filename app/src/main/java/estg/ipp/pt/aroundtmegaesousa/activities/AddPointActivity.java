@@ -7,13 +7,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -104,12 +107,17 @@ public class AddPointActivity extends BaseActivity {
             city = (City) savedInstanceState.getSerializable(MapPickerActivity.CITY_PARAM);
             photos = (ArrayList<File>) savedInstanceState.getSerializable(PHOTOS_KEY);
             for (int i = 0; i < 5; i++) {
-                Object obj = savedInstanceState.getParcelable(THUMBS_KEY + i);
+                if(photos.get(i)!=null){
+                    addPhotoToList(photos.get(i),i);
+                }
+
+
+/*                Object obj = savedInstanceState.getParcelable(THUMBS_KEY + i);
                 if (obj != null) {//existe imagem
                     ImageView imageView = imageViewList.get(i);
                     imageView.setImageBitmap((Bitmap) obj);
                     imageView.setPadding(0, 0, 0, 0);
-                }
+                }*/
             }
         } else {
             photos = new ArrayList<File>();
@@ -233,7 +241,7 @@ public class AddPointActivity extends BaseActivity {
     private void onClickImage(final ImageView imageView) {
         int tag = (Integer) imageView.getTag();
         File image = photos.get(tag);
-        if (image != null) { //se já tiver imagem
+        if (image != null) { //se não tiver imagem
             if (image.exists()) {
                 Picasso.with(AddPointActivity.this).load(image).fit().centerInside().into(expandedImageView);
 /*                Bitmap myBitmap = BitmapFactory.decodeFile(image.getAbsolutePath());
@@ -267,7 +275,6 @@ public class AddPointActivity extends BaseActivity {
             @Override
             public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
                 //Some error handling
-                e.printStackTrace();
                 Toast.makeText(AddPointActivity.this, "Erro a carregar a imagem", Toast.LENGTH_SHORT).show();
             }
 
@@ -303,8 +310,13 @@ public class AddPointActivity extends BaseActivity {
     private void addPhotoToList(File imageFile, int tag) {
         ImageView imageView = imageViewList.get(tag);
         imageView.setPadding(0, 0, 0, 0);
-        Picasso.with(AddPointActivity.this).load(imageFile).fit().centerCrop().into(imageView);
-        photos.set(tag, imageFile);
+        if(imageFile!=null && imageFile.exists()){
+            Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getPath());
+            Bitmap thumb = ThumbnailUtils.extractThumbnail(bitmap, 400, 400);
+            imageView.setImageBitmap(thumb);
+/*            Picasso.with(AddPointActivity.this).load(imageFile).resize(400,400).centerCrop().into(imageView);*/
+            photos.set(tag, imageFile);
+        }
     }
 
     private void closeImage() {
@@ -368,7 +380,7 @@ public class AddPointActivity extends BaseActivity {
         outState.putParcelable(MapPickerActivity.MAP_PARAM, coordinates);
         outState.putSerializable(MapPickerActivity.CITY_PARAM, city);
         outState.putSerializable(PHOTOS_KEY, photos);
-        for (int i = 0; i < 5; i++) {
+/*        for (int i = 0; i < 5; i++) {
             Drawable drawable = imageViewList.get(i).getDrawable();
             if (drawable instanceof BitmapDrawable) { //significa que existe imagem
                 outState.putParcelable(THUMBS_KEY + i, ((BitmapDrawable) drawable).getBitmap());
@@ -376,7 +388,7 @@ public class AddPointActivity extends BaseActivity {
                 outState.putParcelable(THUMBS_KEY + i, null);
             }
 
-        }
+        }*/
         super.onSaveInstanceState(outState);
     }
 

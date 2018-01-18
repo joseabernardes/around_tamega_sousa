@@ -48,7 +48,7 @@ public class PushNotificationService extends FirebaseMessagingService {
 
             if (poiID != null && poiName != null && city != null && userID != null) {
                 String user = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                if (user != null && poiID != user) {
+                if (user != null && userID != user) {
                     Intent intent = new Intent(this, MainActivity.class);
                     intent.putExtra(PointOfInterestFragment.DOCUMENT_ID, poiID);
                     PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);

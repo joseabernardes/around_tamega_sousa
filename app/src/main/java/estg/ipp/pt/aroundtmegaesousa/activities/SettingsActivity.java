@@ -146,10 +146,10 @@ public class SettingsActivity extends BaseActivity {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Pretende aplicar as definções predefinidas ?");
-        builder.setTitle("Predefinições");
+        builder.setMessage(getString(R.string.pre_settings));
+        builder.setTitle(getString(R.string.predefinitions));
 
-        builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.sim), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 sp.setSelection(0);
                 checkBox_sound.setChecked(false);
@@ -162,7 +162,7 @@ public class SettingsActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-        builder.setNegativeButton("Não", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getString(R.string.nao), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
             }

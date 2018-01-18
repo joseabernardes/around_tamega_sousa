@@ -80,10 +80,41 @@
     <string name="text_image">Imagem</string>
     <string name="text_file_not_found">O ficheiro não existe</string>
 
-
+    <string name="error_image">Erro ao carregar a imagem</string>
+    <string name="classificate_poi">Classificar Ponto de Interesse</string>
 
     <string name="apply">Aplicar</string>
     <string name="cancel">Cancelar</string>
+
+
+    <string name="hate">Detestei</string>
+    <string name="bad">Mau</string>
+    <string name="medium">Razoável</string>
+    <string name="like">Gostei</string>
+    <string name="love">Adorei</string>
+
+    <string name="remove_poi_success">Ponto de interesse removido</string>
+    <string name="remove_poi_unsuccess">Não foi possivel remover ponto de interesse</string>
+
+    <string name="classificate_added">Classificação adicionada</string>
+    <string name="classificate_not_added">Não foi possivel classificar ponto de interese</string>
+
+    <string name="classficate_changed">Classificação alterada</string>
+    <string name="classificate_not_changged">Não foi posssivel alterar classificação</string>
+
+
+    <string name="add_to_favorites">Adicionado aos Favoritos</string>
+    <string name="not_add_to_favorites">Não foi possivel adicionar aos Favoritos</string>
+
+    <string name="remove_from_favorites">Removido dos Favoritos</string>
+    <string name="not_remove_from_favorites">Não foi possivel remover dos Favorites</string>
+
+
+    <string name="pre_settings">Pretende aplicar as definções predefinidas ?</string>
+    <string name="predefinitions">Predefinições</string>
+
+    <string name="error">Erro ao recebr informação</string>
+
 
 
     <string name="header_filters">Filtro</string>

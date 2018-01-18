@@ -188,12 +188,12 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
 
     @Override
     public void onError(FirebaseFirestoreException e) {
-        Toast.makeText(mContext, "Raia", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, getString(R.string.error), Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onFilter(Filters filters) {
-        // Construct query basic query
+
         Query query = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION);
 
         if (filters.hasTypeOfLocation()) {

@@ -249,7 +249,7 @@ public class AddPointActivity extends BaseActivity {
             ImageView imageView = imageViewList.get(imageOpen);
             imageView.setImageResource(R.drawable.ic_add_photo);
             imageView.setPadding(60, 60, 60, 60);
-            photos.set(imageOpen,null);
+            photos.set(imageOpen, null);
             closeImage();
 
         }
@@ -297,7 +297,7 @@ public class AddPointActivity extends BaseActivity {
             @Override
             public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
                 //Some error handling
-                Toast.makeText(AddPointActivity.this, "Erro a carregar a imagem", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddPointActivity.this, getString(R.string.error_image), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -331,7 +331,7 @@ public class AddPointActivity extends BaseActivity {
     private void addPhotoToList(File imageFile, int tag) {
         ImageView imageView = imageViewList.get(tag);
         imageView.setPadding(0, 0, 0, 0);
-        if(imageFile!=null && imageFile.exists()){
+        if (imageFile != null && imageFile.exists()) {
             Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getPath());
             Bitmap thumb = ThumbnailUtils.extractThumbnail(bitmap, 400, 400);
 

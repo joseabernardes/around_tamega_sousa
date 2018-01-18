@@ -127,7 +127,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                 builder.setView(view);
 
                 rt = view.findViewById(R.id.rating_dialog_rating_bar);
-                builder.setTitle("Classificar Ponto de Interesse");
+                builder.setTitle(getString(R.string.classificate_poi));
                 final TextView tv = view.findViewById(R.id.rating_dialog_text_view);
 
                 fbh = new FirebaseHelper();
@@ -138,20 +138,20 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                     @Override
                     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                         if (rating == 1) {
-                            tv.setText("Detestei");
+                            tv.setText(getString(R.string.hate));
                         } else if (rating == 2) {
-                            tv.setText("Mau");
+                            tv.setText(getString(R.string.bad));
                         } else if (rating == 3) {
-                            tv.setText("Razoável");
+                            tv.setText(getString(R.string.medium));
                         } else if (rating == 4) {
-                            tv.setText("Gostei");
+                            tv.setText(getString(R.string.like));
                         } else if (rating == 5) {
-                            tv.setText("Adorei");
+                            tv.setText(getString(R.string.love));
                         }
                     }
                 });
 
-                builder.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(getString(R.string.apply), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Rating rating = new Rating(mListener.getLoggedUser().getUid(), rt.getRating());
@@ -164,7 +164,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                     }
                 });
 
-                builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -373,10 +373,10 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
 
     public void deleteSuccess(boolean success) {
         if (success) {
-            Toast.makeText(mContext, "Removido com sucesso", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, getString(R.string.remove_poi_success), Toast.LENGTH_SHORT).show();
             getActivity().onBackPressed();
         } else {
-            Toast.makeText(mContext, "Não Removido", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, getString(R.string.remove_poi_unsuccess), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -400,11 +400,11 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     }
 
     public void addRatingSuccess() {
-        Toast.makeText(mContext, "Classificação adicionada", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, getString(R.string.classificate_added), Toast.LENGTH_SHORT).show();
     }
 
     public void addRatingUnsuccess() {
-        Toast.makeText(mContext, "Problema ao classifcar ponto", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, getString(R.string.classificate_not_added), Toast.LENGTH_SHORT).show();
     }
 
     public void existRating(Rating rating) {
@@ -415,40 +415,40 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     }
 
     public void editRatingSuccess() {
-        Toast.makeText(mContext, "Classificação alterada", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, getString(R.string.classficate_changed), Toast.LENGTH_SHORT).show();
     }
 
     public void editRatingUnsuccess() {
-        Toast.makeText(mContext, "Problema na alteração da classificação", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, getString(R.string.classificate_not_changged), Toast.LENGTH_SHORT).show();
     }
 
     public void addFavoritesSucess() {
         existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
-        Toast.makeText(mContext, "Adcionado aos Favoritos", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, getString(R.string.add_to_favorites), Toast.LENGTH_SHORT).show();
     }
 
     public void addFavoritesUnSucess() {
         existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
-        Toast.makeText(mContext, "Problema ao adicionar aos Favoritos", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, getString(R.string.not_add_to_favorites), Toast.LENGTH_SHORT).show();
     }
 
     public void removeFavoritesSuccess() {
         existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
-        Toast.makeText(mContext, "Removido dos Favoritos", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, getString(R.string.remove_from_favorites), Toast.LENGTH_SHORT).show();
     }
 
     public void removeFavoritesUnSuccess() {
         existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
-        Toast.makeText(mContext, "Problema ao remover dos Favoritos", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mContext, getString(R.string.not_remove_from_favorites), Toast.LENGTH_SHORT).show();
     }
 
     public void existFavorite(boolean favorite) {
         if (favorite) {
             adapter.remove(new Option(3, ""));
-            adapter.add(new Option(4, "Remover dos Favoritos"));
+            adapter.add(new Option(4, getString(R.string.remove_favorites)));
         } else {
             adapter.remove(new Option(4, ""));
-            adapter.add(new Option(3, "Adcionar aos Favoritos"));
+            adapter.add(new Option(3,  getString(R.string.add_favorites)));
         }
     }
 

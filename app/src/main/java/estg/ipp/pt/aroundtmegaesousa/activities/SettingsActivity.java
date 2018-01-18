@@ -13,6 +13,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Selection;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,11 +26,16 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Set;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.services.PushNotificationService;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
 
@@ -39,13 +49,14 @@ public class SettingsActivity extends BaseActivity {
     public static final int DARK_GREEN = 1;
     public static final int BROWN = 2;
     public static final int BLUE = 3;
+    private Switch aSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         themeSettings = false;
         themeFirst = true;
-        themeSettings =  getIntent().getBooleanExtra("theme",themeSettings);
+        themeSettings = getIntent().getBooleanExtra("theme", themeSettings);
         ThemeUtils.changeTheme(this);
         setContentView(R.layout.activity_settings);
 
@@ -54,7 +65,7 @@ public class SettingsActivity extends BaseActivity {
         setSupportActionBar(tb);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
+        aSwitch = findViewById(R.id.id_switch);
         sp = findViewById(R.id.settings_spinner);
         final CheckBox checkBox_sound = findViewById(R.id.settings_sound);
         final CheckBox checkBox_vibration = findViewById(R.id.settings_vibration);
@@ -64,14 +75,25 @@ public class SettingsActivity extends BaseActivity {
         int color = m.getInt("AppliedTheme", LIGHT_GREEN);
         sp.setSelection(color);
 
-
         boolean notif = m.getBoolean("sound", false);
         checkBox_sound.setChecked(notif);
 
         boolean vibration = m.getBoolean("vibration", false);
         checkBox_vibration.setChecked(vibration);
 
+        boolean push = m.getBoolean("push", true);
+        aSwitch.setChecked(push);
+        FirebaseMessaging.getInstance().subscribeToTopic(PushNotificationService.TOPIC);
 
+        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this);
+                SharedPreferences.Editor mEditor = mSettings.edit();
+                mEditor.putBoolean("push", isChecked);
+                mEditor.apply();
+            }
+        });
         checkBox_sound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -89,6 +111,11 @@ public class SettingsActivity extends BaseActivity {
                 SharedPreferences.Editor mEditor = mSettings.edit();
                 mEditor.putBoolean("vibration", isChecked);
                 mEditor.apply();
+                if (isChecked) {
+                    FirebaseMessaging.getInstance().subscribeToTopic(PushNotificationService.TOPIC);
+                } else {
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(PushNotificationService.TOPIC);
+                }
             }
         });
 
@@ -103,10 +130,10 @@ public class SettingsActivity extends BaseActivity {
                     mEditor.apply();
                     themeSettings = true;
                     finish();
-                    Intent intent = new Intent(SettingsActivity.this,SettingsActivity.class);
-                    intent.putExtra("theme",themeSettings);
+                    Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
+                    intent.putExtra("theme", themeSettings);
                     startActivity(intent);
-                }else{
+                } else {
                     themeFirst = false;
                 }
 
@@ -128,9 +155,11 @@ public class SettingsActivity extends BaseActivity {
                 sp.setSelection(0);
                 checkBox_sound.setChecked(false);
                 checkBox_vibration.setChecked(false);
+                aSwitch.setChecked(true);
+                FirebaseMessaging.getInstance().subscribeToTopic(PushNotificationService.TOPIC);
                 finish();
-                Intent intent = new Intent(SettingsActivity.this,SettingsActivity.class);
-                intent.putExtra("theme",themeSettings);
+                Intent intent = new Intent(SettingsActivity.this, SettingsActivity.class);
+                intent.putExtra("theme", themeSettings);
                 startActivity(intent);
             }
         });

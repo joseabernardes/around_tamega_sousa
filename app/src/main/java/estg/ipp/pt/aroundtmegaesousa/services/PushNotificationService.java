@@ -5,6 +5,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -38,7 +40,7 @@ public class PushNotificationService extends FirebaseMessagingService {
             String city = payload.get(CITY);
             String userID = payload.get(USER_ID);
         /*    if(poiID!=null &&)*/
-
+          /*  FirebaseAuth.getInstance().getCurrentUser().getUid()*/
             PrivateNotification privateNotification = new PrivateNotification(this, "Ponto de Interesse adicionado", poiName + " - " + Enums.getCityByID(city), R.drawable.logo_around, PrivateNotification.getRandomID());
             privateNotification.show();
         }

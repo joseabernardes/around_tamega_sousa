@@ -110,7 +110,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                zoomToLocation(marker.getPosition(), 16);
+                zoomToLocation(marker.getPosition(), 13);
                 marker.showInfoWindow();
                 return true;
             }
@@ -141,6 +141,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     private void addMarker(LatLng latLng, String title, String content) {
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker);
         Marker marker = mGoogleMap.addMarker(new MarkerOptions()
+
                 .position(latLng)
                 .title(title)
                 .snippet(content)

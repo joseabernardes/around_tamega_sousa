@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
@@ -103,7 +104,7 @@ public class FilterDialogFragment extends DialogFragment {
         dismiss();
     }
 
-    @Nullable
+
     private int getSelectedTypeOfLocation() {
         TypeOfLocation selected = (TypeOfLocation) mTypeOfLocationSpinner.getSelectedItem();
         if (selected != null) {
@@ -143,6 +144,45 @@ public class FilterDialogFragment extends DialogFragment {
             mTypeOfLocationSpinner.setSelection(0);
             mCitySpinner.setSelection(0);
             mSortSpinner.setSelection(0);
+        }
+    }
+
+    public void setFilters(Filters filters) {
+
+        if (filters.hasTypeOfLocation()) {
+            setSelectedTypeOfLocation(filters.getTypeOfLocation());
+        }
+        if (filters.hasCity()) {
+            setSelectedCity(filters.getCity());
+        }
+        if (filters.hasSortBy()) {
+            setSelectedSortBy(filters.getSortBy());
+        }
+    }
+
+
+    private void setSelectedSortBy(String sortBy) {
+        if (sortBy.equals(PointOfInterest.FIELD_AVG_RATING)) {
+            mSortSpinner.setSelection(1);
+        } else {
+            mSortSpinner.setSelection(0);
+        }
+    }
+
+
+    private void setSelectedTypeOfLocation(int position) {
+        mTypeOfLocationSpinner.setSelection(position);
+    }
+
+    @Nullable
+    private void setSelectedCity(String cityID) {
+        Adapter adapter = mCitySpinner.getAdapter();
+        for (int i = 0; i < adapter.getCount(); i++) {
+            City city = (City) adapter.getItem(i);
+            if (city.getId().equals(cityID)) {
+                mCitySpinner.setSelection(i);
+                return;
+            }
         }
     }
 

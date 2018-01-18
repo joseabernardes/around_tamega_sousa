@@ -115,6 +115,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         changeLayoutByFragmentType();
         if (getArguments() != null && getArguments().getSerializable(FILTER) != null) {
             mFilters = (Filters) getArguments().getSerializable(FILTER);
+            mFilterDialog.setFilters(mFilters);
         }
         return mContentView;
     }

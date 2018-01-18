@@ -43,8 +43,8 @@ public class FilterDialogFragment extends DialogFragment {
     private Spinner mSortSpinner;
     private Button applyButton;
     private Button cancelButton;
-
     private FilterListener mFilterListener;
+    private Filters filters;
 
     @Nullable
     @Override
@@ -81,6 +81,11 @@ public class FilterDialogFragment extends DialogFragment {
         if (getParentFragment() instanceof FilterListener) {
             mFilterListener = (FilterListener) getParentFragment();
         }
+
+        if (filters != null) {
+            setSelections();
+        }
+
 
         return mRootView;
     }
@@ -144,10 +149,18 @@ public class FilterDialogFragment extends DialogFragment {
             mTypeOfLocationSpinner.setSelection(0);
             mCitySpinner.setSelection(0);
             mSortSpinner.setSelection(0);
+            filters = Filters.getDefault();
         }
+
     }
 
+
     public void setFilters(Filters filters) {
+        this.filters = filters;
+
+    }
+
+    public void setSelections() {
 
         if (filters.hasTypeOfLocation()) {
             setSelectedTypeOfLocation(filters.getTypeOfLocation());
@@ -177,7 +190,7 @@ public class FilterDialogFragment extends DialogFragment {
     @Nullable
     private void setSelectedCity(String cityID) {
         Adapter adapter = mCitySpinner.getAdapter();
-        for (int i = 0; i < adapter.getCount(); i++) {
+        for (int i = 1; i < adapter.getCount(); i++) { //skip TODOS OS CONCELHOS
             City city = (City) adapter.getItem(i);
             if (city.getId().equals(cityID)) {
                 mCitySpinner.setSelection(i);

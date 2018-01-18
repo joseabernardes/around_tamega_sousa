@@ -70,8 +70,6 @@ public class MapAdapter implements EventListener<QuerySnapshot> {
     public void setQuery(Query query) {
         stopListening();
         pointOfInterestList.clear();
-//        notifyDataSetChanged();
-        //render
         this.query = query;
         startListening();
     }

@@ -105,7 +105,9 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
             @Override
             public void onClick(View v) {
                 mFilterDialog.resetFilters();
-                onFilter(Filters.getDefault());
+                mFilters = Filters.getDefault();
+                onFilter(mFilters);
+                mFilterDialog = new FilterDialogFragment();
             }
         });
 

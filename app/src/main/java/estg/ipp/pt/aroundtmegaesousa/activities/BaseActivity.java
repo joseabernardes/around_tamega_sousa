@@ -5,15 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.messaging.FirebaseMessaging;
-
-import estg.ipp.pt.aroundtmegaesousa.services.FirebaseIDService;
-import estg.ipp.pt.aroundtmegaesousa.services.PushNotificationService;
 
 /**
  * Created by José Bernardes on 09/01/2018.
@@ -55,7 +51,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Firebase
         if (user != null) {    //signed in
             onSignInInitialize(user);
             this.user = user;
-            FirebaseMessaging.getInstance().subscribeToTopic(PushNotificationService.TOPIC);
         } else { //nao tem login
             Intent intent = new Intent(this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

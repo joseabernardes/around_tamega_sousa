@@ -40,7 +40,7 @@ import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, PointOfInterestFragment.OnFragmentInteractionListener, OnFragmentsCommunicationListener, FirebaseHelper.FirebaseGetPointOfInterest {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, OnFragmentsCommunicationListener, FirebaseHelper.FirebaseGetPointOfInterest {
 
     private String TAG = "MainActivity";
     private Toolbar toolbar;
@@ -188,7 +188,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     .beginTransaction()
                     .replace(R.id.container, fragment)
                     .addToBackStack(null)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
 
     }
@@ -209,11 +209,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         this.onBackPressedListener = null;
     }
 
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 
     @Override
     public void changeActionBarTitle(String title) {

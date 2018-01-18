@@ -70,10 +70,8 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     private RatingBar rt;
     private Rating firebaseRating;
     private ArrayAdapter<Option> adapter;
-    private Button vote,openMap;
-    private OnFragmentsCommunicationListener context;
-
-    private OnFragmentInteractionListener mListener;
+    private Button vote, openMap;
+    private OnFragmentsCommunicationListener mListener;
 
     public PointOfInterestFragment() {
     }
@@ -132,10 +130,8 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                 builder.setTitle("Classificar Ponto de Interesse");
                 final TextView tv = view.findViewById(R.id.rating_dialog_text_view);
 
-
-                context = (OnFragmentsCommunicationListener) mContext;
                 fbh = new FirebaseHelper();
-                fbh.checkRating(pointOfInterest.getId(), context.getLoggedUser().getUid(), PointOfInterestFragment.this);
+                fbh.checkRating(pointOfInterest.getId(), mListener.getLoggedUser().getUid(), PointOfInterestFragment.this);
 
 
                 rt.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -158,14 +154,13 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                 builder.setPositiveButton("Aplicar", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Rating rating = new Rating(context.getLoggedUser().getUid(), rt.getRating());
+                        Rating rating = new Rating(mListener.getLoggedUser().getUid(), rt.getRating());
                         fbh = new FirebaseHelper();
                         if (firebaseRating != null) {
                             fbh.editRating(pointOfInterest.getId(), firebaseRating.getId(), rating.getRating(), PointOfInterestFragment.this);
                         } else {
                             fbh.addRating(rating, pointOfInterest.getId(), PointOfInterestFragment.this);
                         }
-
                     }
                 });
 
@@ -197,9 +192,8 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         });
 
 
-
         title.setText(pointOfInterest.getName());
-        description.setText(pointOfInterest.getDescription() + " \nID: " +  pointOfInterest.getId());
+        description.setText(pointOfInterest.getDescription());
         ratingBar.setRating(pointOfInterest.getAvgRating());
         ratingText.setText(String.valueOf(pointOfInterest.getAvgRating()));
         date.setText(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(pointOfInterest.getDate()));
@@ -212,16 +206,14 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
             localType.setText(typeOfLocation.getType());
         }
         final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        context = (OnFragmentsCommunicationListener) mContext;
-
         fbh = new FirebaseHelper();
 
 
         final List<Option> options = new ArrayList<>();
 
-        if (context.getLoggedUser().getUid().equals(pointOfInterest.getUser())) {
+        if (mListener.getLoggedUser().getUid().equals(pointOfInterest.getUser())) {
             options.add(new Option(0, getString(R.string.edit_poi)));
-            options.add(new Option(1, getString(R.string.delete_poi)));
+            options.add(new Option(1, getString(R.string.delete)));
             options.add(new Option(2, getString(R.string.google_maps)));
         } else {
             options.add(new Option(2, getString(R.string.google_maps)));
@@ -267,11 +259,11 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                         break;
                     case 3:
                         fbh = new FirebaseHelper();
-                        fbh.addFavorite(pointOfInterest, context.getLoggedUser().getUid(), PointOfInterestFragment.this);
+                        fbh.addFavorite(pointOfInterest, mListener.getLoggedUser().getUid(), PointOfInterestFragment.this);
                         break;
                     case 4:
                         fbh = new FirebaseHelper();
-                        fbh.removeFavorite(context.getLoggedUser().getUid(), pointOfInterest, PointOfInterestFragment.this);
+                        fbh.removeFavorite(mListener.getLoggedUser().getUid(), pointOfInterest, PointOfInterestFragment.this);
                 }
 
             }
@@ -313,7 +305,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
 
             }
         });
-        existFavorite(fbh.checkFavorites(pointOfInterest, context.getLoggedUser().getUid()));
+        existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
 
         return mContentView;
     }
@@ -321,8 +313,8 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnFragmentsCommunicationListener) {
+            mListener = (OnFragmentsCommunicationListener) context;
         } else {
             throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
         }
@@ -357,22 +349,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         expandedImageView.setVisibility(View.VISIBLE);
         context.setOnBackPressedListener(new ImageBack());
     }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -447,22 +423,22 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
     }
 
     public void addFavoritesSucess() {
-        existFavorite(fbh.checkFavorites(pointOfInterest, context.getLoggedUser().getUid()));
+        existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
         Toast.makeText(mContext, "Adcionado aos Favoritos", Toast.LENGTH_SHORT).show();
     }
 
     public void addFavoritesUnSucess() {
-        existFavorite(fbh.checkFavorites(pointOfInterest, context.getLoggedUser().getUid()));
+        existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
         Toast.makeText(mContext, "Problema ao adicionar aos Favoritos", Toast.LENGTH_SHORT).show();
     }
 
     public void removeFavoritesSuccess() {
-        existFavorite(fbh.checkFavorites(pointOfInterest, context.getLoggedUser().getUid()));
+        existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
         Toast.makeText(mContext, "Removido dos Favoritos", Toast.LENGTH_SHORT).show();
     }
 
     public void removeFavoritesUnSuccess() {
-        existFavorite(fbh.checkFavorites(pointOfInterest, context.getLoggedUser().getUid()));
+        existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
         Toast.makeText(mContext, "Problema ao remover dos Favoritos", Toast.LENGTH_SHORT).show();
     }
 

@@ -83,7 +83,6 @@ public class SettingsActivity extends BaseActivity {
 
         boolean push = m.getBoolean("push", true);
         aSwitch.setChecked(push);
-        FirebaseMessaging.getInstance().subscribeToTopic(PushNotificationService.TOPIC);
 
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -92,6 +91,11 @@ public class SettingsActivity extends BaseActivity {
                 SharedPreferences.Editor mEditor = mSettings.edit();
                 mEditor.putBoolean("push", isChecked);
                 mEditor.apply();
+                if (isChecked) {
+                    FirebaseMessaging.getInstance().subscribeToTopic(PushNotificationService.TOPIC);
+                } else {
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(PushNotificationService.TOPIC);
+                }
             }
         });
         checkBox_sound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -111,11 +115,6 @@ public class SettingsActivity extends BaseActivity {
                 SharedPreferences.Editor mEditor = mSettings.edit();
                 mEditor.putBoolean("vibration", isChecked);
                 mEditor.apply();
-                if (isChecked) {
-                    FirebaseMessaging.getInstance().subscribeToTopic(PushNotificationService.TOPIC);
-                } else {
-                    FirebaseMessaging.getInstance().unsubscribeFromTopic(PushNotificationService.TOPIC);
-                }
             }
         });
 

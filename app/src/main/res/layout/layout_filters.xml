@@ -70,6 +70,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:tint="@color/greySecondary"
                 app:srcCompat="@drawable/ic_close" />
 

@@ -7,13 +7,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ThumbnailUtils;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,7 +57,7 @@ public class AddPointActivity extends BaseActivity {
     private static final String PHOTOS_KEY = "photos_list";
     private static final String THUMBS_KEY = "img_";
     private List<ImageView> imageViewList;
-    private boolean imageOpen;
+    private int imageOpen;
     private PhotoView expandedImageView;
     private Menu menu;
     private Toolbar toolbar;
@@ -104,12 +107,17 @@ public class AddPointActivity extends BaseActivity {
             city = (City) savedInstanceState.getSerializable(MapPickerActivity.CITY_PARAM);
             photos = (ArrayList<File>) savedInstanceState.getSerializable(PHOTOS_KEY);
             for (int i = 0; i < 5; i++) {
-                Object obj = savedInstanceState.getParcelable(THUMBS_KEY + i);
+                if (photos.get(i) != null) {
+                    addPhotoToList(photos.get(i), i);
+                }
+
+
+/*                Object obj = savedInstanceState.getParcelable(THUMBS_KEY + i);
                 if (obj != null) {//existe imagem
                     ImageView imageView = imageViewList.get(i);
                     imageView.setImageBitmap((Bitmap) obj);
                     imageView.setPadding(0, 0, 0, 0);
-                }
+                }*/
             }
         } else {
             photos = new ArrayList<File>();
@@ -130,7 +138,7 @@ public class AddPointActivity extends BaseActivity {
          * gallery
          */
         expandedImageView = findViewById(R.id.expanded_image);
-        imageOpen = false;
+        imageOpen = -1;
 
 
         for (int i = 0; i < 5; i++) {
@@ -187,7 +195,7 @@ public class AddPointActivity extends BaseActivity {
             }*/
 
             int typeID = ((TypeOfLocation) typeOfLocation.getSelectedItem()).getId();
-            PointOfInterest pointOfInterest = new PointOfInterest(name, description, coordinates, city.getId(), typeID, user.getUid(),0);
+            PointOfInterest pointOfInterest = new PointOfInterest(name, description, coordinates, city.getId(), typeID, user.getUid(), 0);
             Intent intent = new Intent(this, UploadFirebaseService.class);
             intent.setAction(UploadFirebaseService.START_UPLOAD_ACTION);
             intent.putExtra(UploadFirebaseService.POI_PARAM, pointOfInterest);
@@ -219,7 +227,12 @@ public class AddPointActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_check:
-                dialog.show();
+                if (imageOpen != -1) {
+                    removeImage();
+                } else {
+                    dialog.show();
+                }
+
 
                 return true;
             default:
@@ -230,20 +243,35 @@ public class AddPointActivity extends BaseActivity {
     }
 
 
+    private void removeImage() {
+        if (imageOpen != -1) {
+            ImageView imageView = imageViewList.get(imageOpen);
+            imageView.setImageResource(R.drawable.ic_add_photo);
+            imageView.setPadding(60, 60, 60, 60);
+            photos.set(imageOpen,null);
+            closeImage();
+
+        }
+
+
+    }
+
+
     private void onClickImage(final ImageView imageView) {
         int tag = (Integer) imageView.getTag();
         File image = photos.get(tag);
-        if (image != null) { //se já tiver imagem
+        if (image != null) { //se tiver imagem
             if (image.exists()) {
                 Picasso.with(AddPointActivity.this).load(image).fit().centerInside().into(expandedImageView);
 /*                Bitmap myBitmap = BitmapFactory.decodeFile(image.getAbsolutePath());
                 imageView.setImageBitmap(myBitmap);*/
                 expandedImageView.setVisibility(View.VISIBLE);
-                updateMenuItem("Eliminar", R.drawable.ic_close);
-                toolbar.setTitle("Imagem " + image.getName());
-                imageOpen = true;
+                updateMenuItem(getString(R.string.delete), R.drawable.ic_close);
+                toolbar.setTitle(getString(R.string.text_image) + " " + String.valueOf(tag));
+                imageOpen = tag;
+
             } else {
-                Toast.makeText(this, "O ficheiro não existe", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.text_file_not_found), Toast.LENGTH_SHORT).show();
             }
 
         } else {
@@ -267,7 +295,6 @@ public class AddPointActivity extends BaseActivity {
             @Override
             public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
                 //Some error handling
-                e.printStackTrace();
                 Toast.makeText(AddPointActivity.this, "Erro a carregar a imagem", Toast.LENGTH_SHORT).show();
             }
 
@@ -278,7 +305,6 @@ public class AddPointActivity extends BaseActivity {
 
             @Override
             public void onCanceled(EasyImage.ImageSource source, int type) {
-                //Cancel handling, you might wanna remove taken photo if it was canceled
                 if (source == EasyImage.ImageSource.CAMERA) {
                     File photoFile = EasyImage.lastlyTakenButCanceledPhoto(AddPointActivity.this);
                     if (photoFile != null) photoFile.delete();
@@ -303,8 +329,15 @@ public class AddPointActivity extends BaseActivity {
     private void addPhotoToList(File imageFile, int tag) {
         ImageView imageView = imageViewList.get(tag);
         imageView.setPadding(0, 0, 0, 0);
-        Picasso.with(AddPointActivity.this).load(imageFile).fit().centerCrop().into(imageView);
-        photos.set(tag, imageFile);
+        if (imageFile != null && imageFile.exists()) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imageFile.getPath());
+            Bitmap thumb = ThumbnailUtils.extractThumbnail(bitmap, 400, 400);
+            System.out.println("GRANDE: " + String.valueOf(bitmap.getByteCount()));
+            System.out.println("PEQUENA: " + String.valueOf(thumb.getByteCount()));
+            imageView.setImageBitmap(thumb);
+/*            Picasso.with(AddPointActivity.this).load(imageFile).resize(400,400).centerCrop().into(imageView);*/
+            photos.set(tag, imageFile);
+        }
     }
 
     private void closeImage() {
@@ -313,7 +346,7 @@ public class AddPointActivity extends BaseActivity {
         expandedImageView.setVisibility(View.GONE);
         expandedImageView.setDisplayMatrix(new Matrix());
         expandedImageView.setSuppMatrix(new Matrix());
-        imageOpen = false;
+        imageOpen = -1;
     }
 
     private void updateMenuItem(String title, int icon) {
@@ -350,7 +383,7 @@ public class AddPointActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (imageOpen) {
+        if (imageOpen != -1) {
             closeImage();
         } else {
             super.onBackPressed();
@@ -368,7 +401,7 @@ public class AddPointActivity extends BaseActivity {
         outState.putParcelable(MapPickerActivity.MAP_PARAM, coordinates);
         outState.putSerializable(MapPickerActivity.CITY_PARAM, city);
         outState.putSerializable(PHOTOS_KEY, photos);
-        for (int i = 0; i < 5; i++) {
+/*        for (int i = 0; i < 5; i++) {
             Drawable drawable = imageViewList.get(i).getDrawable();
             if (drawable instanceof BitmapDrawable) { //significa que existe imagem
                 outState.putParcelable(THUMBS_KEY + i, ((BitmapDrawable) drawable).getBitmap());
@@ -376,7 +409,7 @@ public class AddPointActivity extends BaseActivity {
                 outState.putParcelable(THUMBS_KEY + i, null);
             }
 
-        }
+        }*/
         super.onSaveInstanceState(outState);
     }
 
@@ -399,6 +432,4 @@ public class AddPointActivity extends BaseActivity {
 
         }
     }
-
-
 }

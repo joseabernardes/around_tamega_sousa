@@ -139,6 +139,10 @@
         <item name="backgroundTint">?colorPrimary</item>
     </style>
 
+    <style name="EditPrimary" parent="Base.Widget.AppCompat.EditText">
+        <item name="backgroundTint">?colorPrimary</item>
+    </style>
+
     <style name="ButtonAccent" parent="Base.TextAppearance.AppCompat.Button">
         <item name="backgroundTint">?colorAccent</item>
     </style>

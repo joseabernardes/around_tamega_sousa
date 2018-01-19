@@ -51,6 +51,11 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
 
     private static final String TAG = "ListMapFragment";
     public static final String FILTER = "filter";
+
+
+    private int fragmentID;
+    private static final String ARG_FRAG_ID = "fragment_id";
+
     private SupportMapFragment mMapFragment;
     private GoogleMap mGoogleMap;
     private Context mContext;
@@ -73,9 +78,10 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     }
 
 
-    public static ListMapFragment newInstance() {
+    public static ListMapFragment newInstance(int fragmentID) {
         ListMapFragment fragment = new ListMapFragment();
         Bundle args = new Bundle();
+        args.putInt(ARG_FRAG_ID, fragmentID);
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,8 +89,9 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-/*        if (getArguments() != null) {
-        }*/
+        if (getArguments() != null) {
+            fragmentID = getArguments().getInt(ARG_FRAG_ID);
+        }
     }
 
     @Override
@@ -118,6 +125,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
         markers = new ArrayList<>();
         if (communicationListener != null) {
             communicationListener.changeActionBarTitle(getString(R.string.title_fragment_map));
+            communicationListener.changeSelectedNavigationItem(fragmentID);
         }
         mFirestore = FirebaseFirestore.getInstance();
         mFilters = Filters.getDefault();
@@ -126,6 +134,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
 
         }
         mFilterDialog.setFilters(mFilters);
+
         return mContentView;
     }
 

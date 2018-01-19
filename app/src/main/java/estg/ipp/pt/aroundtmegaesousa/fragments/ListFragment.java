@@ -31,12 +31,15 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
 
 
     private static final String ARG_TYPE = "type";
+    public static final String ARG_FRAG_ID = "fragment_id";
     public static final String FAVORITES = "favorites";
     public static final String MY_POINTS = "my_points";
     public static final String LIST = "list";
     public static final String FILTER = "filter";
 
     private String typeOfFragment;
+    private int fragmentID;
+
     private Context mContext;
     private OnFragmentsCommunicationListener communicationListener;
     private RecyclerView recyclerView;
@@ -60,10 +63,11 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     }
 
 
-    public static ListFragment newInstance(String typeOfFragment) {
+    public static ListFragment newInstance(String typeOfFragment, int fragmentID) {
         ListFragment fragment = new ListFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TYPE, typeOfFragment);
+        args.putInt(ARG_FRAG_ID, fragmentID);
         fragment.setArguments(args);
         return fragment;
     }
@@ -73,9 +77,13 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             typeOfFragment = getArguments().getString(ARG_TYPE);
+            fragmentID = getArguments().getInt(ARG_FRAG_ID);
         }
     }
 
+    public int getFragmentID() {
+        return fragmentID;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -115,6 +123,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         mFilterDialog = new FilterDialogFragment();
 
         changeLayoutByFragmentType();
+        communicationListener.changeSelectedNavigationItem(fragmentID);
         if (getArguments() != null && getArguments().getSerializable(FILTER) != null) {
             mFilters = (Filters) getArguments().getSerializable(FILTER);
             mFilterDialog.setFilters(mFilters);

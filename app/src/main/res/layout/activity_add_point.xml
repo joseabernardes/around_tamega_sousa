@@ -38,6 +38,7 @@
 
                 <EditText
                     android:id="@+id/name"
+                    style="@style/EditPrimary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Nome" />
@@ -46,6 +47,7 @@
                 <EditText
                     android:id="@+id/description"
                     android:layout_width="match_parent"
+                    style="@style/EditPrimary"
                     android:layout_height="wrap_content"
                     android:hint="Descrição" />
 

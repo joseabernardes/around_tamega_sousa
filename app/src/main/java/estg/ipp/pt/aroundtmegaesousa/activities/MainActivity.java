@@ -7,9 +7,11 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.GravityCompat;
@@ -43,6 +45,7 @@ import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, OnFragmentsCommunicationListener, FirebaseHelper.FirebaseGetPointOfInterest {
 
     private String TAG = "MainActivity";
+    private static final String PREVIOUS_FRAGMENT = "prev_frag";
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -72,7 +75,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.setCheckedItem(R.id.interest_points);
         View headerLayout = navigationView.getHeaderView(0);
         userIcon = headerLayout.findViewById(R.id.user_icon);
         userName = headerLayout.findViewById(R.id.user_name);
@@ -112,30 +114,22 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             //apenas quando a activity está a ser criada, e não RE-CRIADA
             if (findViewById(R.id.container) != null) { //phone
                 Log.d(TAG, "onCreate: Phone Layout");
-                Fragment fragment = ListFragment.newInstance(ListFragment.LIST);
+                Fragment fragment = ListFragment.newInstance(ListFragment.LIST, R.id.interest_points);
                 getSupportFragmentManager()
                         .beginTransaction()
                         .add(R.id.container, fragment)
-                        .commit();
+                        .commit()
+                ;
             } else {
                 Log.d(TAG, "onCreate: TABLET Layout");
             }
         } else {
-//algo
+         /*  ;
+          *//*  *//*
+            navigationView.getMenu().getItem(selectedMenuItem).setChecked(true);*/
         }
     }
 
-
-    @Override
-    public void onBackPressed() {
-        if (onBackPressedListener != null) {
-            onBackPressedListener.doBack();
-        } else if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -143,19 +137,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         Fragment fragment = null;
         int id = item.getItemId();
-
         switch (id) {
             case R.id.mypoints:
-                fragment = ListFragment.newInstance(ListFragment.MY_POINTS);
+                fragment = ListFragment.newInstance(ListFragment.MY_POINTS, R.id.mypoints);
                 break;
             case R.id.favorites:
-                fragment = ListFragment.newInstance(ListFragment.FAVORITES);
+                fragment = ListFragment.newInstance(ListFragment.FAVORITES, R.id.favorites);
                 break;
             case R.id.interest_points:
-                fragment = ListFragment.newInstance(ListFragment.LIST);
+                fragment = ListFragment.newInstance(ListFragment.LIST, R.id.interest_points);
                 break;
             case R.id.map:
-                fragment = ListMapFragment.newInstance();
+                fragment = ListMapFragment.newInstance(R.id.map);
                 fab.hide();
                 break;
             case R.id.settings:
@@ -173,16 +166,29 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return true;
     }
 
+    /**
+     * Se o fragment a fazer replace for a lista principal de pontos (R.id.interest_points),
+     * toda a back stack é consumida, e no proximo BACKPRESSED o utilizador sai da aplicação
+     * @param fragment
+     */
     @Override
     public void replaceFragment(Fragment fragment) {
-        if (fragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.container, fragment)
-                    .addToBackStack(null)
-                    .commitAllowingStateLoss();
+        if (fragment != null && fragment instanceof ListFragment) {
+            int fragmentID = fragment.getArguments().getInt(ListFragment.ARG_FRAG_ID, 0);
+            if (fragmentID == R.id.interest_points) {
+                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.container, fragment)
+                        .commit();
+                return;
+            }
         }
-
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
@@ -202,8 +208,26 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     @Override
+    public void onBackPressed() {
+        if (onBackPressedListener != null) {
+            onBackPressedListener.doBack();
+        } else if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
     public void changeActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    public void changeSelectedNavigationItem(int id) {
+        if (id != -1) {
+            navigationView.setCheckedItem(id);
+        }
     }
 
     @Override
@@ -236,6 +260,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         Fragment fragment = PointOfInterestFragment.newInstance(pointOfInterest);
         replaceFragment(fragment);
     }
+
 
     /**
      * Tarefa responsavel por carregar o avatar do user da memoria

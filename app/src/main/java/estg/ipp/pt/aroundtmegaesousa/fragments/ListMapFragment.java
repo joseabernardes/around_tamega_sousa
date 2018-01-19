@@ -124,7 +124,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
         mFilterDialog = new FilterDialogFragment();
         markers = new ArrayList<>();
         if (communicationListener != null) {
-            communicationListener.changeActionBarTitle(getString(R.string.title_fragment_map));
+            communicationListener.changeActionBarTitle(getString(R.string.title_fragment_map),true);
             communicationListener.changeSelectedNavigationItem(fragmentID);
         }
         mFirestore = FirebaseFirestore.getInstance();

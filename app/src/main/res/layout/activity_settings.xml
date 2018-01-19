@@ -54,15 +54,14 @@
 
         <TextView
             android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:layout_weight="8"
             android:text="Som" />
 
         <CheckBox
             android:id="@+id/settings_sound"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
@@ -77,14 +76,14 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="8"
+            android:layout_weight="1"
             android:text="Vibração" />
 
         <CheckBox
             android:id="@+id/settings_vibration"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+       />
     </LinearLayout>
 
     <View

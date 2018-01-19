@@ -13,7 +13,7 @@ import estg.ipp.pt.aroundtmegaesousa.activities.MainActivity;
  */
 
 public interface OnFragmentsCommunicationListener {
-    void changeActionBarTitle(String title);
+    void changeActionBarTitle(String title, boolean isList);
 
     void changeSelectedNavigationItem(int id);
 

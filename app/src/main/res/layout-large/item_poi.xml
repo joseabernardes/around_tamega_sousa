@@ -17,7 +17,7 @@
         <ImageView
             android:id="@+id/list_poi_img"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="250dp"
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/default_point" />
 
@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginTop="50dp" />
+            android:layout_marginTop="100dp" />
 
         <RelativeLayout
             android:id="@+id/item_desc"

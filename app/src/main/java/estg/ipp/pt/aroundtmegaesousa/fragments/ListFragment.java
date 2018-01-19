@@ -81,9 +81,6 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         }
     }
 
-    public int getFragmentID() {
-        return fragmentID;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -131,6 +128,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         return mContentView;
     }
 
+
     private void changeLayoutByFragmentType() {
         if (mContext != null) {
             String title;
@@ -154,7 +152,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
                     filters.setVisibility(View.GONE);
                     title = getString(R.string.title_fragment_list);
             }
-            communicationListener.changeActionBarTitle(title);
+            communicationListener.changeActionBarTitle(title,true);
         }
 
 

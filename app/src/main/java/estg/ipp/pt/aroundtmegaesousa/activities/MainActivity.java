@@ -22,7 +22,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.fragments.ItemMapFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.ListFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.ListMapFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
@@ -45,7 +49,7 @@ import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, OnFragmentsCommunicationListener, FirebaseHelper.FirebaseGetPointOfInterest {
 
     private String TAG = "MainActivity";
-    private static final String PREVIOUS_FRAGMENT = "prev_frag";
+    private static final String IS_MAP = "is_map";
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -54,6 +58,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private TextView userName;
     private OnBackPressedListener onBackPressedListener;
     private FirebaseHelper firebaseHelper;
+    private FrameLayout leftContainer;
+    private FrameLayout rightContainer;
+    private boolean isListMap;
+    private int[] layoutParams;
+    private boolean isTabletPortrait;
+    private boolean isPhoneLayout;
 
 
     @Override
@@ -98,6 +108,24 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             firebaseHelper.getPointOfInterestByDocumentID(documentID, this);
         }
 
+
+        if (findViewById(R.id.phone_container) == null) { //tablet
+            isPhoneLayout = false;
+            leftContainer = findViewById(R.id.left_container);
+            rightContainer = findViewById(R.id.right_container);
+
+            if (leftContainer.getTag().equals("large")) {
+                layoutParams = new int[]{0, ViewGroup.LayoutParams.MATCH_PARENT,2};
+                isTabletPortrait = false;
+            } else {
+                layoutParams = new int[]{0, ViewGroup.LayoutParams.MATCH_PARENT,1};
+                isTabletPortrait = true;
+            }
+        } else {
+            isPhoneLayout = true;
+        }
+
+
         onRestoreState(savedInstanceState);
     }
 
@@ -112,18 +140,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private void onRestoreState(Bundle savedInstanceState) {
         if (savedInstanceState == null) { //se não existe estado
             //apenas quando a activity está a ser criada, e não RE-CRIADA
-            if (findViewById(R.id.container) != null) { //phone
-                Log.d(TAG, "onCreate: Phone Layout");
+            if (findViewById(R.id.phone_container) != null) { //phone
                 Fragment fragment = ListFragment.newInstance(ListFragment.LIST, R.id.interest_points);
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .add(R.id.container, fragment)
-                        .commit()
-                ;
+                        .replace(R.id.phone_container, fragment)
+                        .commit();
             } else {
-                Log.d(TAG, "onCreate: TABLET Layout");
+                Fragment fragment = ListFragment.newInstance(ListFragment.LIST, R.id.interest_points);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.left_container, fragment)
+                        .commit();
             }
         } else {
+            isListMap = savedInstanceState.getBoolean(IS_MAP, false);
          /*  ;
           *//*  *//*
             navigationView.getMenu().getItem(selectedMenuItem).setChecked(true);*/
@@ -169,26 +200,69 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     /**
      * Se o fragment a fazer replace for a lista principal de pontos (R.id.interest_points),
      * toda a back stack é consumida, e no proximo BACKPRESSED o utilizador sai da aplicação
+     *
      * @param fragment
      */
     @Override
     public void replaceFragment(Fragment fragment) {
-        if (fragment != null && fragment instanceof ListFragment) {
-            int fragmentID = fragment.getArguments().getInt(ListFragment.ARG_FRAG_ID, 0);
-            if (fragmentID == R.id.interest_points) {
-                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.container, fragment)
-                        .commit();
-                return;
+        int replaceID;
+        if (fragment != null) {
+            if (!isPhoneLayout) {//tablet
+                if (fragment instanceof ListFragment) {
+
+                    rightContainer.setLayoutParams(new LinearLayout.LayoutParams(layoutParams[0], layoutParams[1], layoutParams[2]));
+                    isListMap = false;
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.left_container, fragment)
+                            .commit();
+                    return;
+               /*     }*/
+            /*        replaceID = R.id.left_container;*/
+                } else if (fragment instanceof ListMapFragment) {
+                    isListMap = true;
+                    rightContainer.setLayoutParams(new LinearLayout.LayoutParams(layoutParams[0], layoutParams[1], 0));
+                    replaceID = R.id.left_container;
+                    getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.left_container, fragment)
+                            .commit();
+                    return;
+                } else if (fragment instanceof PointOfInterestFragment) {
+                    rightContainer.setLayoutParams(new LinearLayout.LayoutParams(layoutParams[0], layoutParams[1], layoutParams[2]));
+                    replaceID = R.id.right_container;
+                } else if (fragment instanceof ItemMapFragment) {
+                    rightContainer.setLayoutParams(new LinearLayout.LayoutParams(layoutParams[0], layoutParams[1], layoutParams[2]));
+                    if (isListMap) {
+                        leftContainer.setLayoutParams(new LinearLayout.LayoutParams(layoutParams[0], layoutParams[1], 0));
+                    }
+                    replaceID = R.id.right_container;
+                } else {
+                    replaceID = R.id.left_container;
+                }
+
+            } else {//phote
+                if (fragment instanceof ListFragment) {
+                    int fragmentID = fragment.getArguments().getInt(ListFragment.ARG_FRAG_ID, 0);
+                    if (fragmentID == R.id.interest_points) {
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.phone_container, fragment)
+                                .commit();
+                        return;
+                    }
+                }
+                replaceID = R.id.phone_container;
             }
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(replaceID, fragment)
+                    .addToBackStack(null)
+                    .commit();
         }
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container, fragment)
-                .addToBackStack(null)
-                .commit();
     }
 
     @Override
@@ -214,13 +288,21 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         } else if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            if (!isPhoneLayout) {//tablet
+                leftContainer.setLayoutParams(new LinearLayout.LayoutParams(layoutParams[0], layoutParams[1], 1));
+                rightContainer.setLayoutParams(new LinearLayout.LayoutParams(layoutParams[0], layoutParams[1], layoutParams[2]));
+            }
+
+
             super.onBackPressed();
         }
     }
 
     @Override
-    public void changeActionBarTitle(String title) {
-        getSupportActionBar().setTitle(title);
+    public void changeActionBarTitle(String title, boolean isList) {
+        if (isList || isPhoneLayout) {
+            getSupportActionBar().setTitle(title);
+        }
     }
 
     @Override
@@ -248,6 +330,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         userName.setText(user.getDisplayName());
         new LoadImage().execute(user.getUid());
 
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(IS_MAP, isListMap);
+        super.onSaveInstanceState(outState);
     }
 
     /**

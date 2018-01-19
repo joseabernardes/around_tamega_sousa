@@ -296,7 +296,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
 
 
         //toolbar
-        mListener.changeActionBarTitle(pointOfInterest.getName());
+        mListener.changeActionBarTitle(pointOfInterest.getName(),false);
         mListener.showFloatingButton(false);
 
         return mContentView;

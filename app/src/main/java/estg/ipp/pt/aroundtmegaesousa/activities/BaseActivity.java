@@ -38,8 +38,6 @@ public abstract class BaseActivity extends AppCompatActivity implements Firebase
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {    //signed in
             this.user = user;
-        } else {
-            onAuthStateChanged(mFirebaseAuth); //forçar o callback
         }
 
     }

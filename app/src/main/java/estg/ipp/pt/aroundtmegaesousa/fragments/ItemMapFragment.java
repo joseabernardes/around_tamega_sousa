@@ -74,7 +74,7 @@ public class ItemMapFragment extends Fragment implements OnMapReadyCallback {
         mMapFragment.getMapAsync(this);
 
 
-        mContext.changeActionBarTitle(pointOfInterest.getName());
+        mContext.changeActionBarTitle(pointOfInterest.getName(),false);
         mContext.showFloatingButton(false);
 
         return mContentView;

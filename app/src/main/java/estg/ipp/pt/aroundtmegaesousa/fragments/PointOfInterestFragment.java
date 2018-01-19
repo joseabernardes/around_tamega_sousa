@@ -104,7 +104,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         mPager.setAdapter(mImageAdapter);
         numImages = mImageAdapter.getCount();
         dots = new ImageView[numImages];
-        //find
+        //findViewsById
         progressBar = mContentView.findViewById(R.id.image_loading_progress);
         progressBar.getIndeterminateDrawable().setColorFilter(ContextCompat.getColor(progressBar.getContext(), R.color.greyDisabled), android.graphics.PorterDuff.Mode.MULTIPLY);
         expandedImageView = mContentView.findViewById(R.id.expanded_image);
@@ -115,9 +115,8 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         location = mContentView.findViewById(R.id.location);
         localType = mContentView.findViewById(R.id.local_type);
         date = mContentView.findViewById(R.id.date);
-
-
         vote = mContentView.findViewById(R.id.vote);
+        openMap = mContentView.findViewById(R.id.openMap);
         vote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,15 +124,11 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                 LayoutInflater inflater = getActivity().getLayoutInflater();
                 View view = inflater.inflate(R.layout.rating_dialog, null);
                 builder.setView(view);
-
                 rt = view.findViewById(R.id.rating_dialog_rating_bar);
                 builder.setTitle(getString(R.string.classificate_poi));
                 final TextView tv = view.findViewById(R.id.rating_dialog_text_view);
-
                 fbh = new FirebaseHelper();
                 fbh.checkRating(pointOfInterest.getId(), mListener.getLoggedUser().getUid(), PointOfInterestFragment.this);
-
-
                 rt.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     @Override
                     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
@@ -150,7 +145,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                         }
                     }
                 });
-
                 builder.setPositiveButton(getString(R.string.apply), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -163,20 +157,15 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                         }
                     }
                 });
-
                 builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        dialog.dismiss();
                     }
                 });
                 builder.show();
-
-
             }
         });
-
-        openMap = mContentView.findViewById(R.id.openMap);
 
         openMap.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,8 +174,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                 if (mContext instanceof OnFragmentsCommunicationListener) {
                     OnFragmentsCommunicationListener mListener = (OnFragmentsCommunicationListener) mContext;
                     mListener.replaceFragment(fragment);
-                    mListener.changeActionBarTitle(pointOfInterest.getName());
-                    mListener.showFloatingButton(false);
                 }
             }
         });
@@ -228,7 +215,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                 dialog.dismiss();
                 switch (adapter.getItem(which).id) {
                     case 0:
-
+                    //editar
                         break;
                     case 1:
 
@@ -306,6 +293,11 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
             }
         });
         existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
+
+
+        //toolbar
+        mListener.changeActionBarTitle(pointOfInterest.getName());
+        mListener.showFloatingButton(false);
 
         return mContentView;
     }
@@ -448,7 +440,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
             adapter.add(new Option(4, getString(R.string.remove_favorites)));
         } else {
             adapter.remove(new Option(4, ""));
-            adapter.add(new Option(3,  getString(R.string.add_favorites)));
+            adapter.add(new Option(3, getString(R.string.add_favorites)));
         }
     }
 

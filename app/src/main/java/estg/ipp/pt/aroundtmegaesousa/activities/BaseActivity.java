@@ -11,6 +11,8 @@ import android.util.Log;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
+
 /**
  * Created by José Bernardes on 09/01/2018.
  */
@@ -28,25 +30,22 @@ public abstract class BaseActivity extends AppCompatActivity implements Firebase
         }
     }
 
-    private void onSignOutCleanup() {
-
-    }
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ThemeUtils.changeTheme(this);
         mFirebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {    //signed in
             this.user = user;
+        } else {
+            onAuthStateChanged(mFirebaseAuth); //forçar o callback
         }
 
     }
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        Log.d(TAG, "onAuthState");
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {    //signed in
             onSignInInitialize(user);

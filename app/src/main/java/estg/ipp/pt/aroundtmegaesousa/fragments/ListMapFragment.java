@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.adapters.CustomInfoWindowAdapter;
 import estg.ipp.pt.aroundtmegaesousa.adapters.MapAdapter;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
 import estg.ipp.pt.aroundtmegaesousa.models.Filters;
@@ -72,11 +73,9 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     }
 
 
-    public static ListMapFragment newInstance(String param1, String param2) {
+    public static ListMapFragment newInstance() {
         ListMapFragment fragment = new ListMapFragment();
         Bundle args = new Bundle();
-/*        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);*/
         fragment.setArguments(args);
         return fragment;
     }
@@ -84,10 +83,8 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-/*            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);*/
-        }
+/*        if (getArguments() != null) {
+        }*/
     }
 
     @Override
@@ -135,8 +132,6 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
-        Log.d(TAG, "onMapReady: ");
         mGoogleMap = googleMap;
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -152,8 +147,6 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
                 PointOfInterest pointOfInterest = (PointOfInterest) marker.getTag();
                 Fragment fragment = PointOfInterestFragment.newInstance(pointOfInterest);
                 communicationListener.replaceFragment(fragment);
-                communicationListener.changeActionBarTitle(pointOfInterest.getName());
-                communicationListener.showFloatingButton(false);
             }
         });
 
@@ -267,32 +260,4 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
         super.onDestroyView();
     }
 
-
-    public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
-
-        private Activity context;
-
-        public CustomInfoWindowAdapter(Activity context) {
-            this.context = context;
-        }
-
-        @Override
-        public View getInfoWindow(Marker marker) {
-            return null;
-        }
-
-        @Override
-        public View getInfoContents(Marker marker) {
-            View view = context.getLayoutInflater().inflate(R.layout.layout_map_info_window, null);
-            TextView title = view.findViewById(R.id.title);
-            TextView type = view.findViewById(R.id.type);
-            AppCompatRatingBar ratingBar = view.findViewById(R.id.rating_bar_map);
-            PointOfInterest pointOfInterest = (PointOfInterest) marker.getTag();
-            title.setText(pointOfInterest.getName());
-            TypeOfLocation typeOfLocation = Enums.getTypeOfLocationByID(pointOfInterest.getTypeOfLocation());
-            type.setText(typeOfLocation.getType());
-            ratingBar.setRating(pointOfInterest.getAvgRating());
-            return view;
-        }
-    }
 }

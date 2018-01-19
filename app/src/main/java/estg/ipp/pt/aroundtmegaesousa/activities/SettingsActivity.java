@@ -57,7 +57,6 @@ public class SettingsActivity extends BaseActivity {
         themeSettings = false;
         themeFirst = true;
         themeSettings = getIntent().getBooleanExtra("theme", themeSettings);
-        ThemeUtils.changeTheme(this);
         setContentView(R.layout.activity_settings);
 
         tb = findViewById(R.id.toolbar);
@@ -153,6 +152,7 @@ public class SettingsActivity extends BaseActivity {
 
         builder.setPositiveButton(getString(R.string.sim), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+
                 sp.setSelection(0);
                 checkBox_sound.setChecked(false);
                 checkBox_vibration.setChecked(false);

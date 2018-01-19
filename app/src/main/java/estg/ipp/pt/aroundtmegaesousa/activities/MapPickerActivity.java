@@ -64,26 +64,28 @@ public class MapPickerActivity extends BaseActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ThemeUtils.changeTheme(this);
         setContentView(R.layout.activity_map_picker);
+        //findViewsById
         toolbar = findViewById(R.id.toolbar);
+
+        //toolbar
         toolbar.setTitle(R.string.title_activity_map_picker);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         mMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
 
         Intent intent = getIntent();
+        //caso se recebe a localização pelo intent (se for a segunda vez que se abre o mapa quando se adiciona um ponto)
         if (intent.hasExtra(MAP_PARAM)) {
             savedInstance = intent.getParcelableExtra(MAP_PARAM);
         }
         if (savedInstanceState != null) { //recuperar estado
             savedInstance = savedInstanceState.getParcelable(MAP_PARAM);
         }
-
         cities = Enums.getCities();
-
     }
 
 

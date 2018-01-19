@@ -22,9 +22,17 @@
         android:id="@+id/id_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:paddingBottom="16dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="16dp"
         android:text="Ativar/Desativar"
         android:textColor="@color/greySecondary" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/dividerVertical" />
 
     <TextView
         android:layout_width="match_parent"
@@ -39,9 +47,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="8dp"
+        android:paddingBottom="10dp"
         android:paddingLeft="8dp"
-        android:paddingTop="8dp">
+        android:paddingRight="8dp"
+        android:paddingTop="10dp">
 
         <TextView
             android:layout_width="0dp"
@@ -56,19 +65,14 @@
             android:layout_weight="1" />
     </LinearLayout>
 
-    <View
-        android:id="@+id/tile_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?android:attr/dividerVertical" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="8dp"
+        android:paddingBottom="10dp"
         android:paddingLeft="8dp"
-        android:paddingTop="8dp">
+        android:paddingRight="8dp"
+        android:paddingTop="10dp">
 
         <TextView
             android:layout_width="0dp"
@@ -83,6 +87,11 @@
             android:layout_weight="1" />
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/dividerVertical" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -96,7 +105,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/cores"
-        android:padding="8dp"></Spinner>
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp" />
 
 
 </LinearLayout>

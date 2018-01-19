@@ -34,10 +34,6 @@ public class MapAdapter implements EventListener<QuerySnapshot> {
         this.pointOfInterestList = new ArrayList<>();
     }
 
-    public PointOfInterest getPointOfInterest(int index) {
-        return pointOfInterestList.get(index);
-    }
-
 
     /**
      * Escutar alterações no firestore

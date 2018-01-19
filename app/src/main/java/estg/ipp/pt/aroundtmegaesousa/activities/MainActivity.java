@@ -55,34 +55,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
-        ThemeUtils.changeTheme(this);
         setContentView(R.layout.activity_main);
-        //Connect Views
+        //findViewsById
         toolbar = findViewById(R.id.toolbar);
         drawer = findViewById(R.id.drawer_layout); //main layout
         navigationView = findViewById(R.id.nav_view); //navigation drawer
         fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddPointActivity.class);
-                startActivity(intent);
-            }
-        });
+
+        //toolbar
         setSupportActionBar(toolbar);
-        if (findViewById(R.id.container) != null) { //phone
-            Log.d(TAG, "onCreate: Phone Layout");
-            Fragment fragment = ListFragment.newInstance(ListFragment.LIST);
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.container, fragment)
-                    .commit();
-        } else {
-            Log.d(TAG, "onCreate: TABLET Layout");
-        }
+
+        //navigation drawer
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -94,10 +78,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         userName = headerLayout.findViewById(R.id.user_name);
 
 
+        //onClicks
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddPointActivity.class);
+                startActivity(intent);
+            }
+        });
 
-        /*
-        OPEN POI FRAGMENT
-         */
+
+        //Open PointOfInterest by ID
         if (getIntent().hasExtra(PointOfInterestFragment.DOCUMENT_ID)) {
             Toast.makeText(this, getString(R.string.message_toast_open_poi), Toast.LENGTH_SHORT).show();
             String documentID = getIntent().getStringExtra(PointOfInterestFragment.DOCUMENT_ID);
@@ -105,7 +96,33 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             firebaseHelper.getPointOfInterestByDocumentID(documentID, this);
         }
 
+        onRestoreState(savedInstanceState);
+    }
 
+    /**
+     * Metodo responsavel por recuperar o estado da activity
+     * É utilizado em detrimento do onRestoreInstanceState devido a este ultimo só ser chamado caso
+     * exista estado,e neste caso é necessario um metodo que seja sempre chamado na criação da activity
+     *
+     * @param savedInstanceState
+     */
+
+    private void onRestoreState(Bundle savedInstanceState) {
+        if (savedInstanceState == null) { //se não existe estado
+            //apenas quando a activity está a ser criada, e não RE-CRIADA
+            if (findViewById(R.id.container) != null) { //phone
+                Log.d(TAG, "onCreate: Phone Layout");
+                Fragment fragment = ListFragment.newInstance(ListFragment.LIST);
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.container, fragment)
+                        .commit();
+            } else {
+                Log.d(TAG, "onCreate: TABLET Layout");
+            }
+        } else {
+//algo
+        }
     }
 
 
@@ -120,28 +137,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main2, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -152,32 +147,29 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         switch (id) {
             case R.id.mypoints:
                 fragment = ListFragment.newInstance(ListFragment.MY_POINTS);
-
                 break;
             case R.id.favorites:
                 fragment = ListFragment.newInstance(ListFragment.FAVORITES);
-
                 break;
             case R.id.interest_points:
                 fragment = ListFragment.newInstance(ListFragment.LIST);
-
                 break;
             case R.id.map:
-                fragment = ListMapFragment.newInstance("aa", "bb");
+                fragment = ListMapFragment.newInstance();
                 fab.hide();
                 break;
             case R.id.settings:
+                drawer.closeDrawer(GravityCompat.START);
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
                 return false;
             case R.id.logout:
+                drawer.closeDrawer(GravityCompat.START);
                 AuthUI.getInstance().signOut(this);
                 return true;
-               /* break;*/
         }
-
-        replaceFragment(fragment);
         drawer.closeDrawer(GravityCompat.START);
+        replaceFragment(fragment);
         return true;
     }
 
@@ -201,7 +193,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public void setOnBackPressedListener(OnBackPressedListener onBackPressedListener) {
         this.onBackPressedListener = onBackPressedListener;
-
     }
 
     @Override
@@ -232,18 +223,28 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void addUserInfo(FirebaseUser user) {
         userName.setText(user.getDisplayName());
         new LoadImage().execute(user.getUid());
+
     }
 
+    /**
+     * Metodo chamado quando é retornado um ponto de interesse por id á bd
+     *
+     * @param pointOfInterest
+     */
     @Override
     public void getPointOfInterest(PointOfInterest pointOfInterest) {
         Fragment fragment = PointOfInterestFragment.newInstance(pointOfInterest);
         replaceFragment(fragment);
-        changeActionBarTitle(pointOfInterest.getName());
-        showFloatingButton(false);
     }
 
+    /**
+     * Tarefa responsavel por carregar o avatar do user da memoria
+     * <p>
+     * Tenta carregas o avatar do user que foi gravado na internalstorage pela LoginActivity
+     * tenta o fazer 5vezes com intervalos de 5seg, se não conseguir(caso o imagem ainda nao
+     * tenha sido descarregada e guardada), mantem o avatar default
+     */
     private class LoadImage extends AsyncTask<String, Void, Bitmap> {
-
         private Bitmap loadImage(String file) {
             Bitmap bitmap = null;
             FileInputStream fiStream;
@@ -258,12 +259,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                     fiStream.close();
                     if (bitmap == null) {
                         throw new FileNotFoundException("FileNotFound");
-
                     }
 
                 } catch (IOException e) {
                     run = true;
-                    Log.d(TAG, "loadImage: wait 5secs");
                     try {
                         Thread.currentThread();
                         Thread.sleep(5000);
@@ -274,7 +273,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
             return bitmap;
         }
-
 
         @Override
         protected Bitmap doInBackground(String... strings) {
@@ -293,6 +291,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
+    /**
+     * Interface reponsavel por permitir fazer override do onBackPressed da activity, num fragment
+     */
     public interface OnBackPressedListener {
         void doBack();
     }

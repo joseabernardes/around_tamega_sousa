@@ -1,5 +1,6 @@
 package estg.ipp.pt.aroundtmegaesousa.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -31,6 +32,7 @@ import org.json.JSONException;
 import java.io.IOException;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.adapters.CustomInfoWindowAdapter;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 
@@ -42,7 +44,7 @@ public class ItemMapFragment extends Fragment implements OnMapReadyCallback {
     private SupportMapFragment mMapFragment;
     private GeoJsonLayer tamega;
     private GoogleMap mGoogleMap;
-    private Context mContext;
+    private OnFragmentsCommunicationListener mContext;
 
     public ItemMapFragment() {
     }
@@ -70,6 +72,10 @@ public class ItemMapFragment extends Fragment implements OnMapReadyCallback {
         View mContentView = inflater.inflate(R.layout.fragment_item_map, container, false);
         mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
+
+
+        mContext.changeActionBarTitle(pointOfInterest.getName());
+        mContext.showFloatingButton(false);
 
         return mContentView;
     }
@@ -104,7 +110,7 @@ public class ItemMapFragment extends Fragment implements OnMapReadyCallback {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof OnFragmentsCommunicationListener) {
-            mContext = context;
+            mContext = (OnFragmentsCommunicationListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -130,13 +136,17 @@ public class ItemMapFragment extends Fragment implements OnMapReadyCallback {
         });
 
 
+        CustomInfoWindowAdapter adapter = new CustomInfoWindowAdapter((Activity) mContext);
+        mGoogleMap.setInfoWindowAdapter(adapter);
+
+
         //desenhar pontos!
-        addMarker(new LatLng(pointOfInterest.getLatitude(), pointOfInterest.getLongitude()), pointOfInterest.getName());
+        addMarker(pointOfInterest);
 
         try {
-            tamega = new GeoJsonLayer(mGoogleMap, R.raw.tamegaesousa, mContext);
+            tamega = new GeoJsonLayer(mGoogleMap, R.raw.tamegaesousa, (Context) mContext);
             GeoJsonPolygonStyle style = tamega.getDefaultPolygonStyle();
-            style.setStrokeColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark));
+            style.setStrokeColor(ContextCompat.getColor((Context) mContext, R.color.colorPrimaryDark));
             style.setStrokeWidth(6f);
             tamega.addLayerToMap();
         } catch (IOException e) {
@@ -147,12 +157,14 @@ public class ItemMapFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    private void addMarker(LatLng latLng, String title) {
+    private void addMarker(PointOfInterest pointOfInterest) {
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker);
         Marker marker = mGoogleMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .title(title)
+                .position(pointOfInterest.getLocation())
+                .title(pointOfInterest.getName())
                 .icon(icon));
+
+        marker.setTag(pointOfInterest);
     }
 
     private void zoomToLocation(LatLng latLng, float zoom) {

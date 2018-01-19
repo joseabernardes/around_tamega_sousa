@@ -4,8 +4,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Abrir menu</string>
+    <string name="navigation_drawer_close">Fechar menu</string>
     <string name="facebook_application_id" translatable="false">1462407480534175</string>
     <string name="facebook_app_id">1462407480534175</string>
     <string name="add_point">Adicionar Ponto</string>
@@ -18,8 +18,8 @@
     <string name="nav_mypoints">Os Meus Pontos</string>
     <string name="logout">Log Out</string>
 
-    <string name="reset">Reset</string>
-    <string name="check">Check</string>
+    <string name="reset">Repor</string>
+    <string name="check">Adicionar</string>
     <string name="save_place">Selecionar</string>
     <string name="close">Check</string>
 
@@ -93,28 +93,27 @@
     <string name="like">Gostei</string>
     <string name="love">Adorei</string>
 
-    <string name="remove_poi_success">Ponto de interesse removido</string>
-    <string name="remove_poi_unsuccess">Não foi possivel remover ponto de interesse</string>
+    <string name="remove_poi_success">Ponto de interesse eliminado</string>
+    <string name="remove_poi_unsuccess">Não foi possivel eliminar ponto de interesse</string>
 
     <string name="classificate_added">Classificação adicionada</string>
-    <string name="classificate_not_added">Não foi possivel classificar ponto de interese</string>
+    <string name="classificate_not_added">Não foi possivel classificar ponto de interesse</string>
 
     <string name="classficate_changed">Classificação alterada</string>
-    <string name="classificate_not_changged">Não foi posssivel alterar classificação</string>
+    <string name="classificate_not_changged">Não foi possivel alterar a classificação</string>
 
 
     <string name="add_to_favorites">Adicionado aos Favoritos</string>
     <string name="not_add_to_favorites">Não foi possivel adicionar aos Favoritos</string>
 
     <string name="remove_from_favorites">Removido dos Favoritos</string>
-    <string name="not_remove_from_favorites">Não foi possivel remover dos Favorites</string>
+    <string name="not_remove_from_favorites">Não foi possivel remover dos Favoritos</string>
 
 
-    <string name="pre_settings">Pretende aplicar as definções predefinidas ?</string>
+    <string name="pre_settings">Pretende aplicar as definições predefinidas ?</string>
     <string name="predefinitions">Predefinições</string>
 
-    <string name="error">Erro ao recebr informação</string>
-
+    <string name="error">Erro ao receber informação</string>
 
 
     <string name="header_filters">Filtro</string>
@@ -132,13 +131,13 @@
         <item>Outro</item>
     </string-array>
 
-
     <string-array name="cores">
         <item>Verde Claro</item>
         <item>Verde Escuro</item>
         <item>Castanho</item>
         <item>Azul</item>
     </string-array>
+
     <string-array name="type_of_location_add">
         <item>Parque</item>
         <item>Jardim</item>
@@ -154,8 +153,6 @@
 
     <string-array name="cities">
         <item>@string/value_any_city</item>
-
-
         <item>Amarante</item>
         <item>Baião</item>
         <item>Castelo de Paiva</item>
@@ -178,11 +175,6 @@
 
     <string name="value_any_local">Todos os Tipos de Local</string>
     <string name="value_any_city">Todos os Concelhos</string>
-
-    <!--    <string name="label_category">Tipo de Local</string>
-        <string name="label_city">Concelho</string>
-        <string name="label_price">Rating</string>
-        <string name="label_sort_by">Ordenado por</string>-->
 
     <string name="fmt_num_ratings" translatable="false">(%d)</string>
     <string name="all_points">Todos os Pontos</string>

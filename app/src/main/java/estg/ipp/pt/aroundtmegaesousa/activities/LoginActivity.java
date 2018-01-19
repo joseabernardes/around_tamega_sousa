@@ -53,70 +53,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFirebaseAuth = FirebaseAuth.getInstance();
-
-
         user = mFirebaseAuth.getCurrentUser();
-
-            if (user != null) { //signed in
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-            } else {//nao tem login
-                startActivityForResult(
-                        AuthUI.getInstance()
-                                .createSignInIntentBuilder()
-                                .setIsSmartLockEnabled(false)
-                                .setAvailableProviders(
-                                        Arrays.asList(
-                                                new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(),
-                                                new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build()
-                                        ))
-                                .setLogo(R.drawable.around_logo)
-                                .setTheme(R.style.LoginTheme)
-                                .build(),
-                        RC_SIGN_IN);
-            }
-        }
-
-
-        @Override
-        protected void onActivityResult ( int requestCode, int resultCode, Intent data){
-            Log.d(TAG, "onActivityResult Req:" + requestCode + " Res:" + resultCode);
-            super.onActivityResult(requestCode, resultCode, data);
-            if (requestCode == RC_SIGN_IN) { //se foi do meu pedido de login
-                if (resultCode == RESULT_OK) { //se retornou sucesso
-
-                    String url = mFirebaseAuth.getCurrentUser().getPhotoUrl().toString();
-                    String name = mFirebaseAuth.getCurrentUser().getUid();
-                    new DownloadImage().execute(url, name);
-
-                    Intent intent = new Intent(this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-
-
-                } else if (resultCode == RESULT_CANCELED) { // se o utilizador cancelou BACK ou sem ligação á internet
-                    IdpResponse response = IdpResponse.fromResultIntent(data);
-                    // Sign in failed
-                    String toast = getString(R.string.warn_login_unknown_response);
-                    if (response == null) {
-                        finish();
-                        return;
-                    } else if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
-                        toast = getString(R.string.warn_login_no_connection);
-                    } else if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
-                        toast = getString(R.string.warn_login_unknown_error);
-                    }
-                    initLayout(toast);
-                }
-            }
-        }
-/*
-    @Override
-    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        Log.d(TAG, "onAuthStateChanged: ");
-        FirebaseUser user = firebaseAuth.getCurrentUser();
-        if (user != null) { //signed in
+        if (user != null) { //tem login
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -136,40 +74,41 @@ public class LoginActivity extends AppCompatActivity {
                     RC_SIGN_IN);
         }
     }
-*/
 
 
-    public void saveImage(Context context, Bitmap b, String imageName) {
-        FileOutputStream foStream;
-        try {
-            foStream = context.openFileOutput(imageName, Context.MODE_PRIVATE);
-            b.compress(Bitmap.CompressFormat.PNG, 100, foStream);
-            foStream.close();
-        } catch (Exception e) {
-            Log.d("saveImage", "Exception 2, Something went wrong!");
-            e.printStackTrace();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) { //se foi do meu pedido de login
+            if (resultCode == RESULT_OK) { //se retornou sucesso
+                String url = mFirebaseAuth.getCurrentUser().getPhotoUrl().toString();
+                String name = mFirebaseAuth.getCurrentUser().getUid();
+                new DownloadImage().execute(url, name);
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+
+
+            } else if (resultCode == RESULT_CANCELED) { // se o utilizador cancelou BACK ou sem ligação á internet
+                IdpResponse response = IdpResponse.fromResultIntent(data);
+                String toast = getString(R.string.warn_login_unknown_response);
+                if (response == null) {
+                    finish();
+                    return;
+                } else if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    toast = getString(R.string.warn_login_no_connection);
+                } else if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+                    toast = getString(R.string.warn_login_unknown_error);
+                }
+                initLayout(toast);
+            }
         }
     }
 
 
     private class DownloadImage extends AsyncTask<String, Void, Bitmap> {
-        private String TAG = "DownloadImage";
+
         private String filename;
-
-        private Bitmap downloadImageBitmap(String sUrl, String name) {
-            filename = name;
-            Bitmap bitmap = null;
-            try {
-                InputStream inputStream = new URL(sUrl).openStream();   // Download Image from URL
-                bitmap = BitmapFactory.decodeStream(inputStream);       // Decode Bitmap
-                inputStream.close();
-            } catch (Exception e) {
-                Log.d(TAG, "Exception 1, Something went wrong!");
-                e.printStackTrace();
-            }
-            return bitmap;
-        }
-
 
         @Override
         protected Bitmap doInBackground(String... strings) {
@@ -179,6 +118,31 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(Bitmap result) {
             saveImage(getApplicationContext(), result, filename);
 
+        }
+
+        public void saveImage(Context context, Bitmap b, String imageName) {
+            FileOutputStream foStream;
+            try {
+                foStream = context.openFileOutput(imageName, Context.MODE_PRIVATE);
+                b.compress(Bitmap.CompressFormat.PNG, 100, foStream);
+                foStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        private Bitmap downloadImageBitmap(String sUrl, String name) {
+            filename = name;
+            Bitmap bitmap = null;
+            try {
+                InputStream inputStream = new URL(sUrl).openStream();   // Download Image from URL
+                bitmap = BitmapFactory.decodeStream(inputStream);       // Decode Bitmap
+                inputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return bitmap;
         }
 
 

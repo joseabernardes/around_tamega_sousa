@@ -12,6 +12,7 @@ import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
+import android.os.PersistableBundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
@@ -51,17 +52,15 @@ public class AddPointActivity extends BaseActivity {
 
     private static final int REQUEST_PHOTO_PERMISSIONS = 100;
     public static final String EDIT_POI_ACTION = "edit";
-    public static final String DELETE_POI_ACTION = "delete";
     public static final String ADD_POI_ACTION = "add";
     private static final int REQUEST_MAP_POINT = 420;
     private static final String PHOTOS_KEY = "photos_list";
-    private static final String THUMBS_KEY = "img_";
     private List<ImageView> imageViewList;
+    private ArrayList<File> photos;
     private int imageOpen;
     private PhotoView expandedImageView;
     private Menu menu;
     private Toolbar toolbar;
-    private ArrayList<File> photos;
     private Button mapButton;
     private LatLng coordinates;
     private EditText location;
@@ -75,16 +74,38 @@ public class AddPointActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ThemeUtils.changeTheme(this);
-        setContentView(estg.ipp.pt.aroundtmegaesousa.R.layout.activity_add_point);
+        setContentView(R.layout.activity_add_point);
+        // findViewsById
         name = findViewById(R.id.name);
         description = findViewById(R.id.description);
         typeOfLocation = findViewById(R.id.typeOfLocation);
         toolbar = findViewById(R.id.toolbar);
+        mapButton = findViewById(R.id.map_button);
+        location = findViewById(R.id.location);
+        expandedImageView = findViewById(R.id.expanded_image);
+        imageViewList = new ArrayList<>();
+        imageViewList.add(0, (ImageView) findViewById(R.id.img_0));
+        imageViewList.add(1, (ImageView) findViewById(R.id.img_1));
+        imageViewList.add(2, (ImageView) findViewById(R.id.img_2));
+        imageViewList.add(3, (ImageView) findViewById(R.id.img_3));
+        imageViewList.add(4, (ImageView) findViewById(R.id.img_4));
+
+        // toolbar
         toolbar.setTitle(R.string.title_activity_add_point);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mapButton = findViewById(R.id.map_button);
+
+
+        // check photo permissions
+        List<String> permissions = checkPermissions(REQUEST_PHOTO_PERMISSIONS);
+        if (!permissions.isEmpty()) {
+            requestPermissions(permissions, REQUEST_PHOTO_PERMISSIONS);
+        }
+
+        EasyImage.configuration(this).setImagesFolderName("photos");
+
+
+        // onClickEvents
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,53 +116,6 @@ public class AddPointActivity extends BaseActivity {
                 startActivityForResult(i, REQUEST_MAP_POINT);
             }
         });
-        imageViewList = new ArrayList<>();
-        imageViewList.add(0, (ImageView) findViewById(R.id.img_0));
-        imageViewList.add(1, (ImageView) findViewById(R.id.img_1));
-        imageViewList.add(2, (ImageView) findViewById(R.id.img_2));
-        imageViewList.add(3, (ImageView) findViewById(R.id.img_3));
-        imageViewList.add(4, (ImageView) findViewById(R.id.img_4));
-        location = findViewById(R.id.location);
-        if (savedInstanceState != null) { //recuperar estado
-            coordinates = savedInstanceState.getParcelable(MapPickerActivity.MAP_PARAM);
-            city = (City) savedInstanceState.getSerializable(MapPickerActivity.CITY_PARAM);
-            photos = (ArrayList<File>) savedInstanceState.getSerializable(PHOTOS_KEY);
-            for (int i = 0; i < 5; i++) {
-                if (photos.get(i) != null) {
-                    addPhotoToList(photos.get(i), i);
-
-                }
-
-
-/*                Object obj = savedInstanceState.getParcelable(THUMBS_KEY + i);
-                if (obj != null) {//existe imagem
-                    ImageView imageView = imageViewList.get(i);
-                    imageView.setImageBitmap((Bitmap) obj);
-                    imageView.setPadding(0, 0, 0, 0);
-                }*/
-            }
-        } else {
-            photos = new ArrayList<File>();
-            for (int i = 0; i < 5; i++) {
-                photos.add(i, null);
-            }
-        }
-
-        //check permissions
-
-        EasyImage.configuration(this)
-                .setImagesFolderName("photos")
-        ;
-
-
-        //checkGalleryAppAvailability();
-        /**
-         * gallery
-         */
-        expandedImageView = findViewById(R.id.expanded_image);
-        imageOpen = -1;
-
-
         for (int i = 0; i < 5; i++) {
             final ImageView tempImage = imageViewList.get(i);
             tempImage.setTag(i); //adicionar o id da imagem
@@ -152,6 +126,10 @@ public class AddPointActivity extends BaseActivity {
                 }
             });
         }
+
+
+        // initialization
+        imageOpen = -1;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.message_submit_point));
@@ -169,10 +147,38 @@ public class AddPointActivity extends BaseActivity {
         });
         dialog = builder.create();
 
-
         ArrayAdapter<TypeOfLocation> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item);
         adapter.addAll(Enums.getTypeOfLocations());
         typeOfLocation.setAdapter(adapter);
+
+        onRestoreState(savedInstanceState);
+    }
+
+
+    /**
+     * Metodo responsavel por recuperar o estado da activity
+     * É utilizado em detrimento do onRestoreInstanceState devido a este ultimo só ser chamado caso
+     * exista estado,e neste caso é necessario um metodo que seja sempre chamado na criação da activity
+     *
+     * @param savedInstanceState
+     */
+
+    private void onRestoreState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            coordinates = savedInstanceState.getParcelable(MapPickerActivity.MAP_PARAM);
+            city = (City) savedInstanceState.getSerializable(MapPickerActivity.CITY_PARAM);
+            photos = (ArrayList<File>) savedInstanceState.getSerializable(PHOTOS_KEY);
+            for (int i = 0; i < 5; i++) {
+                if (photos.get(i) != null) {
+                    addPhotoToList(photos.get(i), i);
+                }
+            }
+        } else {
+            photos = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                photos.add(i, null);
+            }
+        }
     }
 
     /**
@@ -189,12 +195,8 @@ public class AddPointActivity extends BaseActivity {
             }
         }
         if (coordinates != null && !name.isEmpty() && !description.isEmpty() && city != null && !tempList.isEmpty()) {
-
-
 /*            if(getIntent().getAction().equals(AddPointActivity.EDIT_POI_ACTION)){
-
             }*/
-
             int typeID = ((TypeOfLocation) typeOfLocation.getSelectedItem()).getId();
             PointOfInterest pointOfInterest = new PointOfInterest(name, description, coordinates, city.getId(), typeID, user.getUid(), 0);
             Intent intent = new Intent(this, UploadFirebaseService.class);
@@ -202,14 +204,7 @@ public class AddPointActivity extends BaseActivity {
             intent.putExtra(UploadFirebaseService.POI_PARAM, pointOfInterest);
             intent.putExtra(UploadFirebaseService.FILES_PARAM, (Serializable) tempList);
             intent.setFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-
-
-                    /*
-                       PointOfInterest pointOfInterest = (PointOfInterest) intent.getSerializableExtra(POI_PARAM);
-                List<File> photos = (List<File>) intent.getSerializableExtra(FILES_PARAM);
-                     */
             startService(intent);
-/*            new AddPointTask(pointOfInterest, tempList, this).execute();*/
             finish();
         } else {
             Toast.makeText(this, getString(R.string.warn_params_not_fulfilled), Toast.LENGTH_SHORT).show();
@@ -228,13 +223,14 @@ public class AddPointActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_check:
+
                 if (imageOpen != -1) {
+                    //se existir imagem aberta, significa que o click é para a remover
                     removeImage();
                 } else {
+                    // se não existir, significa que o click é para adicionar o ponto de interesse
                     dialog.show();
                 }
-
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -243,7 +239,9 @@ public class AddPointActivity extends BaseActivity {
         }
     }
 
-
+    /**
+     * Metodo responsavel por remover uma imagem da lista de imagens selecionadas
+     */
     private void removeImage() {
         if (imageOpen != -1) {
             ImageView imageView = imageViewList.get(imageOpen);
@@ -257,7 +255,11 @@ public class AddPointActivity extends BaseActivity {
 
     }
 
-
+    /**
+     * Metodo responsavel por tratar o click numa imagem
+     *
+     * @param imageView
+     */
     private void onClickImage(final ImageView imageView) {
         int tag = (Integer) imageView.getTag();
         File image = photos.get(tag);
@@ -402,15 +404,6 @@ public class AddPointActivity extends BaseActivity {
         outState.putParcelable(MapPickerActivity.MAP_PARAM, coordinates);
         outState.putSerializable(MapPickerActivity.CITY_PARAM, city);
         outState.putSerializable(PHOTOS_KEY, photos);
-/*        for (int i = 0; i < 5; i++) {
-            Drawable drawable = imageViewList.get(i).getDrawable();
-            if (drawable instanceof BitmapDrawable) { //significa que existe imagem
-                outState.putParcelable(THUMBS_KEY + i, ((BitmapDrawable) drawable).getBitmap());
-            } else {
-                outState.putParcelable(THUMBS_KEY + i, null);
-            }
-
-        }*/
         super.onSaveInstanceState(outState);
     }
 

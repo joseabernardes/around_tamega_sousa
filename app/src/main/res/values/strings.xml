@@ -32,11 +32,10 @@
     <!-- Title -->
     <string name="title_activity_add_point">Adicionar Ponto</string>
     <string name="title_activity_map_picker">Selecionar localização</string>
-    <string name="title_activity_main">MainActivity</string>
     <string name="title_fragment_map">Mapa</string>
     <string name="title_fragment_list">Pontos de Interesse</string>
     <string name="title_fragment_list_favo">Favoritos</string>
-    <string name="title_fragment_list_my_points">Os Meus Pontos</string>
+    <string name="title_fragment_list_my_points">Adicionados</string>
     <string name="title_fragment_poi">Ponto de Interesse</string>
     <string name="title_dialog_city">Indique o Concelho</string>
     <string name="title_notification_add_point">Adicionar Ponto de Interesse</string>
@@ -119,18 +118,6 @@
     <string name="header_filters">Filtro</string>
 
 
-    <string-array name="type_of_location">
-        <item>@string/value_any_local</item>
-
-        <item>Parque</item>
-        <item>Jardim</item>
-        <item>Praia fluvial</item>
-        <item>Monumento</item>
-        <item>Igreja</item>
-        <item>Restaurante</item>
-        <item>Outro</item>
-    </string-array>
-
     <string-array name="cores">
         <item>Verde Claro</item>
         <item>Verde Escuro</item>
@@ -151,27 +138,6 @@
 
     <string name="filter_in">em</string>
 
-    <string-array name="cities">
-        <item>@string/value_any_city</item>
-        <item>Amarante</item>
-        <item>Baião</item>
-        <item>Castelo de Paiva</item>
-        <item>Celorico de Basto</item>
-        <item>Cinfães</item>
-        <item>Felgueiras</item>
-        <item>Lousada</item>
-        <item>Marco de Canaveses</item>
-        <item>Paços de Ferreira</item>
-        <item>Penafiel</item>
-        <item>Resende</item>
-    </string-array>
-
-
-    <string-array name="sort_by">
-        <item>@string/sort_by_date</item>
-        <item>@string/sort_by_rating</item>
-
-    </string-array>
 
     <string name="value_any_local">Todos os Tipos de Local</string>
     <string name="value_any_city">Todos os Concelhos</string>

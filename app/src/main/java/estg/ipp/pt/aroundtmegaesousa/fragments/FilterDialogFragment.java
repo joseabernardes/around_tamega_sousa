@@ -30,6 +30,7 @@ import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
 public class FilterDialogFragment extends DialogFragment {
 
     public static final String TAG = "FilterDialog";
+    private static final String ARG_MAP = "is_map";
 
     interface FilterListener {
 
@@ -45,6 +46,25 @@ public class FilterDialogFragment extends DialogFragment {
     private Button cancelButton;
     private FilterListener mFilterListener;
     private Filters filters;
+    private boolean isListMap;
+    private View spinnerParent;
+
+
+    public static FilterDialogFragment newInstance(boolean isListMap) {
+        FilterDialogFragment f = new FilterDialogFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(ARG_MAP, isListMap);
+        f.setArguments(args);
+        return f;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            isListMap = getArguments().getBoolean(ARG_MAP, false);
+        }
+    }
 
     @Nullable
     @Override
@@ -67,16 +87,23 @@ public class FilterDialogFragment extends DialogFragment {
                 onCancelClicked();
             }
         });
-
-        ArrayAdapter<TypeOfLocation> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
+        spinnerParent = mRootView.findViewById(R.id.spinner_parent);
+        if(!isListMap){
+            spinnerParent.setVisibility(View.VISIBLE);
+        }
+        ArrayAdapter<TypeOfLocation> adapter = new ArrayAdapter<>(getContext(), R.layout.item_dialog_options);
         adapter.add(new TypeOfLocation(-1, getString(R.string.value_any_local))); //adicionar á primeira posição
         adapter.addAll(Enums.getTypeOfLocations());
         mTypeOfLocationSpinner.setAdapter(adapter);
 
-        ArrayAdapter<City> cityAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<City> cityAdapter = new ArrayAdapter<>(getContext(), R.layout.item_dialog_options);
         cityAdapter.add(new City(null, getString(R.string.value_any_city))); //adicionar á primeira posição
         cityAdapter.addAll(Enums.getCities());
         mCitySpinner.setAdapter(cityAdapter);
+        ArrayAdapter<String> orderedAdapter = new ArrayAdapter<String>(getContext(), R.layout.item_dialog_options);
+        orderedAdapter.add(getString(R.string.sort_by_rating));
+        orderedAdapter.add(getString(R.string.sort_by_date));
+        mSortSpinner.setAdapter(orderedAdapter);
 
         if (getParentFragment() instanceof FilterListener) {
             mFilterListener = (FilterListener) getParentFragment();

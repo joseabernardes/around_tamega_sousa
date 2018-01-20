@@ -54,6 +54,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     private ImageView buttonCancel;
 
 
+
     private FirebaseFirestore mFirestore;
     private Query mQuery;
 
@@ -86,6 +87,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View mContentView = inflater.inflate(R.layout.fragment_list, container, false);
         recyclerView = mContentView.findViewById(R.id.recycler);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(mContext));
         currentSearch = mContentView.findViewById(R.id.text_current_search);
         currentSortBy = mContentView.findViewById(R.id.text_current_sort_by);
@@ -117,7 +119,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         });
 
 
-        mFilterDialog = new FilterDialogFragment();
+        mFilterDialog = FilterDialogFragment.newInstance(false);
 
         changeLayoutByFragmentType();
         communicationListener.changeSelectedNavigationItem(fragmentID);
@@ -134,7 +136,8 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
             String title;
             switch (typeOfFragment) {
                 case LIST:
-                    communicationListener.showFloatingButton(false);
+                    communicationListener.showFloatingButton(true);
+                    setOnScrolledRecyclerView(communicationListener);
                     title = getString(R.string.title_fragment_list);
                     break;
                 case FAVORITES:
@@ -152,7 +155,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
                     filters.setVisibility(View.GONE);
                     title = getString(R.string.title_fragment_list);
             }
-            communicationListener.changeActionBarTitle(title,true);
+            communicationListener.changeActionBarTitle(title, true);
         }
 
 

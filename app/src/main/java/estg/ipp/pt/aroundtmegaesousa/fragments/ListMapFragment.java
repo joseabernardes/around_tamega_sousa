@@ -2,8 +2,10 @@ package estg.ipp.pt.aroundtmegaesousa.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.AppCompatRatingBar;
@@ -37,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.activities.AddPointActivity;
+import estg.ipp.pt.aroundtmegaesousa.activities.MainActivity;
 import estg.ipp.pt.aroundtmegaesousa.adapters.CustomInfoWindowAdapter;
 import estg.ipp.pt.aroundtmegaesousa.adapters.MapAdapter;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
@@ -47,7 +51,7 @@ import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
 
-public class ListMapFragment extends Fragment implements OnMapReadyCallback, MapAdapter.onItemsChangeListener, FilterDialogFragment.FilterListener {
+public class ListMapFragment extends Fragment implements OnMapReadyCallback, MapAdapter.onItemsChangeListener, View.OnClickListener, FilterDialogFragment.FilterListener {
 
     private static final String TAG = "ListMapFragment";
     public static final String FILTER = "filter";
@@ -60,6 +64,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     private GoogleMap mGoogleMap;
     private Context mContext;
     private OnFragmentsCommunicationListener communicationListener;
+    private FloatingActionButton  viewMore;
     private View filterBar;
     private TextView currentSearch;
     private TextView currentSortBy;
@@ -102,8 +107,12 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
         filterBar = mContentView.findViewById(R.id.filter_bar);
         currentSearch = mContentView.findViewById(R.id.text_current_search);
         currentSortBy = mContentView.findViewById(R.id.text_current_sort_by);
+        currentSortBy.setText(" "); //não existe ordem no mapa
         buttonCancel = mContentView.findViewById(R.id.button_clear_filter);
+        viewMore = mContentView.findViewById(R.id.view_more);
 
+        //onClicks
+        viewMore.setOnClickListener(this);
         filterBar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -121,10 +130,10 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
             }
         });
 
-        mFilterDialog = new FilterDialogFragment();
+        mFilterDialog = FilterDialogFragment.newInstance(true);
         markers = new ArrayList<>();
         if (communicationListener != null) {
-            communicationListener.changeActionBarTitle(getString(R.string.title_fragment_map),true);
+            communicationListener.changeActionBarTitle(getString(R.string.title_fragment_map), true);
             communicationListener.changeSelectedNavigationItem(fragmentID);
         }
         mFirestore = FirebaseFirestore.getInstance();
@@ -142,6 +151,8 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
+
+
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -184,7 +195,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
 
 
     private void addMarker(PointOfInterest pointOfInterest) {
-        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker);
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic__map_marker);
         Marker marker = mGoogleMap.addMarker(new MarkerOptions()
                 .position(pointOfInterest.getLocation())
                 .title(pointOfInterest.getName())
@@ -250,7 +261,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
         }
         mapAdapter.setQuery(query);
         currentSearch.setText(Html.fromHtml(filters.getSearchDescription(mContext)));
-        currentSortBy.setText(filters.getOrderDescription(mContext));
+   /*     currentSortBy.setText(filters.getOrderDescription(mContext));*/
         this.mFilters = filters;
     }
 
@@ -259,7 +270,6 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     public void removeAllMarkers() {
         for (Marker marker : markers) {
             marker.remove();
-
         }
     }
 
@@ -269,4 +279,12 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
         super.onDestroyView();
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == viewMore.getId()){
+
+
+
+        }
+    }
 }

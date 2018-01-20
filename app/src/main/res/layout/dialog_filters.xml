@@ -34,7 +34,8 @@
                 style="@style/AppTheme.FilterSpinner"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/icon_type"
-                android:entries="@array/type_of_location" />
+
+                />
 
         </RelativeLayout>
 
@@ -53,13 +54,14 @@
                 android:id="@+id/spinner_city"
                 style="@style/AppTheme.FilterSpinner"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/icon_city"
-                android:entries="@array/cities" />
+                android:layout_toRightOf="@+id/icon_city" />
 
         </RelativeLayout>
 
 
         <RelativeLayout
+            android:id="@+id/spinner_parent"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -74,8 +76,7 @@
                 android:id="@+id/spinner_sort"
                 style="@style/AppTheme.FilterSpinner"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/icon_sort"
-                android:entries="@array/sort_by" />
+                android:layout_toRightOf="@+id/icon_sort" />
         </RelativeLayout>
 
         <LinearLayout

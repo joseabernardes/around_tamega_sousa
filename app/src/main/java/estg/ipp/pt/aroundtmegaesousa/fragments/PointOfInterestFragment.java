@@ -37,6 +37,7 @@ import java.util.List;
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.activities.MainActivity;
 import estg.ipp.pt.aroundtmegaesousa.adapters.ImageAdapter;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.FirebaseResultListener;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
 import estg.ipp.pt.aroundtmegaesousa.models.City;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
@@ -45,7 +46,7 @@ import estg.ipp.pt.aroundtmegaesousa.models.TypeOfLocation;
 import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
-public class PointOfInterestFragment extends Fragment implements View.OnClickListener {
+public class PointOfInterestFragment extends Fragment implements View.OnClickListener, FirebaseResultListener {
 
     public static final String DOCUMENT_ID = "document_id";
     private int numImages;
@@ -117,6 +118,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         date = mContentView.findViewById(R.id.date);
         vote = mContentView.findViewById(R.id.vote);
         openMap = mContentView.findViewById(R.id.openMap);
+        fbh = new FirebaseHelper();
         vote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,7 +129,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                 rt = view.findViewById(R.id.rating_dialog_rating_bar);
                 builder.setTitle(getString(R.string.classificate_poi));
                 final TextView tv = view.findViewById(R.id.rating_dialog_text_view);
-                fbh = new FirebaseHelper();
                 fbh.checkRating(pointOfInterest.getId(), mListener.getLoggedUser().getUid(), PointOfInterestFragment.this);
                 rt.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     @Override
@@ -149,7 +150,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         Rating rating = new Rating(mListener.getLoggedUser().getUid(), rt.getRating());
-                        fbh = new FirebaseHelper();
                         if (firebaseRating != null) {
                             fbh.editRating(pointOfInterest.getId(), firebaseRating.getId(), rating.getRating(), PointOfInterestFragment.this);
                         } else {
@@ -193,7 +193,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
             localType.setText(typeOfLocation.getType());
         }
         final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        fbh = new FirebaseHelper();
 
 
         final List<Option> options = new ArrayList<>();
@@ -215,7 +214,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                 dialog.dismiss();
                 switch (adapter.getItem(which).id) {
                     case 0:
-                    //editar
+                        //editar
                         break;
                     case 1:
 
@@ -226,7 +225,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                         deleteDialog.setPositiveButton(getString(R.string.sim), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                fbh = new FirebaseHelper();
                                 fbh.deletePOI(pointOfInterest.getId(), PointOfInterestFragment.this);
                             }
                         });
@@ -245,11 +243,9 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                         startActivity(mapIntent);
                         break;
                     case 3:
-                        fbh = new FirebaseHelper();
                         fbh.addFavorite(pointOfInterest, mListener.getLoggedUser().getUid(), PointOfInterestFragment.this);
                         break;
                     case 4:
-                        fbh = new FirebaseHelper();
                         fbh.removeFavorite(mListener.getLoggedUser().getUid(), pointOfInterest, PointOfInterestFragment.this);
                 }
 
@@ -296,7 +292,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
 
 
         //toolbar
-        mListener.changeActionBarTitle(pointOfInterest.getName(),false);
+        mListener.changeActionBarTitle(pointOfInterest.getName(), false);
         mListener.showFloatingButton(false);
 
         return mContentView;
@@ -363,15 +359,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
 
     }
 
-    public void deleteSuccess(boolean success) {
-        if (success) {
-            Toast.makeText(mContext, getString(R.string.remove_poi_success), Toast.LENGTH_SHORT).show();
-            getActivity().onBackPressed();
-        } else {
-            Toast.makeText(mContext, getString(R.string.remove_poi_unsuccess), Toast.LENGTH_SHORT).show();
-        }
-    }
-
 
     private void closeImage() {
         expandedImageView.setVisibility(View.GONE);
@@ -391,48 +378,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    public void addRatingSuccess() {
-        Toast.makeText(mContext, getString(R.string.classificate_added), Toast.LENGTH_SHORT).show();
-    }
-
-    public void addRatingUnsuccess() {
-        Toast.makeText(mContext, getString(R.string.classificate_not_added), Toast.LENGTH_SHORT).show();
-    }
-
-    public void existRating(Rating rating) {
-        if (rating != null) {
-            rt.setRating(rating.getRating());
-            this.firebaseRating = rating;
-        }
-    }
-
-    public void editRatingSuccess() {
-        Toast.makeText(mContext, getString(R.string.classficate_changed), Toast.LENGTH_SHORT).show();
-    }
-
-    public void editRatingUnsuccess() {
-        Toast.makeText(mContext, getString(R.string.classificate_not_changged), Toast.LENGTH_SHORT).show();
-    }
-
-    public void addFavoritesSucess() {
-        existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
-        Toast.makeText(mContext, getString(R.string.add_to_favorites), Toast.LENGTH_SHORT).show();
-    }
-
-    public void addFavoritesUnSucess() {
-        existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
-        Toast.makeText(mContext, getString(R.string.not_add_to_favorites), Toast.LENGTH_SHORT).show();
-    }
-
-    public void removeFavoritesSuccess() {
-        existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
-        Toast.makeText(mContext, getString(R.string.remove_from_favorites), Toast.LENGTH_SHORT).show();
-    }
-
-    public void removeFavoritesUnSuccess() {
-        existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
-        Toast.makeText(mContext, getString(R.string.not_remove_from_favorites), Toast.LENGTH_SHORT).show();
-    }
 
     public void existFavorite(boolean favorite) {
         if (favorite) {
@@ -443,6 +388,61 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
             adapter.add(new Option(3, getString(R.string.add_favorites)));
         }
     }
+
+    @Override
+    public void firebaseTaskResult(boolean result, String type) {
+        String message;
+        if (type.equals(FirebaseResultListener.ADD_FAVORITE)) {
+            existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
+            if (result) {
+                message = getString(R.string.add_to_favorites);
+            } else {
+                message = getString(R.string.not_add_to_favorites);
+            }
+        } else if (type.equals(FirebaseResultListener.REMOVE_FAVORITE)) {
+            existFavorite(fbh.checkFavorites(pointOfInterest, mListener.getLoggedUser().getUid()));
+            if (result) {
+                message = getString(R.string.remove_from_favorites);
+            } else {
+                message = getString(R.string.not_remove_from_favorites);
+            }
+        } else if (type.equals(FirebaseResultListener.ADD_RATING)) {
+            if (result) {
+                message = getString(R.string.classificate_added);
+            } else {
+                message = getString(R.string.classificate_not_added);
+            }
+
+        } else if (type.equals(FirebaseResultListener.EDIT_RATING)) {
+            if (result) {
+                message = getString(R.string.classficate_changed);
+            } else {
+                message = getString(R.string.classificate_not_changged);
+            }
+
+        } else if (type.equals(FirebaseResultListener.DELETE_POI)) {
+            if (result) {
+                message = getString(R.string.remove_poi_success);
+                getActivity().onBackPressed();
+            } else {
+                message = getString(R.string.remove_poi_unsuccess);
+            }
+        } else {
+            message = getString(R.string.warn_login_unknown_error);
+        }
+
+        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+
+    }
+
+    @Override
+    public void firebaseRatingTaskResult(Rating rating) {
+        if (rating != null) {
+            rt.setRating(rating.getRating());
+            this.firebaseRating = rating;
+        }
+    }
+
 
     private class Option {
 

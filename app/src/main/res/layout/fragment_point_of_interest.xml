@@ -1,176 +1,157 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FAFAFA"
-    android:orientation="vertical"
-
     tools:context="estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment">
 
-    <FrameLayout
-        android:id="@+id/container"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
-                <RelativeLayout
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/slider"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="200dp" />
 
-                    <android.support.v4.view.ViewPager
-                        android:id="@+id/slider"
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp"></android.support.v4.view.ViewPager>
-
-
-                    <LinearLayout
-                        android:id="@+id/slider_dots"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@id/slider"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:orientation="horizontal"
-                        android:paddingBottom="8dp"></LinearLayout>
-
-
-                </RelativeLayout>
-
-
-                <RelativeLayout
+                <LinearLayout
+                    android:id="@+id/slider_dots"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:id="@+id/title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="8dp"
-                        android:text="Parque das Nações do Douro"
-                        android:textColor="@color/greyPrimary"
-                        android:textSize="22sp"
-                        android:textStyle="bold" />
-
-                    <android.support.v7.widget.AppCompatRatingBar
-                        android:id="@+id/rating_bar"
-                        style="@style/Widget.AppCompat.RatingBar.Small"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/title"
-                        android:layout_margin="1dp"
-                        android:numStars="5"
-                        android:rating="3.5"
-                        android:stepSize="0.5" />
-
-                    <TextView
-
-                        android:id="@+id/rating_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/title"
-                        android:layout_marginStart="4dp"
-                        android:layout_toEndOf="@+id/rating_bar"
-                        android:text="(3.3)"
-                        android:textColor="@color/greyDisabled" />
-
-                    <TextView
-                        android:id="@+id/date"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_below="@id/title"
-                        android:text="00/00/0000" />
+                    android:layout_alignBottom="@id/slider"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp" />
+            </RelativeLayout>
 
 
-                    <TextView
-                        android:id="@+id/desc"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/rating_text"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="16dp"
-                        android:text="Descrição"
-                        android:textColor="@color/greyPrimary"
-                        android:textSize="16sp" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-                    <TextView
-                        android:id="@+id/description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/desc"
-                        android:lineSpacingExtra="3dp"
-                        android:text="Vista magnifica, bom local para dar umas pinadas, com o frio que está até se dura mais tempo, e o paulo comprova #experienciapropria" />
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="8dp"
+                    android:text="Parque das Nações do Douro"
+                    android:textColor="@color/greyPrimary"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/loca"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/description"
-                        android:paddingBottom="8dp"
-                        android:paddingTop="16dp"
-                        android:text="Localização"
-                        android:textColor="@color/greyPrimary"
-                        android:textSize="16sp" />
+                <android.support.v7.widget.AppCompatRatingBar
+                    android:id="@+id/rating_bar"
+                    style="@style/Widget.AppCompat.RatingBar.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/title"
+                    android:layout_margin="1dp"
+                    android:numStars="5"
+                    android:rating="3.5"
+                    android:stepSize="0.5" />
 
-                    <TextView
-                        android:id="@+id/location"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/loca"
-                        android:lineSpacingExtra="3dp"
-                        android:text="Monte da Travessa, Castelo de Paiva" />
+                <TextView
 
+                    android:id="@+id/rating_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/title"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@+id/rating_bar"
+                    android:text="(3.3)"
+                    android:textColor="@color/greyDisabled" />
 
-                    <TextView
-                        android:id="@+id/loc_t"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/location"
-                        android:paddingTop="16dp"
-                        android:text="Tipo de local > "
-                        android:textColor="@color/greyPrimary"
-                        android:textSize="16sp" />
-
-                    <TextView
-                        android:id="@+id/local_type"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBaseline="@id/loc_t"
-                        android:layout_below="@id/description"
-                        android:layout_marginStart="4dp"
-                        android:layout_toEndOf="@+id/loc_t"
-                        android:paddingTop="16dp"
-                        android:text="Parque"
-                        android:textColor="@color/greySecondary"
-                        android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/title"
+                    android:text="00/00/0000" />
 
 
-                    <!--                <TextView
-                                        android:id="@+id/restaurant_city_divider"
-                                        style="@style/AppTheme.TextDivider"
-                                        android:layout_alignTop="@+id/restaurant_category"
-                                        android:layout_toRightOf="@+id/restaurant_category"
-                                        android:text="@string/divider_bullet"
-                                        android:textColor="@android:color/white" />-->
+                <TextView
+                    android:id="@+id/desc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/rating_text"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="16dp"
+                    android:text="Descrição"
+                    android:textColor="@color/greyPrimary"
+                    android:textSize="16sp" />
 
-                </RelativeLayout>
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/desc"
+                    android:lineSpacingExtra="3dp"
+                    android:text="Vista magnifica, bom local para dar uma volta, com o frio que está até se dura mais tempo" />
+
+                <TextView
+                    android:id="@+id/loca"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/description"
+                    android:paddingBottom="8dp"
+                    android:paddingTop="16dp"
+                    android:text="Localização"
+                    android:textColor="@color/greyPrimary"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/loca"
+                    android:lineSpacingExtra="3dp"
+                    android:text="Monte da Travessa, Castelo de Paiva" />
+
+
+                <TextView
+                    android:id="@+id/loc_t"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/location"
+                    android:paddingTop="16dp"
+                    android:text="Tipo de local > "
+                    android:textColor="@color/greyPrimary"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/local_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@id/loc_t"
+                    android:layout_below="@id/description"
+                    android:layout_marginStart="4dp"
+                    android:layout_toEndOf="@+id/loc_t"
+                    android:paddingTop="16dp"
+                    android:text="Parque"
+                    android:textColor="@color/greySecondary"
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp">
+                    android:layout_marginTop="8dp"
+                    android:layout_below="@id/loc_t"
+                   >
 
 
                     <Button
@@ -178,46 +159,42 @@
                         style="@style/ButtonPrimary"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
-                        android:layout_margin="8dp"
+                        android:layout_marginRight="8dp"
                         android:layout_weight="1"
-                        android:drawableLeft="@mipmap/ic__star"
+                        android:drawableLeft="@drawable/ic__star"
                         android:text="Votar"
                         android:textColor="@color/white" />
-                    <!--
-                                        android:drawableLeft="@drawable/ic_star"-->
                     <Button
                         android:id="@+id/openMap"
                         style="@style/ButtonPrimary"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
-                        android:layout_margin="8dp"
+                        android:layout_marginLeft="8dp"
                         android:layout_weight="1"
-                        android:drawableLeft="@mipmap/ic__map"
+                        android:drawableLeft="@drawable/ic__map"
                         android:drawableTint="@color/white"
                         android:text="Ver Mapa"
                         android:textColor="@color/white" />
 
                 </LinearLayout>
 
-
-            </LinearLayout>
-        </ScrollView>
-
-        <ProgressBar
-            android:id="@+id/image_loading_progress"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="center_vertical"
-            android:visibility="gone" />
-
-        <com.github.chrisbanes.photoview.PhotoView
-            android:id="@+id/expanded_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#7e000000"
-            android:visibility="invisible" />
+            </RelativeLayout>
 
 
-    </FrameLayout>
+        </LinearLayout>
+    </ScrollView>
 
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/image_loading_progress"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical"
+        android:visibility="gone" />
+
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/expanded_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#7e000000"
+        android:visibility="gone" />
+</FrameLayout>

@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/action_googleMaps"
-        android:icon="@drawable/google_maps"
+        android:icon="@drawable/ic_google_maps"
         android:title="@string/google_maps"
         app:showAsAction="ifRoom"/>
 </menu>

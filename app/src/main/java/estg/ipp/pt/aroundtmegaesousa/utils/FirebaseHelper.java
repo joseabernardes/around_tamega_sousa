@@ -35,6 +35,7 @@ import java.util.UUID;
 import java.util.concurrent.Semaphore;
 
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
+import estg.ipp.pt.aroundtmegaesousa.interfaces.FirebaseResultListener;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.FirebaseServiceCommunication;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.models.Rating;
@@ -151,19 +152,19 @@ public class FirebaseHelper {
         return baos.toByteArray();
     }
 
-    public void deletePOI(String id, final PointOfInterestFragment context) {
+    public void deletePOI(String id, final FirebaseResultListener context) {
 
         points.document(id).delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        context.deleteSuccess(true);
+                        context.firebaseTaskResult(true, FirebaseResultListener.DELETE_POI);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        context.deleteSuccess(false);
+                        context.firebaseTaskResult(false, FirebaseResultListener.DELETE_POI);
                     }
                 });
     }
@@ -247,7 +248,7 @@ public class FirebaseHelper {
     }
 
 
-    public void editPOI(final PointOfInterestFragment context, PointOfInterest pointOfInterest) {
+    public void editPOI(final FirebaseResultListener context, PointOfInterest pointOfInterest) {
         DocumentReference poi = points.document(pointOfInterest.getId());
         poi.set(pointOfInterest).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -260,21 +261,22 @@ public class FirebaseHelper {
     }
 
 
-    public void addRating(Rating rating, String idPoi, final PointOfInterestFragment context) {
+    public void addRating(Rating rating, String idPoi, final FirebaseResultListener context) {
         points.document(idPoi).collection("ratings").add(rating).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if (task.isSuccessful()) {
-                    context.addRatingSuccess();
+                    context.firebaseTaskResult(true, FirebaseResultListener.ADD_RATING);
+
                 } else {
-                    context.addRatingSuccess();
+                    context.firebaseTaskResult(false, FirebaseResultListener.ADD_RATING);
                 }
             }
         });
     }
 
 
-    public void checkRating(String idPoi, String user, final PointOfInterestFragment context) {
+    public void checkRating(String idPoi, String user, final FirebaseResultListener context) {
         Query query = points.document(idPoi).collection("ratings").whereEqualTo("id", user);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -287,36 +289,38 @@ public class FirebaseHelper {
                     rating = documentSnapshot.toObject(Rating.class);
                     rating.setId(documentSnapshot.getId());
                 }
-                context.existRating(rating);
+
+                context.firebaseRatingTaskResult(rating);
             }
         });
 
     }
 
-    public void editRating(String idPoi, String ratingID, float rate, final PointOfInterestFragment context) {
+    public void editRating(String idPoi, String ratingID, float rate, final FirebaseResultListener context) {
         DocumentReference rating = points.document(idPoi).collection("ratings").document(ratingID);
         rating.update("rating", rate).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    context.editRatingSuccess();
+                    context.firebaseTaskResult(true, FirebaseResultListener.EDIT_RATING);
+
                 } else {
-                    context.editRatingUnsuccess();
+                    context.firebaseTaskResult(false, FirebaseResultListener.EDIT_RATING);
                 }
             }
         });
     }
 
-    public void addFavorite(PointOfInterest poi, String userID, final PointOfInterestFragment context) {
+    public void addFavorite(PointOfInterest poi, String userID, final FirebaseResultListener context) {
         Map<String, Date> favorites = poi.getFavorites();
         favorites.put(userID, poi.getDate());
         points.document(poi.getId()).update("favorites", favorites).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    context.addFavoritesSucess();
+                    context.firebaseTaskResult(true, FirebaseResultListener.ADD_FAVORITE);
                 } else {
-                    context.addFavoritesUnSucess();
+                    context.firebaseTaskResult(false, FirebaseResultListener.ADD_FAVORITE);
                 }
             }
         });
@@ -334,7 +338,7 @@ public class FirebaseHelper {
         return false;
     }
 
-    public void removeFavorite(String userID, PointOfInterest poi, final PointOfInterestFragment context) {
+    public void removeFavorite(String userID, PointOfInterest poi, final FirebaseResultListener context) {
         Map<String, Date> favorites = poi.getFavorites();
         Iterator<Map.Entry<String, Date>> it = favorites.entrySet().iterator();
         while (it.hasNext()) {
@@ -348,9 +352,9 @@ public class FirebaseHelper {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    context.removeFavoritesSuccess();
+                    context.firebaseTaskResult(true, FirebaseResultListener.REMOVE_FAVORITE);
                 } else {
-                    context.removeFavoritesUnSuccess();
+                    context.firebaseTaskResult(false, FirebaseResultListener.REMOVE_FAVORITE);
                 }
             }
         });

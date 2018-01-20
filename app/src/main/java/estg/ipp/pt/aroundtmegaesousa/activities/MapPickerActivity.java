@@ -238,7 +238,7 @@ public class MapPickerActivity extends BaseActivity implements OnMapReadyCallbac
 
 
     private Marker addMarker(LatLng latLng) {
-        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker);
+        BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic__map_marker);
 
         Marker marker = mGoogleMap.addMarker(new MarkerOptions()
                 .position(latLng)

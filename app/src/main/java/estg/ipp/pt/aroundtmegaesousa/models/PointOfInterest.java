@@ -156,7 +156,7 @@ public class PointOfInterest implements Serializable {
         return longitude;
     }
 
-    public LatLng getLocation() {
+    public LatLng pointLocation() {
         return new LatLng(this.latitude, this.longitude);
     }
 

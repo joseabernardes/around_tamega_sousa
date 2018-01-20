@@ -160,7 +160,7 @@ public class ItemMapFragment extends Fragment implements OnMapReadyCallback {
     private void addMarker(PointOfInterest pointOfInterest) {
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic__map_marker);
         Marker marker = mGoogleMap.addMarker(new MarkerOptions()
-                .position(pointOfInterest.getLocation())
+                .position(pointOfInterest.pointLocation())
                 .title(pointOfInterest.getName())
                 .icon(icon));
 

@@ -53,9 +53,7 @@ public class PrivateNotification {
         }
         this.mBuilder = new NotificationCompat.Builder(context, DEFAULT_CHANNEL);
         mBuilder.setContentTitle(title)
-                .setSmallIcon(icon)
-     /*           .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon))*/
-                .setOngoing(true);
+                .setSmallIcon(icon);
         this.id = id;
     }
 
@@ -80,7 +78,6 @@ public class PrivateNotification {
         mBuilder.setContentTitle(title)
                 .setContentText(content)
                 .setSmallIcon(icon)
-              /*  .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon))*/
                 .setLights(Color.GREEN, 3000, 3000);
 
         this.id = id;

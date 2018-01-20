@@ -2,13 +2,10 @@ package estg.ipp.pt.aroundtmegaesousa.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatRatingBar;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,32 +36,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
-import estg.ipp.pt.aroundtmegaesousa.activities.AddPointActivity;
-import estg.ipp.pt.aroundtmegaesousa.activities.MainActivity;
 import estg.ipp.pt.aroundtmegaesousa.adapters.CustomInfoWindowAdapter;
 import estg.ipp.pt.aroundtmegaesousa.adapters.MapAdapter;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
 import estg.ipp.pt.aroundtmegaesousa.models.Filters;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
-import estg.ipp.pt.aroundtmegaesousa.models.TypeOfLocation;
-import estg.ipp.pt.aroundtmegaesousa.utils.Enums;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 
 
 public class ListMapFragment extends Fragment implements OnMapReadyCallback, MapAdapter.onItemsChangeListener, View.OnClickListener, FilterDialogFragment.FilterListener {
 
     private static final String TAG = "ListMapFragment";
+    private static final String ARG_FRAG_ID = "fragment_id";
+    private static final int PAGE_SIZE = 10;
     public static final String FILTER = "filter";
 
 
     private int fragmentID;
-    private static final String ARG_FRAG_ID = "fragment_id";
-
     private SupportMapFragment mMapFragment;
     private GoogleMap mGoogleMap;
     private Context mContext;
     private OnFragmentsCommunicationListener communicationListener;
-    private FloatingActionButton  viewMore;
+    private FloatingActionButton viewMore;
     private View filterBar;
     private TextView currentSearch;
     private TextView currentSortBy;
@@ -76,6 +69,9 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     private MapAdapter mapAdapter;
     private Query query;
     List<Marker> markers;
+    List<PointOfInterest> pointOfInterests;
+    private int currentIndex;
+    private View loadingMap;
 
 
     public ListMapFragment() {
@@ -101,6 +97,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d(TAG, "onCreateView: ");
         View mContentView = inflater.inflate(R.layout.fragment_map_view, container, false);
         mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
@@ -110,7 +107,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
         currentSortBy.setText(" "); //não existe ordem no mapa
         buttonCancel = mContentView.findViewById(R.id.button_clear_filter);
         viewMore = mContentView.findViewById(R.id.view_more);
-
+        loadingMap = mContentView.findViewById(R.id.map_loading_progress);
         //onClicks
         viewMore.setOnClickListener(this);
         filterBar.setOnClickListener(new View.OnClickListener() {
@@ -137,22 +134,36 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
             communicationListener.changeSelectedNavigationItem(fragmentID);
         }
         mFirestore = FirebaseFirestore.getInstance();
-        mFilters = Filters.getDefault();
-        if (getArguments() != null && getArguments().getSerializable(FILTER) != null) {
-            mFilters = (Filters) getArguments().getSerializable(FILTER);
-
-        }
         mFilterDialog.setFilters(mFilters);
+        query = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
+                .orderBy(PointOfInterest.FIELD_DATE);
+        mapAdapter = new MapAdapter(query, this);
+
+
+
+        communicationListener.showFloatingButton(false);
 
         return mContentView;
     }
 
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume: ");
+        if (getArguments() != null && getArguments().getSerializable(FILTER) != null) {
+            Log.d(TAG, "onResume: asARGS");
+            mFilters = (Filters) getArguments().getSerializable(FILTER);
+            onFilter(mFilters);
+        } else {
+            mFilters = Filters.getDefault();
+        }
+        Log.d(TAG, "onResume: ");
+        super.onResume();
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.d(TAG, "onMapReady: ");
         mGoogleMap = googleMap;
-
-
         mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -186,10 +197,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
             e.printStackTrace();
         }
 
-        query = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION)
-                .orderBy(PointOfInterest.FIELD_DATE);
-        mapAdapter = new MapAdapter(query, this);
-        mapAdapter.startListening();
+
         onFilter(mFilters);
     }
 
@@ -197,7 +205,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     private void addMarker(PointOfInterest pointOfInterest) {
         BitmapDescriptor icon = BitmapDescriptorFactory.fromResource(R.drawable.ic__map_marker);
         Marker marker = mGoogleMap.addMarker(new MarkerOptions()
-                .position(pointOfInterest.getLocation())
+                .position(pointOfInterest.pointLocation())
                 .title(pointOfInterest.getName())
                 .icon(icon));
 
@@ -241,13 +249,39 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     @Override
     public void addItemToMap(List<PointOfInterest> pointOfInterests) {
         removeAllMarkers();
-        for (PointOfInterest pointOfInterest : pointOfInterests) {
+        this.pointOfInterests = pointOfInterests;
+        currentIndex = 0;
+
+        if (!addMoreItemsToMap()) {
+            viewMore.hide();
+        } else {
+            viewMore.show();
+        }
+        loadingMap.setVisibility(View.GONE);
+    }
+
+    /**
+     * @return true se ainda tiver mais pontos para mostrar
+     */
+    private boolean addMoreItemsToMap() {
+
+        boolean hasMore = true;
+        int nextIndex = currentIndex + PAGE_SIZE;
+        if (nextIndex > pointOfInterests.size()) {
+            nextIndex = pointOfInterests.size();
+            hasMore = false;
+        }
+        List<PointOfInterest> tempList = pointOfInterests.subList(currentIndex, nextIndex);
+        for (PointOfInterest pointOfInterest : tempList) {
             addMarker(pointOfInterest);
         }
+        currentIndex = nextIndex;
+        return hasMore;
     }
 
     @Override
     public void onFilter(Filters filters) {
+        loadingMap.setVisibility(View.VISIBLE);
         Query query = mFirestore.collection(FirebaseHelper.POINTS_COLLECTION);
 
         if (filters.hasTypeOfLocation()) {
@@ -281,9 +315,10 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == viewMore.getId()){
-
-
+        if (v.getId() == viewMore.getId()) {
+            if (!addMoreItemsToMap()) {
+                viewMore.hide();
+            }
 
         }
     }

@@ -54,7 +54,6 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     private ImageView buttonCancel;
 
 
-
     private FirebaseFirestore mFirestore;
     private Query mQuery;
 
@@ -230,8 +229,7 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
         super.onStart();
         if (typeOfFragment.equals(LIST)) {//apenas existe barra de filtros na lista geral
             onFilter(mFilters);
-        }
-        if (itemAdapter != null) {
+        } else if (itemAdapter != null) {
             itemAdapter.startListening();
         }
 

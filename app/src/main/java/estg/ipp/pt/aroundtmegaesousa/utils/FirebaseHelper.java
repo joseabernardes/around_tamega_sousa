@@ -187,7 +187,6 @@ public class FirebaseHelper {
             this.semaphore = semaphore;
             this.type = type;
         }
-
         private void addImages() throws InterruptedException {
             for (int i = 0; i < photos.size(); i++) {
                 final int position = i;
@@ -245,6 +244,10 @@ public class FirebaseHelper {
             return null;
         }
 
+        @Override
+        protected void onCancelled() {
+            Log.d(TAG, "onCancelled: ");
+        }
     }
 
 

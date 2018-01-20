@@ -10,31 +10,54 @@
         android:id="@+id/filters"
         layout="@layout/layout_filters" />
 
-    <include
-        layout="@layout/layout_map"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/filters" />
+        android:layout_below="@id/filters">
 
-<!--    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/left_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/right_fab"
-        android:clickable="true"
-        android:focusable="true"
-        android:layout_toStartOf="@+id/right_fab"
-        app:srcCompat="@drawable/ic_arrow_left" />-->
+        <include
+            layout="@layout/layout_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <FrameLayout
+            android:id="@+id/map_loading_progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/greyDisabled">
+
+            <ProgressBar
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+
+                />
+        </FrameLayout>
+
+
+    </FrameLayout>
+
+
+    <!--    <android.support.design.widget.FloatingActionButton
+            android:id="@+id/left_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/right_fab"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_toStartOf="@+id/right_fab"
+            app:srcCompat="@drawable/ic_arrow_left" />-->
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/view_more"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+
+        android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
         android:focusable="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_view_more" />
 
     <View

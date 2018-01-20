@@ -56,14 +56,13 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
         return START_REDELIVER_INTENT;
     }
 
-
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         if (progressNotification != null) {
             progressNotification.cancel();
-            Toast.makeText(this, getString(R.string.message_toast_restart_service), Toast.LENGTH_SHORT).show();
-
+            Log.d(TAG, "onTaskRemoved: CANCEL");
         }
+        Toast.makeText(this, getString(R.string.message_toast_restart_service), Toast.LENGTH_SHORT).show();
         super.onTaskRemoved(rootIntent);
     }
 
@@ -112,9 +111,11 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
     }
 
 
+
     @Override
     public void onDestroy() {
-        super.onDestroy();
         Log.d(TAG, "onDestroy: ");
+        super.onDestroy();
+
     }
 }

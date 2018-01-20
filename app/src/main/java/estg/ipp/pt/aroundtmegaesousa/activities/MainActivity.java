@@ -180,7 +180,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
             case R.id.map:
                 fragment = ListMapFragment.newInstance(R.id.map);
-                fab.hide();
                 break;
             case R.id.settings:
                 drawer.closeDrawer(GravityCompat.START);

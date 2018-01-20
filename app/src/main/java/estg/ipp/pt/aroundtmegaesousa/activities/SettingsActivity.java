@@ -2,6 +2,7 @@ package estg.ipp.pt.aroundtmegaesousa.activities;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -32,10 +34,13 @@ import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.Calendar;
 import java.util.Set;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.services.NearByLocationService;
 import estg.ipp.pt.aroundtmegaesousa.services.PushNotificationService;
+import estg.ipp.pt.aroundtmegaesousa.services.StartNearbyServiceReceiver;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
 
@@ -49,7 +54,7 @@ public class SettingsActivity extends BaseActivity {
     public static final int DARK_GREEN = 1;
     public static final int BROWN = 2;
     public static final int BLUE = 3;
-    private Switch aSwitch;
+    private Switch aSwitch, nearby;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +70,7 @@ public class SettingsActivity extends BaseActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         aSwitch = findViewById(R.id.id_switch);
+        nearby = findViewById(R.id.switch_nearby);
         sp = findViewById(R.id.settings_spinner);
         final CheckBox checkBox_sound = findViewById(R.id.settings_sound);
         final CheckBox checkBox_vibration = findViewById(R.id.settings_vibration);
@@ -99,6 +105,43 @@ public class SettingsActivity extends BaseActivity {
                 }
             }
         });
+
+        boolean nerb = m.getBoolean("nearby", true);
+
+        nearby.setChecked(nerb);
+
+        if (nerb) { //ativar a primeira vez
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(SettingsActivity.this, StartNearbyServiceReceiver.class);
+            intent.setAction(StartNearbyServiceReceiver.ACTION);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (1000), 36000, pendingIntent);
+       /*         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (36000), 3600000, pendingIntent);*/
+        }
+
+        nearby.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this);
+                SharedPreferences.Editor mEditor = mSettings.edit();
+                mEditor.putBoolean("nearby", isChecked);
+                mEditor.apply();
+                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                Intent intent = new Intent(SettingsActivity.this, StartNearbyServiceReceiver.class);
+                intent.setAction(StartNearbyServiceReceiver.ACTION);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+                if (isChecked) {
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (1000), 36000, pendingIntent);
+       /*         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (36000), 3600000, pendingIntent);*/
+                } else {
+                    alarmManager.cancel(pendingIntent);
+                }
+            }
+        });
+
+
         checkBox_sound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -170,6 +213,16 @@ public class SettingsActivity extends BaseActivity {
             }
         });
         dialog = builder.create();
+
+
+        Button servico = findViewById(R.id.servico_butao);
+        servico.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
     }
 

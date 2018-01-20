@@ -16,7 +16,6 @@
         android:layout_below="@id/filters"
         android:background="@android:color/white"
         tools:listitem="@layout/item_poi"
-
         />
 
     <View

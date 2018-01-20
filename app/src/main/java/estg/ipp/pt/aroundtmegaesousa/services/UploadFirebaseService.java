@@ -60,7 +60,6 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
     public void onTaskRemoved(Intent rootIntent) {
         if (progressNotification != null) {
             progressNotification.cancel();
-            Log.d(TAG, "onTaskRemoved: CANCEL");
         }
         Toast.makeText(this, getString(R.string.message_toast_restart_service), Toast.LENGTH_SHORT).show();
         super.onTaskRemoved(rootIntent);

@@ -35,6 +35,8 @@ import com.google.firebase.auth.FirebaseUser;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.fragments.ItemMapFragment;
@@ -43,6 +45,7 @@ import estg.ipp.pt.aroundtmegaesousa.fragments.ListMapFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
+import estg.ipp.pt.aroundtmegaesousa.services.NearByLocationService;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
@@ -109,16 +112,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
 
 
+
         if (findViewById(R.id.phone_container) == null) { //tablet
             isPhoneLayout = false;
             leftContainer = findViewById(R.id.left_container);
             rightContainer = findViewById(R.id.right_container);
 
             if (leftContainer.getTag().equals("large")) {
-                layoutParams = new int[]{0, ViewGroup.LayoutParams.MATCH_PARENT,2};
+                layoutParams = new int[]{0, ViewGroup.LayoutParams.MATCH_PARENT, 2};
                 isTabletPortrait = false;
             } else {
-                layoutParams = new int[]{0, ViewGroup.LayoutParams.MATCH_PARENT,1};
+                layoutParams = new int[]{0, ViewGroup.LayoutParams.MATCH_PARENT, 1};
                 isTabletPortrait = true;
             }
         } else {
@@ -127,6 +131,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
 
         onRestoreState(savedInstanceState);
+        //open Lista de poi's
+        if (getIntent().hasExtra(NearByLocationService.LIST_POI)) {
+
+            Serializable serializable = getIntent().getSerializableExtra(NearByLocationService.LIST_POI);
+
+
+            ArrayList<PointOfInterest> pointOfInterestArrayList = (ArrayList<PointOfInterest>) getIntent().getSerializableExtra(NearByLocationService.LIST_POI);
+            Fragment fragment = ListMapFragment.newInstance(ListMapFragment.REC_MAP, R.id.map, null);
+            replaceFragment(fragment);
+        }
+
     }
 
     /**
@@ -179,7 +194,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 fragment = ListFragment.newInstance(ListFragment.LIST, R.id.interest_points);
                 break;
             case R.id.map:
-                fragment = ListMapFragment.newInstance(R.id.map);
+                fragment = ListMapFragment.newInstance(ListMapFragment.LIST_MAP, R.id.map, null);
                 break;
             case R.id.settings:
                 drawer.closeDrawer(GravityCompat.START);

@@ -54,8 +54,8 @@
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:text="Som" />
 
         <CheckBox
@@ -82,8 +82,7 @@
         <CheckBox
             android:id="@+id/settings_vibration"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-       />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <View
@@ -106,6 +105,13 @@
         android:entries="@array/cores"
         android:paddingBottom="16dp"
         android:paddingTop="16dp" />
+
+
+    <Button
+        android:id="@+id/servico_butao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Service" />
 
 
 </LinearLayout>

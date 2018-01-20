@@ -2,6 +2,7 @@ package estg.ipp.pt.aroundtmegaesousa.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -376,6 +377,30 @@ public class FirebaseHelper {
         });
     }
 
+    public void calculateLocation(final Location location, final FirebaseGetNerbyPointsOfInterest listener) {
+        points.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    List<DocumentSnapshot> documentSnapshots = task.getResult().getDocuments();
+                    ArrayList<PointOfInterest> tempList = new ArrayList<>();
+                    for (DocumentSnapshot documentSnapshot : documentSnapshots) {
+                        PointOfInterest pointOfInterest = documentSnapshot.toObject(PointOfInterest.class);
+                        float[] results = new float[1];
+                        Location.distanceBetween(location.getLatitude(), location.getLongitude(), pointOfInterest.getLatitude(), pointOfInterest.getLongitude(), results);
+                        if (results[0] < 5000) {
+                            tempList.add(pointOfInterest);
+                        }
+                    }
+                    listener.getNerbyPointsOfInterest(tempList);
+
+                }
+            }
+        });
+
+
+    }
+
 
     public interface FirebaseGetPointOfInterest {
 
@@ -383,4 +408,10 @@ public class FirebaseHelper {
 
     }
 
+
+    public interface FirebaseGetNerbyPointsOfInterest {
+
+
+        void getNerbyPointsOfInterest(ArrayList<PointOfInterest> pointOfInterests);
+    }
 }

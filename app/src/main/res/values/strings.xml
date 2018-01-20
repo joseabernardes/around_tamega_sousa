@@ -114,6 +114,8 @@
 
     <string name="error">Erro ao receber informação</string>
 
+    <string name="recommendations">Recomendações</string>
+    <string name="recommendations_list_poi">Pontos de interesse perto de si</string>
 
     <string name="header_filters">Filtro</string>
 

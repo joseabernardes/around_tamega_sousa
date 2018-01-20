@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -35,6 +36,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.Set;
 
 import estg.ipp.pt.aroundtmegaesousa.R;
+import estg.ipp.pt.aroundtmegaesousa.services.NearByLocationService;
 import estg.ipp.pt.aroundtmegaesousa.services.PushNotificationService;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
@@ -170,6 +172,18 @@ public class SettingsActivity extends BaseActivity {
             }
         });
         dialog = builder.create();
+
+
+        Button servico = findViewById(R.id.servico_butao);
+        servico.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(SettingsActivity.this, NearByLocationService.class);
+                i.setAction("REQUEST_LOCATION");
+                startService(i);
+            }
+        });
+
 
     }
 

@@ -64,7 +64,7 @@ public class NearByLocationService extends Service implements FirebaseHelper.Fir
         if (intent.getAction().equals(REQUEST_LOCATION)) {
             Log.d(TAG, "onStartCommand: ACTION");
             mLocationRequest = new LocationRequest();
-            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
             mLocationRequest.setInterval(LOCATION_INTERVAL);
             mLocationRequest.setFastestInterval(LOCATION_INTERVAL);
             mLocationCallback = new LocationCallback() {
@@ -78,7 +78,7 @@ public class NearByLocationService extends Service implements FirebaseHelper.Fir
                     if (locations != null) {
                         //locations
                         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-                        firebaseHelper.calculateLocation(locations, NearByLocationService.this);
+                        firebaseHelper.getNearbyLocations(locations, NearByLocationService.this);
                     }
                 }
             };
@@ -90,7 +90,7 @@ public class NearByLocationService extends Service implements FirebaseHelper.Fir
 
     private void startLocationUpdates() {
         Log.d(TAG, "startLocationUpdates: ");
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
             Log.d(TAG, "startLocationUpdates: PERMITIONS");
             builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
@@ -100,7 +100,7 @@ public class NearByLocationService extends Service implements FirebaseHelper.Fir
                 @Override
                 public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                     //se tiver localizaçao ativa
-                    if (ActivityCompat.checkSelfPermission(NearByLocationService.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    if (ActivityCompat.checkSelfPermission(NearByLocationService.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
                     }
                 }

@@ -272,7 +272,5 @@ public class ListFragment extends Fragment implements ListItemAdapter.OnItemSele
     public void onDestroyView() {
         getArguments().putSerializable(FILTER, mFilters);
         super.onDestroyView();
-
-
     }
 }

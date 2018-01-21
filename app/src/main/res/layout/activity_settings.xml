@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="Push Notifications"
+        android:text="@string/push_notifications"
         android:textStyle="bold" />
 
     <Switch
@@ -26,7 +26,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="16dp"
-        android:text="Ativar/Desativar"
+        android:text="@string/inaactive"
         android:textColor="@color/greySecondary" />
 
     <View
@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="Recomendação nas proximidades"
+        android:text="@string/setting_recomendation"
         android:textStyle="bold" />
 
     <Switch
@@ -49,7 +49,7 @@
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="16dp"
-        android:text="Ativar/Desativar"
+        android:text="@string/inaactive"
         android:textColor="@color/greySecondary" />
 
     <View
@@ -61,7 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8dp"
-        android:text="Notificação"
+        android:text="@string/notifications"
         android:textSize="15sp"
         android:textStyle="bold" />
 
@@ -128,13 +128,4 @@
         android:entries="@array/cores"
         android:paddingBottom="16dp"
         android:paddingTop="16dp" />
-
-
-    <Button
-        android:id="@+id/servico_butao"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Service" />
-
-
 </LinearLayout>

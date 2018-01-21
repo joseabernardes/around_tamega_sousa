@@ -62,6 +62,7 @@ public abstract class PointOfInterestAdapter extends RecyclerView.Adapter<ListIt
         notifyDataSetChanged();
     }
 
+
     /**
      * Iniciar nova pesquisa considerando os parametros da query
      *
@@ -74,6 +75,7 @@ public abstract class PointOfInterestAdapter extends RecyclerView.Adapter<ListIt
         this.query = query;
         startListening();
     }
+
 
     /**
      * Listener da query
@@ -94,19 +96,25 @@ public abstract class PointOfInterestAdapter extends RecyclerView.Adapter<ListIt
         for (DocumentChange change : documentSnapshots.getDocumentChanges()) {
             PointOfInterest pointOfInterest = change.getDocument().toObject(PointOfInterest.class);
             pointOfInterest.setId(change.getDocument().getId());
-            switch (change.getType()) {
-                case ADDED:
-                    onDocumentAdded(pointOfInterest, change.getNewIndex());
-                    break;
-                case MODIFIED:
-                    onDocumentModified(pointOfInterest, change.getNewIndex(), change.getOldIndex());
-                    break;
-                case REMOVED:
-                    onDocumentRemoved(change.getOldIndex());
-                    break;
-            }
+            onDocumentChange(pointOfInterest, change.getType(), change.getNewIndex(), change.getOldIndex());
         }
     }
+
+
+    public void onDocumentChange(PointOfInterest pointOfInterest, DocumentChange.Type type, int nextIndex, int oldIndex) {
+        switch (type) {
+            case ADDED:
+                onDocumentAdded(pointOfInterest, nextIndex);
+                break;
+            case MODIFIED:
+                onDocumentModified(pointOfInterest, nextIndex, oldIndex);
+                break;
+            case REMOVED:
+                onDocumentRemoved(oldIndex);
+                break;
+        }
+    }
+
 
     protected void onDocumentAdded(PointOfInterest pointOfInterest, int changeNextIndex) {
         pointOfInterestList.add(changeNextIndex, pointOfInterest);

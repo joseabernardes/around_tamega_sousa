@@ -1,15 +1,27 @@
 package estg.ipp.pt.aroundtmegaesousa.activities;
 
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -30,7 +42,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -42,14 +59,18 @@ import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.fragments.ItemMapFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.ListFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.ListMapFragment;
+import estg.ipp.pt.aroundtmegaesousa.fragments.NearbyListFragment;
 import estg.ipp.pt.aroundtmegaesousa.fragments.PointOfInterestFragment;
 import estg.ipp.pt.aroundtmegaesousa.interfaces.OnFragmentsCommunicationListener;
 import estg.ipp.pt.aroundtmegaesousa.models.PointOfInterest;
 import estg.ipp.pt.aroundtmegaesousa.services.NearByLocationService;
+import estg.ipp.pt.aroundtmegaesousa.services.PushNotificationService;
+import estg.ipp.pt.aroundtmegaesousa.services.StartNearbyServiceReceiver;
 import estg.ipp.pt.aroundtmegaesousa.utils.FirebaseHelper;
+import estg.ipp.pt.aroundtmegaesousa.utils.LocationUtils;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, OnFragmentsCommunicationListener, FirebaseHelper.FirebaseGetPointOfInterest {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, OnFragmentsCommunicationListener, FirebaseHelper.FirebaseGetPointOfInterest, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private String TAG = "MainActivity";
     private static final String IS_MAP = "is_map";
@@ -67,6 +88,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private int[] layoutParams;
     private boolean isTabletPortrait;
     private boolean isPhoneLayout;
+    private boolean locationEnable, permissionLocation, alarmActivated;
 
 
     @Override
@@ -112,7 +134,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
 
 
-
         if (findViewById(R.id.phone_container) == null) { //tablet
             isPhoneLayout = false;
             leftContainer = findViewById(R.id.left_container);
@@ -133,14 +154,118 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         onRestoreState(savedInstanceState);
         //open Lista de poi's
         if (getIntent().hasExtra(NearByLocationService.LIST_POI)) {
-
-            Serializable serializable = getIntent().getSerializableExtra(NearByLocationService.LIST_POI);
-
-
             ArrayList<PointOfInterest> pointOfInterestArrayList = (ArrayList<PointOfInterest>) getIntent().getSerializableExtra(NearByLocationService.LIST_POI);
-            Fragment fragment = ListMapFragment.newInstance(ListMapFragment.REC_MAP, R.id.map, null);
+            Fragment fragment = NearbyListFragment.newInstance(R.id.interest_points, pointOfInterestArrayList);
             replaceFragment(fragment);
         }
+        checkInternet();
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
+    }
+
+    public Boolean isOnline() {
+        try {
+            Process p1 = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.com");
+            int returnVal = p1.waitFor();
+            boolean reachable = (returnVal == 0);
+            return reachable;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void checkInternet() {
+        if (!isNetworkAvailable() && !isOnline()) {
+            Snackbar.make(findViewById(android.R.id.content),
+                    getString(R.string.offline), Snackbar.LENGTH_LONG).show();
+
+        }
+
+    }
+
+
+    private void fistTime() {
+        SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean fist = mSettings.getBoolean("first_time", true);
+
+        if (fist) {
+            SharedPreferences.Editor mEditor = mSettings.edit();
+            mEditor.putBoolean("first_time", false);
+            mEditor.apply();
+            FirebaseMessaging.getInstance().subscribeToTopic(PushNotificationService.TOPIC);
+            permissionLocation = LocationUtils.checkAndRequestPermissions(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+            Task task = LocationUtils.enableLocationSettings(this, LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+            task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+                @Override
+                public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                    locationEnable = true;
+                    if (permissionLocation && !alarmActivated) { //só se tiver permissões e a localização ativa
+                        alarmActivated = true;
+                        setAlarmNearby();
+                        Toast.makeText(MainActivity.this, getString(R.string.recom_on), Toast.LENGTH_SHORT).show();
+                        setNearbyPreference(true);
+                    } else { //se ja tiver locatizaçao ON e nao tiver permicoes
+                        setNearbyPreference(false);
+                    }
+                }
+            });
+        }
+    }
+
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        permissionLocation = LocationUtils.onRequestPermissionsResult(requestCode, permissions, grantResults, Manifest.permission.ACCESS_COARSE_LOCATION);
+        if (permissionLocation) {
+            if (locationEnable && !alarmActivated) { //tem permissões e tem a localização ativa
+                alarmActivated = true;
+                setAlarmNearby();
+                Toast.makeText(MainActivity.this, getString(R.string.recom_on), Toast.LENGTH_SHORT).show();
+                setNearbyPreference(true);
+            }
+        } else {
+            Toast.makeText(MainActivity.this, getString(R.string.recom_off), Toast.LENGTH_SHORT).show();
+            setNearbyPreference(false);
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        locationEnable = LocationUtils.checkLocationSettings(requestCode, resultCode);
+        if (locationEnable) {
+            if (permissionLocation && !alarmActivated) {//tem permissões e tem a localização ativa
+                alarmActivated = true;
+                setAlarmNearby();
+                Toast.makeText(MainActivity.this, getString(R.string.recom_on), Toast.LENGTH_SHORT).show();
+                setNearbyPreference(true);
+            }
+        } else {
+            Toast.makeText(MainActivity.this, getString(R.string.recom_off), Toast.LENGTH_SHORT).show();
+            setNearbyPreference(false);
+        }
+    }
+
+    private void setNearbyPreference(boolean pref) {
+        SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences.Editor mEditor = mSettings.edit();
+        mEditor.putBoolean("nearby", pref);
+        mEditor.apply();
+
+    }
+
+    private void setAlarmNearby() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, StartNearbyServiceReceiver.class);
+        intent.setAction(StartNearbyServiceReceiver.ACTION);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (36000), 3600000, pendingIntent);
 
     }
 
@@ -222,7 +347,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         int replaceID;
         if (fragment != null) {
             if (!isPhoneLayout) {//tablet
-                if (fragment instanceof ListFragment) {
+                if (fragment instanceof ListFragment || fragment instanceof NearbyListFragment) {
 
                     rightContainer.setLayoutParams(new LinearLayout.LayoutParams(layoutParams[0], layoutParams[1], layoutParams[2]));
                     isListMap = false;
@@ -343,6 +468,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void addUserInfo(FirebaseUser user) {
         userName.setText(user.getDisplayName());
         new LoadImage().execute(user.getUid());
+        fistTime();
 
     }
 

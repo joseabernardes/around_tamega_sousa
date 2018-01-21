@@ -154,5 +154,18 @@
     <string name="sorted_by_rating">Ordenado por rating</string>
     <string name="sorted_by_date">Ordenado por data</string>
 
+    <string name="offline">Está Offline. Verifique a sua ligação</string>
+
+
+  <!--  Settings-->
+
+    <string name="push_notifications">Notificações de novos pontos</string>
+    <string name="setting_recomendation">Recomendações nas proximidades</string>
+    <string name="recom_on">Serviço de Recomendações Ativado</string>
+    <string name="recom_off">Serviço de Recomendações Desativado</string>
+    <string name="notifications">Notificações</string>
+    <string name="active">Ativado</string>
+    <string name="inaactive">Desativado</string>
+
 
 </resources>

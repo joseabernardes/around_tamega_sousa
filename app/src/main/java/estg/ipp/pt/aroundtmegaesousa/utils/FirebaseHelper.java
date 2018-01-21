@@ -188,6 +188,7 @@ public class FirebaseHelper {
             this.semaphore = semaphore;
             this.type = type;
         }
+
         private void addImages() throws InterruptedException {
             for (int i = 0; i < photos.size(); i++) {
                 final int position = i;
@@ -249,19 +250,6 @@ public class FirebaseHelper {
         protected void onCancelled() {
             Log.d(TAG, "onCancelled: ");
         }
-    }
-
-
-    public void editPOI(final FirebaseResultListener context, PointOfInterest pointOfInterest) {
-        DocumentReference poi = points.document(pointOfInterest.getId());
-        poi.set(pointOfInterest).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-
-                }
-            }
-        });
     }
 
 
@@ -380,15 +368,17 @@ public class FirebaseHelper {
         });
     }
 
-    public void calculateLocation(final Location location, final FirebaseGetNerbyPointsOfInterest listener) {
+    public void getNearbyLocations(final Location location, final FirebaseGetNerbyPointsOfInterest listener) {
         points.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     List<DocumentSnapshot> documentSnapshots = task.getResult().getDocuments();
                     ArrayList<PointOfInterest> tempList = new ArrayList<>();
+
                     for (DocumentSnapshot documentSnapshot : documentSnapshots) {
                         PointOfInterest pointOfInterest = documentSnapshot.toObject(PointOfInterest.class);
+                        pointOfInterest.setId(documentSnapshot.getId());
                         float[] results = new float[1];
                         Location.distanceBetween(location.getLatitude(), location.getLongitude(), pointOfInterest.getLatitude(), pointOfInterest.getLongitude(), results);
                         if (results[0] < 5000) {
@@ -413,8 +403,6 @@ public class FirebaseHelper {
 
 
     public interface FirebaseGetNerbyPointsOfInterest {
-
-
         void getNerbyPointsOfInterest(ArrayList<PointOfInterest> pointOfInterests);
     }
 }

@@ -198,7 +198,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
         final List<Option> options = new ArrayList<>();
 
         if (mListener.getLoggedUser().getUid().equals(pointOfInterest.getUser())) {
-            options.add(new Option(0, getString(R.string.edit_poi)));
             options.add(new Option(1, getString(R.string.delete)));
             options.add(new Option(2, getString(R.string.google_maps)));
         } else {
@@ -213,9 +212,6 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 switch (adapter.getItem(which).id) {
-                    case 0:
-                        //editar
-                        break;
                     case 1:
 
                         AlertDialog.Builder deleteDialog = new AlertDialog.Builder(mContext);

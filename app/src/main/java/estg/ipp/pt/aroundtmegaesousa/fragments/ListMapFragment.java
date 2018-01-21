@@ -48,7 +48,6 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
 
     private static final String TAG = "ListMapFragment";
     private static final String ARG_FRAG_ID = "fragment_id";
-    private static final String ARG_TYPE = "arg_type";
     private static final int PAGE_SIZE = 10;
     public static final String FILTER = "filter";
     public static final String LIST_MAP = "list_map";
@@ -74,7 +73,6 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     List<PointOfInterest> pointOfInterests;
     private int currentIndex;
     private View loadingMap;
-    private String mapType;
 
     public ListMapFragment() {
 
@@ -85,7 +83,6 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
         ListMapFragment fragment = new ListMapFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_FRAG_ID, fragmentID);
-        args.putString(ARG_TYPE, type);
         args.putSerializable("lista", pointOfInterests);
 
         fragment.setArguments(args);
@@ -97,8 +94,6 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             fragmentID = getArguments().getInt(ARG_FRAG_ID);
-            mapType = getArguments().getString(ARG_TYPE);
-            pointOfInterests = (List<PointOfInterest>) getArguments().getSerializable("lista");
         }
     }
 
@@ -155,17 +150,16 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
     @Override
     public void onResume() {
         Log.d(TAG, "onResume: ");
-        if (mapType.equals(LIST_MAP)) {
 
 
-            if (getArguments() != null && getArguments().getSerializable(FILTER) != null) {
-                Log.d(TAG, "onResume: asARGS");
-                mFilters = (Filters) getArguments().getSerializable(FILTER);
-                onFilter(mFilters);
-            } else {
-                mFilters = Filters.getDefault();
-            }
+        if (getArguments() != null && getArguments().getSerializable(FILTER) != null) {
+            Log.d(TAG, "onResume: asARGS");
+            mFilters = (Filters) getArguments().getSerializable(FILTER);
+            onFilter(mFilters);
+        } else {
+            mFilters = Filters.getDefault();
         }
+
         Log.d(TAG, "onResume: ");
         super.onResume();
     }
@@ -206,19 +200,7 @@ public class ListMapFragment extends Fragment implements OnMapReadyCallback, Map
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (mapType.equals(LIST_MAP)) {
-            onFilter(mFilters);
-        } else {
-            if (pointOfInterests != null) {
-                addItemToMap(pointOfInterests);
-
-
-            }
-
-
-        }
-
-
+        onFilter(mFilters);
     }
 
 

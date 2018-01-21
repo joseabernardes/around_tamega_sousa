@@ -1,5 +1,7 @@
 package estg.ipp.pt.aroundtmegaesousa.activities;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -32,6 +35,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Calendar;
@@ -41,10 +48,11 @@ import estg.ipp.pt.aroundtmegaesousa.R;
 import estg.ipp.pt.aroundtmegaesousa.services.NearByLocationService;
 import estg.ipp.pt.aroundtmegaesousa.services.PushNotificationService;
 import estg.ipp.pt.aroundtmegaesousa.services.StartNearbyServiceReceiver;
+import estg.ipp.pt.aroundtmegaesousa.utils.LocationUtils;
 import estg.ipp.pt.aroundtmegaesousa.utils.ThemeUtils;
 
 
-public class SettingsActivity extends BaseActivity {
+public class SettingsActivity extends BaseActivity implements ActivityCompat.OnRequestPermissionsResultCallback, CompoundButton.OnCheckedChangeListener {
 
     private Toolbar tb;
     private Spinner sp;
@@ -55,6 +63,7 @@ public class SettingsActivity extends BaseActivity {
     public static final int BROWN = 2;
     public static final int BLUE = 3;
     private Switch aSwitch, nearby;
+    private boolean locationEnable, permissionLocation, alarmActivated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,9 +97,8 @@ public class SettingsActivity extends BaseActivity {
 
         boolean push = m.getBoolean("push", true);
         aSwitch.setChecked(push);
-        if (push) {
-            FirebaseMessaging.getInstance().subscribeToTopic(PushNotificationService.TOPIC);
-        }
+
+        aSwitch.setText(getString(R.string.active));
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -99,47 +107,24 @@ public class SettingsActivity extends BaseActivity {
                 mEditor.putBoolean("push", isChecked);
                 mEditor.apply();
                 if (isChecked) {
+                    aSwitch.setText(getString(R.string.active));
                     FirebaseMessaging.getInstance().subscribeToTopic(PushNotificationService.TOPIC);
                 } else {
+                    aSwitch.setText(getString(R.string.inaactive));
                     FirebaseMessaging.getInstance().unsubscribeFromTopic(PushNotificationService.TOPIC);
                 }
             }
         });
 
         boolean nerb = m.getBoolean("nearby", true);
-
+        alarmActivated = nerb;
         nearby.setChecked(nerb);
-
-        if (nerb) { //ativar a primeira vez
-
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            Intent intent = new Intent(SettingsActivity.this, StartNearbyServiceReceiver.class);
-            intent.setAction(StartNearbyServiceReceiver.ACTION);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (1000), 36000, pendingIntent);
-       /*         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (36000), 3600000, pendingIntent);*/
+        if (nerb) {
+            nearby.setText(getString(R.string.active));
+        } else {
+            nearby.setText(getString(R.string.inaactive));
         }
-
-        nearby.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this);
-                SharedPreferences.Editor mEditor = mSettings.edit();
-                mEditor.putBoolean("nearby", isChecked);
-                mEditor.apply();
-                AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                Intent intent = new Intent(SettingsActivity.this, StartNearbyServiceReceiver.class);
-                intent.setAction(StartNearbyServiceReceiver.ACTION);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-                if (isChecked) {
-                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (1000), 36000, pendingIntent);
-       /*         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (36000), 3600000, pendingIntent);*/
-                } else {
-                    alarmManager.cancel(pendingIntent);
-                }
-            }
-        });
+        nearby.setOnCheckedChangeListener(this);
 
 
         checkBox_sound.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -215,15 +200,99 @@ public class SettingsActivity extends BaseActivity {
         dialog = builder.create();
 
 
-        Button servico = findViewById(R.id.servico_butao);
-        servico.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+    }
 
+
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
+            activateNearby();
+        } else {
+            setNearbyPreference(false);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(SettingsActivity.this, StartNearbyServiceReceiver.class);
+            intent.setAction(StartNearbyServiceReceiver.ACTION);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(SettingsActivity.this, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            alarmActivated = false;
+            nearby.setText(getString(R.string.active));
+            alarmManager.cancel(pendingIntent);
+        }
+    }
+
+    private void setCheckedNearby(boolean check) {
+        nearby.setOnCheckedChangeListener(null);
+        nearby.setChecked(check);
+        setNearbyPreference(check);
+        if (check) {
+            nearby.setText(getString(R.string.active));
+            setAlarmNearby();
+        } else {
+            nearby.setText(getString(R.string.inaactive));
+        }
+        nearby.setOnCheckedChangeListener(this);
+    }
+
+
+    public void activateNearby() {
+        permissionLocation = LocationUtils.checkAndRequestPermissions(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        Task task = LocationUtils.enableLocationSettings(this, LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+            @Override
+            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                locationEnable = true;
+                if (permissionLocation && !alarmActivated) { //só se tiver permissões e a localização ativa
+                    alarmActivated = true;
+                    setCheckedNearby(true);
+                } else {
+                    setCheckedNearby(false);
+                }
             }
         });
 
+    }
 
+
+    private void setNearbyPreference(boolean pref) {
+        SharedPreferences mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        final SharedPreferences.Editor mEditor = mSettings.edit();
+        mEditor.putBoolean("nearby", pref);
+        mEditor.apply();
+
+    }
+
+    private void setAlarmNearby() {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, StartNearbyServiceReceiver.class);
+        intent.setAction(StartNearbyServiceReceiver.ACTION);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (36000), 3600000, pendingIntent);
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        permissionLocation = LocationUtils.onRequestPermissionsResult(requestCode, permissions, grantResults, Manifest.permission.ACCESS_COARSE_LOCATION);
+        if (permissionLocation) {
+            if (locationEnable && !alarmActivated) { //tem permissões e tem a localização ativa
+                alarmActivated = true;
+                setCheckedNearby(true);
+            }
+        } else {
+            setCheckedNearby(false);
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        locationEnable = LocationUtils.checkLocationSettings(requestCode, resultCode);
+        if (locationEnable) {
+            if (permissionLocation && !alarmActivated) {//tem permissões e tem a localização ativa
+                alarmActivated = true;
+                setCheckedNearby(true);
+            }
+        } else {
+            setCheckedNearby(false);
+        }
     }
 
     @Override
@@ -264,4 +333,5 @@ public class SettingsActivity extends BaseActivity {
         }
 
     }
+
 }

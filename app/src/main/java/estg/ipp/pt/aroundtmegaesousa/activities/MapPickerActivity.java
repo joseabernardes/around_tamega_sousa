@@ -1,5 +1,6 @@
 package estg.ipp.pt.aroundtmegaesousa.activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -16,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -103,8 +105,8 @@ public class MapPickerActivity extends BaseActivity implements OnMapReadyCallbac
         });
         mGoogleMap.setOnMapClickListener(this);
 
-        permissionLocation = LocationUtils.checkAndRequestPermissions(this);
-        Task task = LocationUtils.enableLocationSettings(this);
+        permissionLocation = LocationUtils.checkAndRequestPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        Task task = LocationUtils.enableLocationSettings(this, LocationRequest.PRIORITY_HIGH_ACCURACY);
         task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
@@ -262,7 +264,7 @@ public class MapPickerActivity extends BaseActivity implements OnMapReadyCallbac
     @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        permissionLocation = LocationUtils.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+        permissionLocation = LocationUtils.onRequestPermissionsResult( requestCode, permissions, grantResults,Manifest.permission.ACCESS_FINE_LOCATION);
         if (permissionLocation) {
             if (locationEnable) { //tem permissões e tem a localização ativa
                 mGoogleMap.setMyLocationEnabled(true);

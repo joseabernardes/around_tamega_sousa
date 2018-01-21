@@ -266,8 +266,7 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
             dots[0].setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.indicator_active));
         }
 
-
-        //deve ser no onCreate provavelmente
+        
 
         mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

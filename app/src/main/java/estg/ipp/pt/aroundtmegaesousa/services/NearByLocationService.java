@@ -77,6 +77,7 @@ public class NearByLocationService extends Service implements FirebaseHelper.Fir
                     }
                     if (locations != null) {
                         //locations
+                        Log.d(TAG, "onLocationResult: " + locationResult.toString());
                         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
                         firebaseHelper.getNearbyLocations(locations, NearByLocationService.this);
                     }
@@ -130,12 +131,16 @@ public class NearByLocationService extends Service implements FirebaseHelper.Fir
     @Override
     public void getNerbyPointsOfInterest(ArrayList<PointOfInterest> pointOfInterests) {
         if (!pointOfInterests.isEmpty()) {
+            Log.d(TAG, "getNerbyPointsOfInterest: notempty");
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(LIST_POI, pointOfInterests);
-            PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pi = PendingIntent.getActivity(this, PrivateNotification.getRandomID(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
             PrivateNotification resultNotification = new PrivateNotification(this, getString(R.string.recommendations), String.valueOf(pointOfInterests.size()) + " " + getString(R.string.recommendations_list_poi), R.drawable.around_logo, PrivateNotification.getRandomID());
             resultNotification.setAction(pi);
             resultNotification.show();
+        }else{
+            Log.d(TAG, "getNerbyPointsOfInterest: empty");
         }
     }
 

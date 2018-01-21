@@ -84,7 +84,8 @@ public class UploadFirebaseService extends Service implements FirebaseServiceCom
         if (result) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(PointOfInterestFragment.DOCUMENT_ID, documentID);
-            PendingIntent pi = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pi = PendingIntent.getActivity(this, PrivateNotification.getRandomID(), intent, PendingIntent.FLAG_CANCEL_CURRENT);
             resultNotification = new PrivateNotification(this, getString(R.string.title_notification_add_point), getString(R.string.message_notification_added), R.mipmap.ic__check, PrivateNotification.getRandomID());
             resultNotification.setAction(pi);
         } else {

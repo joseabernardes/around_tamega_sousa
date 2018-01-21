@@ -153,6 +153,7 @@
 
     <string name="sorted_by_rating">Ordenado por rating</string>
     <string name="sorted_by_date">Ordenado por data</string>
+    <string name="invalid_rating">Indique uma classificação de 1 a 5</string>
 
     <string name="offline">Está Offline. Verifique a sua ligação</string>
 

@@ -80,6 +80,8 @@ public class NearByLocationService extends Service implements FirebaseHelper.Fir
                         Log.d(TAG, "onLocationResult: " + locationResult.toString());
                         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
                         firebaseHelper.getNearbyLocations(locations, NearByLocationService.this);
+                    }else{
+                        stopSelf();
                     }
                 }
             };

@@ -149,11 +149,16 @@ public class PointOfInterestFragment extends Fragment implements View.OnClickLis
                 builder.setPositiveButton(getString(R.string.apply), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Rating rating = new Rating(mListener.getLoggedUser().getUid(), rt.getRating());
-                        if (firebaseRating != null) {
-                            fbh.editRating(pointOfInterest.getId(), firebaseRating.getId(), rating.getRating(), PointOfInterestFragment.this);
+                        if (rt.getRating() >= 1) {
+
+                            Rating rating = new Rating(mListener.getLoggedUser().getUid(), rt.getRating());
+                            if (firebaseRating != null) {
+                                fbh.editRating(pointOfInterest.getId(), firebaseRating.getId(), rating.getRating(), PointOfInterestFragment.this);
+                            } else {
+                                fbh.addRating(rating, pointOfInterest.getId(), PointOfInterestFragment.this);
+                            }
                         } else {
-                            fbh.addRating(rating, pointOfInterest.getId(), PointOfInterestFragment.this);
+                            Toast.makeText(mContext, getString(R.string.invalid_rating), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
